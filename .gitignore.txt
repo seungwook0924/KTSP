@@ -37,9 +37,9 @@ Temporary Items
 .apdisk
 
 # Ignore contents of the etc/ignore folder
-etc/ignore/
-SpringBoot/src/main/resources/*.properties
-SpringBoot/src/main/resources/*.yml
-SpringBoot/log
-SpringBoot/report-images
-database/ignore
+/etc/ignore/
+/SpringBoot/src/main/resources/*.properties
+/SpringBoot/src/main/resources/*.yml
+/SpringBoot/log
+/SpringBoot/report-images
+/database/ignore
