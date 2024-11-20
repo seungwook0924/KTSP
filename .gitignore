@@ -42,4 +42,4 @@ SpringBoot/src/main/resources/*.properties
 SpringBoot/src/main/resources/*.yml
 SpringBoot/log
 SpringBoot/report-images
-database/ignore
+Database/ignore
