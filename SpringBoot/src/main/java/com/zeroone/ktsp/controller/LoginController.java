@@ -32,36 +32,18 @@ public class LoginController {
     //학번 형식
     private static final String STUDENT_NUMBER_PATTERN = "^[0-9]{9}$";
 
-    // 학번 유효성 검사
-    public static boolean isValidStudentNumber(String studentNumber)
-    {
-        if (!Pattern.matches(STUDENT_NUMBER_PATTERN, studentNumber)) return false; // 9자리 숫자가 아니면 유효하지 않음
-
-        // 학번의 첫 4자리 (입학년도)
-        int admissionYear = Integer.parseInt(studentNumber.substring(0, 4));
-
-        // 현재 년도와 비교
-        int currentYear = Year.now().getValue();  // 현재 년도
-
-        // 입학년도가 현재 년도보다 크면 안 되고, 10년 이전이면 안 됨
-        if (admissionYear > currentYear || admissionYear < (currentYear - 10)) return false; // 유효하지 않은 학번
-
-        return true; // 유효한 학번
-    }
-
-
     @PostMapping("/register")
     public String registerUser(@Validated @ModelAttribute RegisterDTO registerDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-        if (bindingResult.hasErrors()) {
-            return "login/register";
-        }
+        if (bindingResult.hasErrors()) return "login/register";
 
-        if (userService.findEMail(registerDTO.getEmail()).isPresent()) {
+        if (userService.findEMail(registerDTO.getEmail()).isPresent())
+        {
             bindingResult.rejectValue("email", "error.studentNumber", "이미 등록된 이메일입니다.");
             return "login/register";
         }
 
-        if (userService.isStudentNumberExists(registerDTO.getStudentNumber())) {
+        if (userService.isStudentNumberExists(registerDTO.getStudentNumber()))
+        {
             bindingResult.rejectValue("studentNumber", "error.studentNumber", "이미 존재하는 학번입니다.");
             return "login/register";
         }
@@ -108,7 +90,8 @@ public class LoginController {
         return "redirect:/login/findpassword";
     }
 
-    private String createCode() {
+    private String createCode()
+    {
         int leftLimit = 48; // number '0'
         int rightLimit = 122; // alphabet 'z'
         int targetStringLength = 6;
@@ -119,5 +102,22 @@ public class LoginController {
                 .limit(targetStringLength)
                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                 .toString();
+    }
+
+    // 학번 유효성 검사
+    public static boolean isValidStudentNumber(String studentNumber)
+    {
+        if (!Pattern.matches(STUDENT_NUMBER_PATTERN, studentNumber)) return false; // 9자리 숫자가 아니면 유효하지 않음
+
+        // 학번의 첫 4자리 (입학년도)
+        int admissionYear = Integer.parseInt(studentNumber.substring(0, 4));
+
+        // 현재 년도와 비교
+        int currentYear = Year.now().getValue();  // 현재 년도
+
+        // 입학년도가 현재 년도보다 크면 안 되고, 10년 이전이면 안 됨
+        if (admissionYear > currentYear || admissionYear < (currentYear - 10)) return false; // 유효하지 않은 학번
+
+        return true; // 유효한 학번
     }
 }

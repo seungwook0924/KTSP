@@ -25,28 +25,30 @@ public class EmailController {
     // 인증코드 메일 발송
     @PostMapping("/send")
     public ResponseEntity<Map<String, String>> mailSend(@RequestBody RegisterDTO registerDTO) throws MessagingException {
-        log.info("EmailController.mailSend()");
-        if (registerDTO.getEmail() == null || registerDTO.getEmail().trim().isEmpty()) {
-            throw new IllegalArgumentException("이메일은 필수 입력 항목입니다.");
+        String userEmailId = registerDTO.getEmail();
+        if (registerDTO.getEmail() == null || userEmailId.substring(0, userEmailId.indexOf("@")).trim().isEmpty())
+        {
+            throw new IllegalArgumentException("이메일 앞부분이 null 처리되었음.");
         }
         emailService.sendEmail(registerDTO.getEmail());
         Map<String, String> response = new HashMap<>();
+        response.put("status", "success");
         return ResponseEntity.ok(response);
     }
 
     // 인증코드 인증
     @PostMapping("/verify")
     public ResponseEntity<Map<String, String>> verify(@RequestBody RegisterDTO registerDTO) {
-        log.info("EmailController.verify()");
-        log.info("getVerifyCode = {}", registerDTO.getVerifyCode());
-
         boolean isVerify = emailService.verifyEmailCode(registerDTO.getEmail(), registerDTO.getVerifyCode());
         Map<String, String> response = new HashMap<>();
 
-        if (isVerify) {
+        if (isVerify)
+        {
             response.put("status", "success");
             return ResponseEntity.ok(response);
-        } else {
+        }
+        else
+        {
             response.put("status", "fail");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }

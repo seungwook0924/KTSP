@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login Page</title>
+  <title>KNU 재능 공유 플랫폼</title>
   <link rel="stylesheet" href="/css/login.css">
 </head>
 <body>
@@ -19,9 +19,7 @@
     <div th:if="${param.error}" class="error">아이디 또는 비밀번호가 잘못되었습니다.</div>
 
     <!-- 성공 메시지 -->
-    <div th:if="${message}" class="message">
-      <p th:text="${message}"></p>
-    </div>
+    <div th:if="${message}" class="message"><p th:text="${message}"></p></div>
 
     <!-- 로그인 박스 -->
     <div class="login-box">

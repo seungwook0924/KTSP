@@ -26,28 +26,30 @@ public class EmailService {
     private static final String senderEmail = "rebugs0924@gmail.com";
 
     // 인증코드 이메일 발송
-    public void sendEmail(String toEmail) throws MessagingException {
-        log.info("Attempting to send email to: {}", toEmail); // 로그 추가
-
-        try {
-            if (redisUtil.existData(toEmail)) {
-                redisUtil.deleteData(toEmail);
-            }
+    public void sendEmail(String toEmail) throws MessagingException
+    {
+        log.info("sendEmail : send email to: {}", toEmail); // 로그 추가
+        try
+        {
+            if (redisUtil.existData(toEmail)) redisUtil.deleteData(toEmail);
 
             // 이메일 폼 생성
             MimeMessage emailForm = createEmailForm(toEmail);
 
             // 이메일 발송
             javaMailSender.send(emailForm);
-        } catch (MessagingException e) {
+        }
+        catch (MessagingException e)
+        {
             log.error("Failed to send email to: {}. Error: {}", toEmail, e.getMessage(), e); // 에러 로그 추가
             throw e;
         }
     }
 
     // 아이디 찾기 이메일 발송
-    public void sendFindEmail(String toEmail, String tempPassword) throws MessagingException {
-        log.info("Attempting to send email to: {}", toEmail); // 로그 추가
+    public void sendFindEmail(String toEmail, String tempPassword) throws MessagingException
+    {
+        log.info("sendFindEmail : send email to: {}", toEmail); // 로그 추가
 
         try {
             // 이메일 폼 생성
@@ -56,18 +58,21 @@ public class EmailService {
             // 이메일 발송
             javaMailSender.send(emailForm);
             log.info("Email sent successfully to: {}", toEmail); // 로그 추가
-        } catch (MessagingException e) {
+        } catch (MessagingException e)
+        {
             log.error("Failed to send email to: {}. Error: {}", toEmail, e.getMessage(), e); // 에러 로그 추가
             throw e;
         }
     }
 
     // 코드 검증
-    public Boolean verifyEmailCode(String email, String code) {
+    public Boolean verifyEmailCode(String email, String code)
+    {
         String codeFoundByEmail = redisUtil.getData(email);
         log.info("Verification attempt for email: {}. Code found in Redis: {}", email, codeFoundByEmail); // 로그 추가
 
-        if (codeFoundByEmail == null) {
+        if (codeFoundByEmail == null)
+        {
             log.warn("No code found for email: {}", email); // 경고 로그 추가
             return false;
         }
@@ -77,7 +82,8 @@ public class EmailService {
         return result;
     }
 
-    private String createCode() {
+    private String createCode()
+    {
         int leftLimit = 48; // number '0'
         int rightLimit = 122; // alphabet 'z'
         int targetStringLength = 6;
@@ -91,7 +97,8 @@ public class EmailService {
     }
 
     // 이메일 내용 초기화
-    private String setContext(String templateName, Map<String, Object> variables) {
+    private String setContext(String templateName, Map<String, Object> variables)
+    {
         log.debug("Initializing email context for template: {}", templateName); // 로그 추가
         Context context = new Context();
 
@@ -111,7 +118,8 @@ public class EmailService {
     }
 
     // 회원가입용 이메일 폼 생성
-    private MimeMessage createEmailForm(String email) throws MessagingException {
+    private MimeMessage createEmailForm(String email) throws MessagingException
+    {
         String authCode = createCode();
         log.info("Generated auth code: {}", authCode);
 
@@ -129,7 +137,6 @@ public class EmailService {
 
             // Redis 에 인증 코드 저장
             redisUtil.setDataExpire(email, authCode, 60 * 30L);
-            log.info("Email form created successfully for recipient: {}", email);
         } catch (MessagingException e) {
             log.error("Error while creating email form: {}", e.getMessage(), e);
             throw e;
@@ -152,7 +159,6 @@ public class EmailService {
             variables.put("tempPassword", tempPassword);
 
             message.setText(setContext("temp_password", variables), "utf-8", "html");
-            log.info("Email form created successfully for recipient: {}", email);
         } catch (MessagingException e) {
             log.error("Error while creating email form: {}", e.getMessage(), e);
             throw e;

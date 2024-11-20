@@ -111,15 +111,16 @@ tr:hover td {
 
 .modal-content button {
     padding: 12px 20px;
-    background-color: #033975;
+    background-color: #0059B7;
     color: white;
     border: none;
-    border-radius: 4px;
     cursor: pointer;
+    display: block;
+    margin: 0 auto;
 }
 
 .modal-content button:hover {
-    background-color: #2477d2;
+    text-decoration: underline;
 }
 
 .error {
@@ -127,4 +128,118 @@ tr:hover td {
     text-align: center;
     font-size: 12px;
     margin-top: 5px;
+}
+
+.error-message{
+    color: red;
+    text-align: center;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.message {
+    color: #2e7d32;
+    text-align: center;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+/* 기본 버튼 스타일 */
+button {
+    padding: 10px 20px; /* 여백 설정 */
+    background-color: #0059B7; /* 기본 배경색 */
+    color: white; /* 텍스트 색상 */
+    border: none; /* 테두리 제거 */
+    font-size: 16px; /* 기본 글자 크기 */
+    cursor: pointer; /* 클릭 커서 표시 */
+    transition: background-color 0.3s, transform 0.2s; /* 애니메이션 */
+}
+
+/* 호버 상태 */
+button:hover {
+    text-decoration: underline;
+}
+
+/* 비활성화 상태 */
+button:disabled {
+    background-color: #ccc; /* 비활성화 배경색 */
+    color: #777; /* 텍스트 색상 변경 */
+    cursor: not-allowed; /* 클릭 불가 표시 */
+}
+
+/* 반응형 스타일 - 모바일 크기 */
+@media (max-width: 480px) {
+    button {
+        font-size: 14px; /* 글자 크기 축소 */
+        padding: 8px 15px; /* 여백 축소 */
+    }
+}
+
+/* 반응형 디자인 */
+
+/* 태블릿 크기 이하 (768px 이하) */
+@media (max-width: 768px) {
+    .content {
+        padding: 15px;
+        margin-left: 0; /* 좌측 여백 제거 */
+    }
+
+    .content h1 {
+        font-size: 24px;
+    }
+
+    .content h2 {
+        font-size: 20px;
+    }
+
+    .content h3 {
+        font-size: 18px;
+    }
+
+    table th, table td {
+        padding: 8px; /* 셀 간격 축소 */
+        font-size: 14px;
+    }
+
+    .modal-content {
+        width: 90%; /* 화면 너비에 더 맞춤 */
+    }
+}
+
+/* 모바일 크기 이하 (480px 이하) */
+@media (max-width: 480px) {
+    .content {
+        padding: 10px;
+    }
+
+    .content h1 {
+        font-size: 20px;
+    }
+
+    .content h2 {
+        font-size: 18px;
+    }
+
+    .content h3 {
+        font-size: 16px;
+    }
+
+    table th, table td {
+        padding: 6px; /* 셀 간격 더 축소 */
+        font-size: 12px;
+    }
+
+    .modal-content {
+        padding: 20px;
+        width: 95%;
+        font-size: 14px; /* 텍스트 크기 축소 */
+    }
+
+    .modal-content input {
+        padding: 10px;
+    }
+
+    .modal-content button {
+        padding: 10px 15px;
+    }
 }

@@ -42,7 +42,8 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void registerUser(RegisterDTO registerDTO) {
+    public void registerUser(RegisterDTO registerDTO)
+    {
         User user = User.builder()
                 .studentNumber(registerDTO.getStudentNumber())
                 .password(passwordEncoder.encode(registerDTO.getPassword()))
@@ -57,7 +58,8 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public boolean isStudentNumberExists(String studentNumber) {
+    public boolean isStudentNumberExists(String studentNumber)
+    {
         return userRepository.existsByStudentNumber(studentNumber);
     }
 }

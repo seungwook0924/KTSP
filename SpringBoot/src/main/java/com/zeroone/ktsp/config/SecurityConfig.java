@@ -63,7 +63,7 @@ public class SecurityConfig {
                                 "/logout",             // 로그아웃
                                 "/register/**",          // 회원가입 관련 경로
                                 "/static/**",            // 정적 리소스
-                                "/css/**", "/js/**", "/images/**",
+                                "/css/**", "/js/**", "/images/**", "/icons/**",
                                 "/error",                // 에러 페이지
                                 "/health"                // 헬스 체크
                         ).permitAll() // 인증 없이 접근 가능

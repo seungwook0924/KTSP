@@ -41,11 +41,14 @@ var email; // 사용자가 입력한 이메일
 
 // 이메일 인증 버튼 클릭 시
 emailVerifyBtn.onclick = function () {
-    email = document.getElementById("emailId").value + "@kangwon.ac.kr"; // 폼에서 입력한 이메일 가져오기
+    email = document.getElementById("emailId").value; // 폼에서 입력한 이메일 가져오기
 
     // 이메일 검증 (빈 값 체크)
-    if (email) {
+    if (email)
+    {
+        email += "@kangwon.ac.kr";
         emailSending.style.display = "block";
+        emailError.style.display = "none";
         // 이메일 인증 요청
         fetch("/api/email/send", {
             method: "POST",
@@ -74,7 +77,9 @@ emailVerifyBtn.onclick = function () {
                 emailSending.style.display = "none";
                 emailError.textContent = "요청 중 문제가 발생했습니다. 다시 시도해주세요.";
             });
-    } else {
+    }
+    else
+    {
         // 이메일이 입력되지 않은 경우
         emailError.style.display = "block";
         emailError.textContent = "이메일을 입력해주세요.";
@@ -82,12 +87,14 @@ emailVerifyBtn.onclick = function () {
 };
 
 // 모달 닫기 버튼 클릭 시
-closeModalBtn.onclick = function () {
+closeModalBtn.onclick = function ()
+{
     emailModal.style.display = "none";
 };
 
 // 인증번호 확인 버튼 클릭 시
-document.getElementById("verifyCodeBtn").onclick = function () {
+document.getElementById("verifyCodeBtn").onclick = function ()
+{
     var verificationCode = document.getElementById("verificationCode").value;
 
     // 인증번호를 서버로 보내 확인
@@ -134,8 +141,10 @@ document.getElementById("verifyCodeBtn").onclick = function () {
 };
 
 // 회원가입 폼 제출 시 이메일 인증 여부 체크
-document.getElementById("registerForm").onsubmit = function (event) {
-    if (!emailVerified) {
+document.getElementById("registerForm").onsubmit = function (event)
+{
+    if (!emailVerified)
+    {
         event.preventDefault(); // 이메일 인증이 완료되지 않으면 폼 제출을 막음
         alert("이메일 인증을 먼저 완료해주세요.");
     }

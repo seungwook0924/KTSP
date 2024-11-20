@@ -20,3 +20,28 @@
 .active-slide {
     display: block;
 }
+
+/* 반응형 디자인 추가 */
+
+/* 태블릿 크기 이하 (768px 이하) */
+@media (max-width: 768px) {
+    .banner-slider {
+        max-width: 90%; /* 슬라이더 너비를 화면 비율에 맞게 줄임 */
+    }
+
+    .banner-slider img {
+        border-radius: 8px; /* 둥근 모서리 조정 */
+    }
+}
+
+/* 모바일 크기 이하 (480px 이하) */
+@media (max-width: 480px) {
+    .banner-slider {
+        max-width: 100%; /* 화면 전체 너비로 확장 */
+        margin: 10px 0; /* 상하 간격 조정 */
+    }
+
+    .banner-slider img {
+        border-radius: 5px; /* 둥근 모서리 더 축소 */
+    }
+}

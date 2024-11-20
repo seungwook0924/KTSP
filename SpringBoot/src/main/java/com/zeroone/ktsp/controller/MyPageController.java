@@ -1,6 +1,5 @@
 package com.zeroone.ktsp.controller;
 
-import com.zeroone.ktsp.DTO.UpdatePasswordDTO;
 import com.zeroone.ktsp.DTO.UpdateUserDTO;
 import com.zeroone.ktsp.domain.User;
 import com.zeroone.ktsp.service.UserService;
@@ -10,10 +9,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.math.BigDecimal;
+import java.util.regex.Pattern;
 
 @Controller
 @RequestMapping("/mypage")
@@ -24,62 +28,97 @@ public class MyPageController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
+    private static final Pattern PHONE_PATTERN = Pattern.compile("^010-\\d{4}-\\d{4}$");
+
     @GetMapping("/update")
-    public String showMypage(Model model, HttpSession session, UpdateUserDTO updateUserDTO)
+    public String showMypage(Model model, UpdateUserDTO updateUserDTO, HttpSession session)
     {
-        if(session != null)
-        {
-            User user = (User)session.getAttribute("user");
-            model.addAttribute("user", user);
-            updateUserDTO.setLevel(user.getLevel());
-            updateUserDTO.setTel(user.getTel());
-            updateUserDTO.setMajor(user.getMajor());
-            updateUserDTO.setLastGrades(user.getLastGrades());
-        }
+        User user = (User) session.getAttribute("user");
+
+        model.addAttribute("user", user);
+        updateUserDTO.setLevel(user.getLevel());
+        updateUserDTO.setTel(user.getTel());
+        updateUserDTO.setMajor(user.getMajor());
+        updateUserDTO.setLastGrades(user.getLastGrades().toString());
+
         model.addAttribute("updateUserDTO", updateUserDTO);
         model.addAttribute("currentMenu", "one");
         return "my_page/update";
     }
 
     @PostMapping("/update")
-    public String updateUser(HttpSession session, @ModelAttribute UpdateUserDTO updateUserDTO)
+    public String updateUser(@Validated @ModelAttribute UpdateUserDTO updateUserDTO, RedirectAttributes redirectAttributes, HttpSession session)
     {
-        if(session != null)
+        // 입력 데이터 유효성 검사
+        String validationError = validateUserData(updateUserDTO);
+        if (validationError != null)
         {
-            User user = (User)session.getAttribute("user");
-            User updateUser = user.toBuilder()
-                    .level(updateUserDTO.getLevel())
-                    .tel(updateUserDTO.getTel())
-                    .major(updateUserDTO.getMajor())
-                    .lastGrades(updateUserDTO.getLastGrades())
-                    .build();
-            session.setAttribute("user", updateUser);
-            userService.save(updateUser);
+            redirectAttributes.addFlashAttribute("errorMessage", validationError);
+            return "redirect:/mypage/update";
         }
+
+        User user = (User) session.getAttribute("user");
+        User updateUser = user.toBuilder()
+                .level(updateUserDTO.getLevel())
+                .tel(updateUserDTO.getTel())
+                .major(updateUserDTO.getMajor())
+                .lastGrades(new BigDecimal(updateUserDTO.getLastGrades()))
+                .build();
+
+        // 업데이트된 사용자 정보 저장
+        userService.save(updateUser);
+        session.setAttribute("user", updateUser);
         return "redirect:/mypage";
     }
 
     @PostMapping("/updatePassword")
-    public String updatePassword(HttpSession session, @ModelAttribute UpdatePasswordDTO updatePasswordDTO)
+    public String updatePassword(@ModelAttribute UpdateUserDTO updateUserDTO, RedirectAttributes redirectAttributes, HttpSession session)
     {
-        if(session != null)
+        User user = (User) session.getAttribute("user");
+
+        if (!updateUserDTO.getNewPassword().equals(updateUserDTO.getConfirmPassword()))
         {
-            User user = (User)session.getAttribute("user");
-            if (!updatePasswordDTO.getNewPassword().equals(updatePasswordDTO.getConfirmPassword())) {
-                // 비밀번호 불일치 처리
-                return "redirect:/mypage?error=비밀번호가 일치하지 않습니다.";
-            }
-
-            // 새 비밀번호를 BCrypt로 인코딩
-            String encodedPassword = passwordEncoder.encode(updatePasswordDTO.getNewPassword());
-
-            User updateUser = user.toBuilder()
-                    .password(encodedPassword)
-                    .build();
-            session.setAttribute("user", updateUser);
-            log.info("{}", updatePasswordDTO.getNewPassword());
-            userService.save(updateUser);
+            redirectAttributes.addFlashAttribute("errorMessage", "비밀번호가 일치하지 않습니다.");
+            return "redirect:/mypage";
         }
+
+        String encodedPassword = passwordEncoder.encode(updateUserDTO.getNewPassword()); // 암호화
+
+        User updateUser = user.toBuilder()
+                .password(encodedPassword)
+                .build();
+
+        userService.save(updateUser);
+        session.setAttribute("user", updateUser);
         return "redirect:/mypage";
+    }
+
+    private String validateUserData(UpdateUserDTO updateUserDTO)
+    {
+        // 전공 필드 유효성 검사
+        if (updateUserDTO.getMajor() == null || updateUserDTO.getMajor().trim().isEmpty()) return "전공을 입력해주세요.";
+        if (updateUserDTO.getMajor().length() < 2 || updateUserDTO.getMajor().length() > 20) return "전공은 2글자 이상 20글자 이하로 입력해야 합니다.";
+
+        // 전화번호 형식 검사
+        if (!PHONE_PATTERN.matcher(updateUserDTO.getTel()).matches()) return "전화번호는 010-XXXX-XXXX 형식이어야 합니다.";
+
+        // 학점 유효성 검사
+        try
+        {
+            BigDecimal grades = new BigDecimal(updateUserDTO.getLastGrades());
+
+            if (grades.scale() > 2) return "학점은 소수점 아래 두 자리까지만 입력 가능합니다.";
+
+            BigDecimal minGrade = new BigDecimal("0.0");
+            BigDecimal maxGrade = new BigDecimal("4.5");
+
+            if (grades.compareTo(minGrade) < 0 || grades.compareTo(maxGrade) > 0) return "학점은 0.0 이상 4.5 이하여야 합니다.";
+        }
+        catch (NumberFormatException e)
+        {
+            return "학점은 숫자 형식이어야 합니다.";
+        }
+
+        return null;
     }
 }

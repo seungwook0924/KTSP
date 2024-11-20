@@ -6,7 +6,7 @@
     <ul>
       <li><a href="/mypage" th:classappend="${currentMenu == 'mypage_main'} ? 'active' : ''">나의 정보</a></li>
       <li><a href="/mypage/update" th:classappend="${currentMenu == 'one'} ? 'active' : ''">회원 정보 수정</a></li>
-      <li><a href="#" th:classappend="${currentMenu == 'two'} ? 'active' : ''">회원 탈퇴</a></li>
+      <li><a href="/mypage/myteam" th:classappend="${currentMenu == 'two'} ? 'active' : ''">나의 팀</a></li>
     </ul>
   </aside>
 </div>

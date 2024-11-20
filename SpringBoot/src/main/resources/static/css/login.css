@@ -224,11 +224,15 @@ body, html {
     text-decoration: none;
 }
 
+.modal-content {
+    text-align: center; /* 내부 콘텐츠를 중앙 정렬 */
+}
+
 /* 모달 내 입력 필드와 버튼 스타일 */
 .modal-content label {
     display: block;
     margin-bottom: 10px;
-    font-weight: bold;
+    font-size: 16px;
 }
 
 .modal-content input {
@@ -242,13 +246,83 @@ body, html {
 
 .modal-content button {
     padding: 12px 20px;
-    background-color: #033975;
+    background-color: #0059B7;
     color: white;
     border: none;
-    border-radius: 4px;
     cursor: pointer;
 }
 
 .modal-content button:hover {
-    background-color: #2477d2;
+    text-decoration: underline;
+}
+
+/* 반응형 디자인 */
+
+/* 태블릿 크기 이하 (768px 이하) */
+@media (max-width: 768px) {
+    .login-container {
+        width: 90%; /* 화면 너비의 90%로 조정 */
+        padding: 15px; /* 내부 여백 축소 */
+    }
+
+    .logo img {
+        width: 200px; /* 로고 크기 축소 */
+    }
+
+    .login-box h1 {
+        font-size: 16px; /* 제목 크기 축소 */
+    }
+
+    .login-box input[type="text"],
+    .login-box input[type="password"] {
+        padding: 8px; /* 입력 필드 간격 축소 */
+        font-size: 14px; /* 글자 크기 축소 */
+    }
+
+    .login-btn {
+        font-size: 14px; /* 버튼 크기 축소 */
+    }
+
+    .additional-links {
+        font-size: 12px; /* 추가 링크 크기 축소 */
+    }
+}
+
+/* 모바일 크기 이하 (480px 이하) */
+@media (max-width: 480px) {
+    .login-container {
+        width: 100%; /* 화면 전체 너비 사용 */
+        padding: 10px;
+    }
+
+    .logo img {
+        width: 150px; /* 로고 크기 더 축소 */
+    }
+
+    .login-box h1 {
+        font-size: 14px; /* 제목 크기 더 축소 */
+    }
+
+    .login-box input[type="text"],
+    .login-box input[type="password"] {
+        padding: 6px; /* 입력 필드 간격 더 축소 */
+        font-size: 12px;
+    }
+
+    .login-btn {
+        font-size: 12px; /* 버튼 크기 더 축소 */
+        padding: 8px;
+    }
+
+    .additional-links {
+        font-size: 10px; /* 추가 링크 크기 더 축소 */
+    }
+
+    .notice h2 {
+        font-size: 16px; /* 공지사항 제목 크기 축소 */
+    }
+
+    .notice li {
+        font-size: 12px; /* 공지사항 텍스트 크기 축소 */
+    }
 }
