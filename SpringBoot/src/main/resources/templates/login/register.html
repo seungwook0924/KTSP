@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup Page</title>
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+
+<div class="background">
+    <div class="login-container">
+        <!-- 로고 -->
+        <div class="logo">
+            <img src="/images/knu_logo.png" alt="KNU Logo">
+        </div>
+
+        <!-- 회원가입 박스 -->
+        <div class="login-box">
+            <h1>회원가입</h1>
+            <form id="registerForm" action="/login/register" th:action="@{/login/register}" th:object="${registerDTO}" method="post">
+                <!-- 이메일 입력 -->
+                <div class="input-container">
+                    <label for="emailId" class="input-label">강원대학교 이메일</label> <!-- for 속성을 emailId로 설정 -->
+                    <div class="input-wrapper email-container">
+                        <!-- 이메일 아이디 입력 -->
+                        <input type="text" id="emailId" name="emailId" placeholder="이메일 입력" required aria-labelledby="emailIdLabel">
+                        <!-- 고정 도메인 표시 -->
+                        <span class="email-domain">@kangwon.ac.kr</span>
+                    </div>
+                    <button type="button" id="emailVerifyBtn" class="verify-btn">이메일 인증</button>
+                    <div id="emailSending" class="message" style="display: none;">이메일 전송중입니다.</div>
+                    <div id="emailError" class="error-message" style="display: none;">이메일 인증이 필요합니다.</div>
+                    <div id="emailSuccess" class="message" style="display: none;">이메일 인증이 완료되었습니다.</div>
+                </div>
+
+                <!-- 이메일 인증 모달 -->
+                <div id="emailModal" class="modal" style="display: none;">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h2>이메일 인증</h2>
+                        <label for="verificationCode">인증번호가 전송되었습니다. 30분안에 입력해주세요.</label>
+                        <input type="text" id="verificationCode" placeholder="인증번호를 입력하세요">
+                        <button id="verifyCodeBtn" type="button">확인</button>
+                        <div id="modalError" class="error-message" style="display: none;">인증번호가 일치하지 않습니다.</div>
+                    </div>
+                </div>
+
+                <!-- 학년 선택 -->
+                <div class="input-container">
+                    <label for="level" class="input-label">학년 선택</label>
+                    <div class="input-wrapper">
+                        <select id="level" name="level" th:field="*{level}">
+                            <option value="" disabled selected>학년 선택</option>
+                            <option value="freshman">1학년</option>
+                            <option value="sophomore">2학년</option>
+                            <option value="junior">3학년</option>
+                            <option value="senior">4학년</option>
+                        </select>
+                    </div>
+                    <div th:if="${#fields.hasErrors('level')}" th:errors="*{level}" class="error-message"></div>
+                </div>
+
+                <!-- 사용자 아이디 (학번) -->
+                <div class="input-container">
+                    <label for="studentNumber" class="input-label">사용자 아이디 (학번)</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="studentNumber" placeholder="사용자 아이디 (학번)" th:field="*{studentNumber}" required>
+                    </div>
+                    <div th:if="${#fields.hasErrors('studentNumber')}" th:errors="*{studentNumber}" class="error-message"></div>
+                </div>
+
+                <!-- 비밀번호 -->
+                <div class="input-container">
+                    <label for="password" class="input-label">비밀번호</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password" placeholder="비밀번호" th:field="*{password}" required>
+                    </div>
+                    <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error-message"></div>
+                </div>
+
+                <!-- 비밀번호 확인 -->
+                <div class="input-container">
+                    <label for="confirmPassword" class="input-label">비밀번호 확인</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="confirmPassword" placeholder="비밀번호 확인" required>
+                    </div>
+                    <div id="passwordError" class="error-message" style="display: none;">비밀번호가 일치하지 않습니다.</div>
+                </div>
+
+                <!-- 이름 -->
+                <div class="input-container">
+                    <label for="name" class="input-label">이름</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="name" placeholder="이름" th:field="*{name}" required>
+                    </div>
+                    <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error-message"></div>
+                </div>
+
+                <!-- 연락처 -->
+                <div class="input-container">
+                    <label for="tel" class="input-label">연락처</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="tel" placeholder="연락처 (예: 010-1234-5678)" th:field="*{tel}" required>
+                    </div>
+                    <div th:if="${#fields.hasErrors('tel')}" th:errors="*{tel}" class="error-message"></div>
+                </div>
+
+                <!-- 학과명 또는 전공 -->
+                <div class="input-container">
+                    <label for="major" class="input-label">전공</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="major" placeholder="학과명 또는 전공이름" th:field="*{major}" required>
+                    </div>
+                    <div th:if="${#fields.hasErrors('major')}" th:errors="*{major}" class="error-message"></div>
+                </div>
+
+                <!-- 학점 -->
+                <div class="input-container">
+                    <label for="lastGrade" class="input-label">직전학기 성적</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="lastGrade" placeholder="직전학기 성적 (예: 3.75)" th:field="*{lastGrade}" step="0.01" min="0" max="4.5" required>
+                    </div>
+                    <div th:if="${#fields.hasErrors('lastGrade')}" th:errors="*{lastGrade}" class="error-message"></div>
+                </div>
+
+                <button type="submit" class="login-btn">회원가입</button>
+            </form>
+
+            <div class="additional-links">
+                <a href="/login">로그인</a>
+            </div>
+        </div>
+
+        <!-- 안내사항 -->
+        <div class="notice">
+            <h2>안내사항</h2>
+            <ul>
+                <li>· 정확한 학번으로 아이디를 설정해주세요.</li>
+                <li>· 팀원들에게 보일 연락처를 정확히 입력해주세요.</li>
+                <li>· 민감한 정보는 암호화되어 안전하게 처리됩니다.</li>
+                <li>· 직전학기 성적은 평균 학점이 아닌 이전 학기 학점을 입력.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script src="/js/register.js"></script>
+
+</body>
+</html>

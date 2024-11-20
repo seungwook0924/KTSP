@@ -1,0 +1,46 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* 부모 푸터: 화면 전체를 채우도록 설정 */
+.footer {
+    background-color: white; /* 배경색 */
+    padding: 20px 0; /* 위아래 여백 */
+    width: 100%; /* 화면 전체 너비 */
+    position: relative; /* 내부 요소 위치 설정 */
+}
+
+.footer-container {
+    max-width: 1200px; /* 콘텐츠 최대 너비 */
+    margin: 0 auto; /* 중앙 정렬 */
+    display: flex;
+    align-items: center;
+    gap: 20px; /* 로고와 텍스트 사이 간격 */
+    position: relative; /* 내부 요소 위치 설정 */
+    padding: 0 20px; /* 좌우 패딩 추가 */
+    background-color: #f7f7f7; /* 상자 안의 배경 */
+}
+
+/* 로고 스타일 */
+.footer-logo {
+    flex-shrink: 0;
+}
+
+.footer-logo-img {
+    height: 50px;
+    object-fit: contain;
+}
+
+/* 텍스트 스타일 */
+.footer-text {
+    text-align: left;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.footer-text p {
+    margin: 5px 0;
+}

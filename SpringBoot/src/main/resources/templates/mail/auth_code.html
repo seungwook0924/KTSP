@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>인증 코드 메일</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f9;">
+
+<!-- 컨테이너 테이블 -->
+<table align="center" border="0" cellpadding="0" cellspacing="0" style="max-width: 600px; width: 100%; background-color: #ffffff; margin: 20px auto; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+  <tr>
+    <td style="padding: 20px; text-align: center; border-bottom: 1px solid #eee;">
+      <!-- 헤더 -->
+      <h1 style="color: #333333; font-size: 24px; margin: 0;">KNU 재능 공유 플랫폼</h1>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding: 20px; text-align: center;">
+      <!-- 본문 -->
+      <h3 style="color: #555555; font-size: 18px; margin: 0;">아래 인증 코드를 사이트에 입력해 주세요.</h3>
+      <div style="margin: 20px 0; font-size: 24px; font-weight: bold; color: crimson;" th:text="${code}">CODE</div>
+      <p style="font-size: 14px; color: #777777; margin: 0;">본 이메일 발신전용입니다.</p>
+      <p style="font-size: 14px; color: #555555; margin: 5px 0;">문의사항은 leesw_0924@icloud.com 으로 연락 주세요.</p>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding: 10px; text-align: center; background-color: #f4f4f9; border-top: 1px solid #eee;">
+      <!-- 푸터 -->
+      <p style="font-size: 12px; color: #999999; margin: 0;">© 2024 KNU 재능 공유 플랫폼. All rights reserved.</p>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>

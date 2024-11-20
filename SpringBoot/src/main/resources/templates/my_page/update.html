@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>내 정보 수정</title>
+  <link rel="stylesheet" href="/css/header.css">
+  <link rel="stylesheet" href="/css/footer.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/content.css">
+</head>
+<body>
+
+<div th:insert="~{fragments/header :: header}"></div>
+
+<!-- 사이드바와 콘텐츠를 포함하는 컨테이너 -->
+<div class="main-container" style="display: flex; max-width: 1200px; margin: 0 auto; padding-top: 20px;">
+  <!-- 사이드바 삽입 -->
+  <div th:insert="~{fragments/sidebar/mypage_sidebar :: mypage_sidebar}"></div>
+
+  <!-- 콘텐츠 영역 -->
+  <div class="content">
+    <h1>내 정보 수정</h1>
+
+    <!-- 에러 메시지 -->
+    <div th:if="${param.error}" class="error">비밀번호가 서로 일치하지 않습니다.</div>
+
+    <!-- 사용자 정보 테이블 -->
+    <form action="/mypage/update" method="post">
+      <table>
+        <tr>
+          <th>학번</th>
+          <td th:text="${user.studentNumber}">123456789</td>
+        </tr>
+        <tr>
+          <th>학년</th>
+          <td>
+            <select th:field="*{updateUserDTO.level}">
+              <option value="freshman" th:selected="${updateUserDTO.level == 'freshman'}">1학년</option>
+              <option value="sophomore" th:selected="${updateUserDTO.level == 'sophomore'}">2학년</option>
+              <option value="junior" th:selected="${updateUserDTO.level == 'junior'}">3학년</option>
+              <option value="senior" th:selected="${updateUserDTO.level == 'senior'}">4학년</option>
+              <option value="etc" th:selected="${updateUserDTO.level == 'etc'}">기타</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <th>이름</th>
+          <td th:text="${user.name}">홍길동</td>
+        </tr>
+        <tr>
+          <th>이메일</th>
+          <td th:text="${user.EMail}">홍길동</td>
+        </tr>
+        <tr>
+          <th>전화번호</th>
+          <td><input type="text" th:field="*{updateUserDTO.tel}" /></td>
+        </tr>
+        <tr>
+          <th>전공</th>
+          <td><input type="text" th:field="*{updateUserDTO.major}" /></td>
+        </tr>
+        <tr>
+          <th>직전학기 성적</th>
+          <td><input type="text" th:field="*{updateUserDTO.lastGrades}" /></td>
+        </tr>
+        <tr>
+          <th>비밀번호</th>
+          <td>
+            <button type="button" id="changePasswordBtn">비밀번호 변경</button>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <button type="submit">수정하기</button>
+          </td>
+        </tr>
+      </table>
+    </form>
+  </div>
+</div>
+
+<div th:insert="~{fragments/footer :: footer}"></div>
+
+<!-- 비밀번호 수정 모달 -->
+<div id="passwordModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>비밀번호 변경</h2>
+    <form id="passwordForm" action="/mypage/updatePassword" method="post">
+      <label for="newPassword">새 비밀번호</label>
+      <input type="password" id="newPassword" name="newPassword" required />
+      <label for="confirmPassword">새 비밀번호 확인</label>
+      <input type="password" id="confirmPassword" name="confirmPassword" required />
+      <button type="submit">비밀번호 변경</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  // 모달 열기 및 닫기
+  var modal = document.getElementById("passwordModal");
+  var btn = document.getElementById("changePasswordBtn");
+  var span = document.getElementsByClassName("close")[0];
+
+  // 비밀번호 변경 버튼 클릭 시 모달 열기
+  btn.onclick = function() {
+    modal.style.display = "block";
+  }
+
+  // 모달 닫기 버튼 클릭 시 모달 닫기
+  span.onclick = function() {
+    modal.style.display = "none";
+  }
+
+  // 모달 외부 클릭 시 모달 닫기
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
+
+  // 비밀번호 변경 버튼 클릭 시 모달 열기
+  btn.onclick = function() {
+    modal.style.display = "block";
+  }
+
+  // 비밀번호 변경 폼 제출 시 검증
+  var passwordForm = document.querySelector('#passwordModal form');
+  passwordForm.onsubmit = function(event) {
+    var newPassword = document.getElementById('newPassword').value;
+    var confirmPassword = document.getElementById('confirmPassword').value;
+
+    // 새 비밀번호와 확인 비밀번호가 일치하는지 확인
+    if (newPassword !== confirmPassword) {
+      alert("비밀번호가 일치하지 않습니다.");
+      event.preventDefault();  // 폼 제출을 막음
+    }
+  }
+</script>
+
+</body>
+</html>

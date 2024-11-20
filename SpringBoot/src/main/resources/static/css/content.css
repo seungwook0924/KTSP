@@ -1,0 +1,130 @@
+/* content.css */
+.content {
+    padding: 20px; /* 내부 여백 설정 */
+    flex-grow: 1; /* 남은 공간을 모두 차지 */
+    background-color: white; /* 배경색을 흰색으로 설정 */
+    box-sizing: border-box; /* 패딩과 테두리를 포함하여 크기 조정 */
+    font-family: 'Noto Sans KR', 'Nanum Gothic', 'Apple SD Gothic Neo', sans-serif; /* 기본 고딕 폰트 설정 */
+    margin-left: 20px;
+}
+
+/* 제목 스타일 */
+.content h1 {
+    font-size: 28px; /* 큰 제목 크기 */
+    margin-bottom: 20px; /* 하단 여백 */
+    font-weight: normal; /* 굵기 설정을 일반(normal)로 */
+}
+
+.content h2 {
+    font-size: 24px; /* 중간 제목 크기 */
+    margin-bottom: 15px; /* 하단 여백 */
+    font-weight: normal; /* 굵기 설정을 일반(normal)로 */
+}
+
+.content h3 {
+    font-size: 20px; /* 작은 제목 크기 */
+    margin-bottom: 10px; /* 하단 여백 */
+    font-weight: normal; /* 굵기 설정을 일반(normal)로 */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+td {
+    background-color: #fafafa;
+}
+
+tr:nth-child(even) td {
+    background-color: #f9f9f9;
+}
+
+tr:hover td {
+    background-color: #f1f1f1;
+}
+
+/* 모달 스타일 */
+.modal {
+    display: none; /* 기본적으로 숨김 */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4); /* 배경색 */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 30px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 400px;
+    border-radius: 8px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+}
+
+/* 모달 내 입력 필드와 버튼 스타일 */
+.modal-content label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 12px;
+    max-width: 370px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.modal-content button {
+    padding: 12px 20px;
+    background-color: #033975;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.modal-content button:hover {
+    background-color: #2477d2;
+}
+
+.error {
+    color: red;
+    text-align: center;
+    font-size: 12px;
+    margin-top: 5px;
+}

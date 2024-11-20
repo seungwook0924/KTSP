@@ -1,0 +1,22 @@
+.banner-slider {
+    position: relative;
+    max-width: 1200px;
+    margin: 20px auto;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.banner-slide {
+    display: none;
+    width: 100%;
+}
+
+.banner-slider img {
+    width: 100%;
+    height: auto;
+}
+
+/* 슬라이더가 자동으로 전환될 때 활성화된 슬라이드만 보이게 설정 */
+.active-slide {
+    display: block;
+}

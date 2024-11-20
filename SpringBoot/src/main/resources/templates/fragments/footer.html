@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Footer</title>
+    <link rel="stylesheet" href="/css/footer.css">
+</head>
+<body>
+<div th:fragment="footer">
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-logo">
+                <img src="/path/to/logo.png" alt="LINC 로고" class="footer-logo-img">
+            </div>
+            <div class="footer-text">
+                <p>제작 - 이승욱</p>
+                <p>email : leesw_0924@icloud.com</p>
+                <p>site : https://re-bugs.github.io/</p>
+                <p>&copy; 이승욱 All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</div>
+</body>
+</html>

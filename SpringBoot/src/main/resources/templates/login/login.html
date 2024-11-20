@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+  <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+
+<div class="background">
+  <div class="login-container">
+    <!-- 로고 -->
+    <div class="logo">
+      <img src="/images/knu_logo.png" alt="KNU Logo">
+    </div>
+
+    <!-- 에러 메시지 -->
+    <div th:if="${param.error}" class="error">아이디 또는 비밀번호가 잘못되었습니다.</div>
+
+    <!-- 성공 메시지 -->
+    <div th:if="${message}" class="message">
+      <p th:text="${message}"></p>
+    </div>
+
+    <!-- 로그인 박스 -->
+    <div class="login-box">
+      <h1>LOGIN</h1>
+      <form id="loginForm" action="/login" method="post">
+        <input type="text" id="studentNumber" name="studentNumber" placeholder="사용자 아이디" required>
+        <input type="password" id="password" name="password" placeholder="비밀번호" required>
+        <div class="remember">
+          <input type="checkbox" id="remember">
+          <label for="remember">사용자 아이디 기억</label>
+          <div class="additional-links">
+            <a href="/register">회원가입</a> |
+            <a href="/login/findpassword">비밀번호 찾기</a>
+          </div>
+        </div>
+        <button type="submit" class="login-btn">로그인</button>
+      </form>
+    </div>
+
+    <!-- 공지사항 -->
+    <div class="notice">
+      <h2>안내사항</h2>
+      <ul>
+        <li>· 아이디는 학번을 입력해주세요.</li>
+        <li>· 이 사이트는 KNU 재능공유 플랫폼입니다.</li>
+        <li>· 정식으로 강원대학교가 운영하는 사이트가 아님을 알립니다.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script src="/js/login.js"></script>
+
+</body>
+</html>

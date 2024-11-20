@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="challenge_learner_sidebar">
+  <aside class="sidebar">
+    <ul>
+      <li><a href="/challenge_learner" th:classappend="${currentMenu == 'description'} ? 'active' : ''">챌린지러너</a></li>
+      <li><a href="#" th:classappend="${currentMenu == 'one'} ? 'active' : ''">팀 들어가기</a></li>
+      <li><a href="#" th:classappend="${currentMenu == 'two'} ? 'active' : ''">팀 만들기</a></li>
+    </ul>
+  </aside>
+</div>
+</body>
+</html>

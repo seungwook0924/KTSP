@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="community_sidebar">
+  <aside class="sidebar">
+    <ul>
+      <li><a href="/community" th:classappend="${currentMenu == 'introduction'} ? 'active' : ''">사이트 소개</a></li>
+      <li><a href="/notice" th:classappend="${currentMenu == 'notice'} ? 'active' : ''">공지사항</a></li>
+      <li><a href="/report" th:classappend="${currentMenu == 'report'} ? 'active' : ''">불편접수</a></li>
+    </ul>
+  </aside>
+</div>
+</body>
+</html>

@@ -1,0 +1,145 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.top-links {
+    display: flex;
+    justify-content: flex-end;
+    background-color: white;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ccc;
+    max-width: 1200px; /* 최대 너비 설정 */
+    margin: 0 auto; /* 가운데 정렬 */
+}
+
+.top-links a {
+    color: black;
+    margin-left: 10px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    color: black;
+    padding: 10px 20px;
+    border-bottom: 2px solid #ccc;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative; /* 상대 위치 설정 */
+}
+
+/* 기존 CSS에 추가할 스타일 */
+.header-content h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Noto Sans KR', 'Nanum Gothic', 'Apple SD Gothic Neo', sans-serif; /* 유사 폰트 설정 */
+}
+
+.header-content h1 a {
+    text-decoration: none;
+    color: black;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    margin-left: auto; /* 오른쪽으로 정렬 */
+}
+
+.search-container input[type="text"] {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.search-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    margin-left: 5px;
+    padding: 0;
+}
+
+.search-button img {
+    width: 20px;
+    height: 20px;
+}
+
+nav {
+    position: relative;
+    background-color: #0059B7;
+    padding: 10px 0;
+    height: 45px;
+    margin: 0 auto; /* 좌우 가운데 정렬 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+nav ul {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+nav ul li {
+    margin: 0 15px;
+    position: relative;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 24px;
+    margin-right: 10px;
+}
+
+nav ul li a:hover {
+    text-decoration: underline;
+}
+.dropdown-menu {
+    display: none; /* 기본적으로 드롭다운 메뉴 숨김 */
+    position: absolute;
+    top: 100%; /* 부모 요소 바로 아래에 위치 */
+    left: 0; /* 부모 요소의 왼쪽에 정렬 */
+    background-color: #003346; /* 드롭다운 메뉴 배경색 */
+    padding: 10px 0;
+    list-style: none;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 약간의 그림자 */
+    z-index: 1000; /* 드롭다운 메뉴가 다른 요소 위에 표시되도록 */
+    width: 150px; /* 드롭다운 메뉴 너비 */
+}
+
+/* 드롭다운 메뉴 항목 스타일 */
+.dropdown-menu li {
+    margin: 0;
+}
+
+.dropdown-menu li a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    display: block;
+    font-size: 18px;
+}
+
+.dropdown-menu li a:hover {
+    background-color: #004a5a; /* 드롭다운 항목에 호버 시 색상 변경 */
+}
+
+/* 드롭다운 메뉴 표시 - 부모에 마우스 호버 시 자식 메뉴 표시 */
+.dropdown:hover .dropdown-menu {
+    display: block;
+}

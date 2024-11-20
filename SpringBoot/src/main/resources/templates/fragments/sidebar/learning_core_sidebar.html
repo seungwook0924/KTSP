@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="learning_core_sidebar">
+  <aside class="sidebar">
+    <ul>
+      <li><a href="/learning_core" th:classappend="${currentMenu == 'description'} ? 'active' : ''">러닝코어</a></li>
+      <li><a href="#" th:classappend="${currentMenu == 'one'} ? 'active' : ''">가르치미</a></li>
+      <li><a href="#" th:classappend="${currentMenu == 'two'} ? 'active' : ''">배우미</a></li>
+    </ul>
+  </aside>
+</div>
+</body>
+</html>
