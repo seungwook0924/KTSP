@@ -28,7 +28,7 @@ public class EmailService {
     // 인증코드 이메일 발송
     public void sendEmail(String toEmail) throws MessagingException
     {
-        log.info("sendEmail : send email to: {}", toEmail); // 로그 추가
+        log.info("서비스 계층 sendEmail() - send email to: {}", toEmail); // 로그 추가
         try
         {
             if (redisUtil.existData(toEmail)) redisUtil.deleteData(toEmail);
@@ -49,7 +49,7 @@ public class EmailService {
     // 아이디 찾기 이메일 발송
     public void sendFindEmail(String toEmail, String tempPassword) throws MessagingException
     {
-        log.info("sendFindEmail : send email to: {}", toEmail); // 로그 추가
+        log.info("서비스 계층 sendFindEmail() - send email to: {}", toEmail); // 로그 추가
 
         try {
             // 이메일 폼 생성

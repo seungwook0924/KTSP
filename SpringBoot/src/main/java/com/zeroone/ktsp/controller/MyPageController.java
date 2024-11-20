@@ -68,6 +68,8 @@ public class MyPageController {
         // 업데이트된 사용자 정보 저장
         userService.save(updateUser);
         session.setAttribute("user", updateUser);
+
+        log.info("사용자 정보 업데이트 - 이름 : {} / 학번 : {}", user.getName(), user.getStudentNumber());
         return "redirect:/mypage";
     }
 
@@ -90,6 +92,8 @@ public class MyPageController {
 
         userService.save(updateUser);
         session.setAttribute("user", updateUser);
+
+        log.info("비밀번호 변경 - 이름 : {} / 학번 : {}", user.getName(), user.getStudentNumber());
         return "redirect:/mypage";
     }
 

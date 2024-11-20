@@ -27,15 +27,17 @@ public class SecurityConfig {
 
     // PasswordEncoder 설정
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        log.info("Initializing PasswordEncoder...");
+    public PasswordEncoder passwordEncoder()
+    {
+        log.info("SecurityConfig - Initializing PasswordEncoder...");
         return new BCryptPasswordEncoder();
     }
 
     // DaoAuthenticationProvider 등록
     @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
-        log.info("Initializing DaoAuthenticationProvider...");
+    public DaoAuthenticationProvider authenticationProvider()
+    {
+        log.info("SecurityConfig - Initializing DaoAuthenticationProvider...");
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
@@ -44,15 +46,17 @@ public class SecurityConfig {
 
     // AuthenticationManager 설정
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        log.info("Initializing AuthenticationManager...");
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception
+    {
+        log.info("SecurityConfig - Initializing AuthenticationManager...");
         return config.getAuthenticationManager();
     }
 
     // SecurityFilterChain 설정
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        log.info("Initializing SecurityFilterChain...");
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception
+    {
+        log.info("SecurityConfig - Initializing SecurityFilterChain...");
         http
                 .csrf(csrf -> csrf.disable()) // CSRF 비활성화
                 .authorizeHttpRequests(auth -> auth
@@ -70,7 +74,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated() // 그 외는 인증 필요
                 )
                 .formLogin(form -> form
-                        .loginPage("/login") // 커스텀 로그인 페이지
+                        .loginPage("/login") // 로그인 매핑 경로
                         .usernameParameter("studentNumber") // username 대신 studentNumber 매핑
                         .passwordParameter("password")      // password 필드 매핑
                         .successHandler(successHandler) // 성공 핸들러 설정

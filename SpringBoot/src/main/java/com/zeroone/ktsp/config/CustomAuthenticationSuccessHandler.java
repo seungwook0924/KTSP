@@ -15,12 +15,14 @@ import java.io.IOException;
 
 @Slf4j
 @Component
-public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler
+{
 
     private final HttpSession session;
     private final UserRepository userRepository;
 
-    public CustomAuthenticationSuccessHandler(HttpSession session, UserRepository userRepository) {
+    public CustomAuthenticationSuccessHandler(HttpSession session, UserRepository userRepository)
+    {
         this.session = session;
         this.userRepository = userRepository;
     }
@@ -28,7 +30,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException
     {
-        log.info("인증완료! Principal: {}", authentication.getPrincipal());
+        log.info("로그인 성공 - studentNumber : {}", authentication.getName());
 
         // Authentication에서 UserDetails 추출
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();

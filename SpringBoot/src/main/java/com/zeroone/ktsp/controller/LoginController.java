@@ -55,6 +55,8 @@ public class LoginController {
         }
 
         userService.registerUser(registerDTO);
+        log.info("회원가입 성공 - 이름 : {} / 학번 : {}", registerDTO.getName(), registerDTO.getStudentNumber());
+
         redirectAttributes.addFlashAttribute("message", "회원가입이 완료되었습니다.");
         return "redirect:/login";
     }
@@ -82,6 +84,7 @@ public class LoginController {
             String targetEmail = updateUser.getEMail();
             emailService.sendFindEmail(targetEmail, newPassword);
 
+            log.info("비밀번호 변경 요청 : {}", studentNumber);
             redirectAttributes.addFlashAttribute("message", "등록된 이메일로 임시 비밀번호가 전송되었습니다.");
             return "redirect:/login";
         }
