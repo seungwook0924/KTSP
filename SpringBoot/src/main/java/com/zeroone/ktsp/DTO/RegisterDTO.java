@@ -37,7 +37,6 @@ public class RegisterDTO {
     @DecimalMax(value = "4.5", inclusive = true, message = "학점은 최대 4.5 이하이어야 합니다.")
     private BigDecimal lastGrade;
 
-    @Email(message = "유효한 이메일 주소를 입력해주세요.")
     @NotBlank(message = "이메일은 필수 항목입니다.")
     private String email;
 

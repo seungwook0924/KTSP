@@ -21,14 +21,19 @@
             <form id="registerForm" action="/login/register" th:action="@{/login/register}" th:object="${registerDTO}" method="post">
                 <!-- 이메일 입력 -->
                 <div class="input-container">
-                    <label for="emailId" class="input-label">강원대학교 이메일</label> <!-- for 속성을 emailId로 설정 -->
+                    <label for="emailId" class="input-label">강원대학교 이메일</label>
                     <div class="input-wrapper email-container">
                         <!-- 이메일 아이디 입력 -->
                         <input type="text" id="emailId" name="emailId" placeholder="이메일 입력" required aria-labelledby="emailIdLabel">
                         <!-- 고정 도메인 표시 -->
                         <span class="email-domain">@kangwon.ac.kr</span>
                     </div>
+                    <!-- 숨겨진 필드로 서버에 값 전달 -->
+                    <input type="hidden" id="hiddenEmailId" name="email" th:field="*{email}">
+
                     <button type="button" id="emailVerifyBtn" class="verify-btn">이메일 인증</button>
+
+                    <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error-message"></div>
                     <div id="emailSending" class="message" style="display: none;">이메일 전송중입니다.</div>
                     <div id="emailError" class="error-message" style="display: none;">이메일 인증이 필요합니다.</div>
                     <div id="emailSuccess" class="message" style="display: none;">이메일 인증이 완료되었습니다.</div>

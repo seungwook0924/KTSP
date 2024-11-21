@@ -33,7 +33,9 @@ public class LoginController {
     private static final String STUDENT_NUMBER_PATTERN = "^[0-9]{9}$";
 
     @PostMapping("/register")
-    public String registerUser(@Validated @ModelAttribute RegisterDTO registerDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public String registerUser(@Validated @ModelAttribute RegisterDTO registerDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes)
+    {
+        registerDTO.setEmail(registerDTO.getEmail() + "@kangwon.ac.kr"); //@kangwon.ac.kr 붙혀서 등록
         if (bindingResult.hasErrors()) return "login/register";
 
         if (userService.findEMail(registerDTO.getEmail()).isPresent())

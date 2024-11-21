@@ -40,8 +40,21 @@ var emailVerified = false; // 이메일 인증 여부
 var email; // 사용자가 입력한 이메일
 
 // 이메일 인증 버튼 클릭 시
-emailVerifyBtn.onclick = function () {
+emailVerifyBtn.onclick = function ()
+{
     email = document.getElementById("emailId").value; // 폼에서 입력한 이메일 가져오기
+    // 한글 입력 방지 정규식
+    const invalidPattern = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g;
+
+    // 한글이 포함된 경우
+    if (invalidPattern.test(email))
+    {
+        alert("이메일에는 한글을 포함할 수 없습니다."); // 경고 메시지
+        return; // 함수 종료
+    }
+
+    document.getElementById("emailVerifyBtn").disabled = true; //버튼 클릭 비활성화
+
 
     // 이메일 검증 (빈 값 체크)
     if (email)
@@ -49,6 +62,7 @@ emailVerifyBtn.onclick = function () {
         email += "@kangwon.ac.kr";
         emailSending.style.display = "block";
         emailError.style.display = "none";
+
         // 이메일 인증 요청
         fetch("/api/email/send", {
             method: "POST",
@@ -69,6 +83,7 @@ emailVerifyBtn.onclick = function () {
                     emailError.style.display = "block";
                     emailSending.style.display = "none";
                     emailError.textContent = "인증 코드를 보낼 수 없습니다. 다시 시도해주세요.";
+                    document.getElementById("emailVerifyBtn").disabled = false; //버튼 클릭 활성화
                 }
             })
             .catch((error) => {
@@ -76,6 +91,7 @@ emailVerifyBtn.onclick = function () {
                 emailError.style.display = "block";
                 emailSending.style.display = "none";
                 emailError.textContent = "요청 중 문제가 발생했습니다. 다시 시도해주세요.";
+                document.getElementById("emailVerifyBtn").disabled = false; //버튼 클릭 활성화
             });
     }
     else
@@ -83,6 +99,8 @@ emailVerifyBtn.onclick = function () {
         // 이메일이 입력되지 않은 경우
         emailError.style.display = "block";
         emailError.textContent = "이메일을 입력해주세요.";
+        document.getElementById("emailVerifyBtn").disabled = false; //버튼 클릭 활성화
+        alert("이메일을 입력해주세요.");
     }
 };
 
@@ -90,11 +108,19 @@ emailVerifyBtn.onclick = function () {
 closeModalBtn.onclick = function ()
 {
     emailModal.style.display = "none";
+    document.getElementById("emailId").value = "";
+    document.getElementById("emailVerifyBtn").disabled = false; //버튼 클릭 활성화
 };
+
+document.getElementById("emailId").addEventListener("input", function () {
+    const emailValue = this.value;
+    document.getElementById("hiddenEmailId").value = emailValue; // 값 복사
+});
 
 // 인증번호 확인 버튼 클릭 시
 document.getElementById("verifyCodeBtn").onclick = function ()
 {
+    document.getElementById("hiddenEmailId").value = emailId.value; // 값 복사
     var verificationCode = document.getElementById("verificationCode").value;
 
     // 인증번호를 서버로 보내 확인
@@ -123,6 +149,10 @@ document.getElementById("verifyCodeBtn").onclick = function ()
                 emailModal.style.display = "none"; // 모달 닫기
                 emailSending.style.display = "none";
                 document.getElementById("modalError").style.display = "none";
+
+                // 이메일 입력 필드를 비활성화
+                document.getElementById("emailId").disabled = true;
+                document.getElementById("emailVerifyBtn").disabled = true;
             } else {
                 // 인증 실패 시
                 emailSending.style.display = "none";
@@ -135,8 +165,8 @@ document.getElementById("verifyCodeBtn").onclick = function ()
             console.error("Error verifying email:", error);
             document.getElementById("modalError").style.display = "block";
             emailSending.style.display = "none";
-            document.getElementById("modalError").textContent =
-                "인증 확인 중 문제가 발생했습니다. 다시 시도해주세요.";
+            document.getElementById("emailVerifyBtn").disabled = false; //버튼 클릭 활성화
+            document.getElementById("modalError").textContent = "인증 확인 중 문제가 발생했습니다. 다시 시도해주세요.";
         });
 };
 
