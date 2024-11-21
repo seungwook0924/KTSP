@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="/css/header.css">
   <link rel="stylesheet" href="/css/footer.css">
   <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/content.css">
 </head>
 <body>
 <div th:insert="~{fragments/header :: header}"></div>
@@ -14,11 +15,15 @@
 <!-- 사이드바와 콘텐츠를 포함하는 컨테이너 -->
 <div class="main-container" style="display: flex; max-width: 1200px; margin: 0 auto; padding-top: 20px;">
   <!-- 사이드바 삽입 -->
-  <div th:insert="~{fragments/sidebar/challenge_learner_sidebar :: challenge_learner_sidebar}"></div>
+  <div th:insert="~{fragments/sidebar/project_contest_sidebar :: project_sidebar}"></div>
 
   <!-- 콘텐츠 영역 -->
   <div class="content">
     <!-- 본문 내용 -->
+    <h1>프로젝트·공모전</h1>
+    <hr>
+    <!-- 프로젝트 소개 이미지 -->
+    <img src="/images/project_contest_main.png" alt="프로젝트·공모전 소개 이미지" style="width: 100%; max-width: 950px; display: block; margin: 0 auto;">
   </div>
 </div>
 

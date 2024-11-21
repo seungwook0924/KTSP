@@ -32,11 +32,11 @@ public class HomeController {
         return "major_learner/major_learner_main";
     }
 
-    @GetMapping("/challenge_learner")
+    @GetMapping("/project_contest")
     public String challengeLearner(Model model)
     {
         model.addAttribute("currentMenu", "description");
-        return "challenge_learner/challenge_learner_main";
+        return "project_contest/project_contest_main";
     }
 
     @GetMapping("/introduction")

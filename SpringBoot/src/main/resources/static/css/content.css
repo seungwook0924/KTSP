@@ -16,15 +16,49 @@
 }
 
 .content h2 {
-    font-size: 24px; /* 중간 제목 크기 */
+    font-size: 22px; /* 중간 제목 크기 */
     margin-bottom: 15px; /* 하단 여백 */
     font-weight: normal; /* 굵기 설정을 일반(normal)로 */
 }
 
 .content h3 {
-    font-size: 20px; /* 작은 제목 크기 */
+    font-size: 18px; /* 작은 제목 크기 */
     margin-bottom: 10px; /* 하단 여백 */
     font-weight: normal; /* 굵기 설정을 일반(normal)로 */
+}
+
+.section-title {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    border-left: 5px solid #007bff;
+    padding-left: 10px;
+    color: #007bff;
+}
+
+.content li {
+    margin-bottom: 20px;
+    list-style-type: disc;
+    margin-left: 10px;
+}
+
+
+
+.content ul {
+    list-style-type: disc;
+    margin-left: 10px;
+}
+
+.note {
+    font-size: 0.9rem;
+    color: #c03939;
+    margin-left: 20px;
+    display: block;
+    margin-top: 5px;
+}
+
+hr {
+    border: 1px solid #ccc; /* 색상 및 두께 설정 */
+    margin: 20px 0; /* 위아래 여백 */
 }
 
 table {
