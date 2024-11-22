@@ -23,7 +23,7 @@ body {
 
 .header-content {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     background-color: white;
     color: black;
@@ -34,20 +34,24 @@ body {
     position: relative; /* 상대 위치 설정 */
 }
 
+.header-content img.logo {
+    width: 100px;
+    height: auto;
+    margin-right: 10px; /* 로고와 텍스트 사이 간격 */
+}
+
 /* 기존 CSS에 추가할 스타일 */
 .header-content h1 {
-    margin: 0;
     font-size: 24px;
     font-weight: bold;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
     font-family: 'Noto Sans KR', 'Nanum Gothic', 'Apple SD Gothic Neo', sans-serif; /* 유사 폰트 설정 */
+    text-align: left;
+
 }
 
 .header-content h1 a {
     text-decoration: none;
-    color: black;
+    color: #3865AD;
 }
 
 .search-container {
