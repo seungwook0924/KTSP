@@ -3,6 +3,7 @@ package com.zeroone.ktsp.controller;
 import com.zeroone.ktsp.DTO.AddBoardDTO;
 import com.zeroone.ktsp.DTO.BoardDTO;
 import com.zeroone.ktsp.DTO.BoardViewDTO;
+import com.zeroone.ktsp.DTO.UpdateBoardDTO;
 import com.zeroone.ktsp.domain.Board;
 import com.zeroone.ktsp.domain.User;
 import com.zeroone.ktsp.enumeration.BoardType;
@@ -141,33 +142,35 @@ public class LearningCoreController
     }
 
     @GetMapping("/update/{id}")
-    public String modify(@PathVariable long id, Model model, HttpSession session, AddBoardDTO addBoardDTO)
+    public String modify(@PathVariable long id, Model model, HttpSession session, UpdateBoardDTO updateBoardDTO)
     {
         Optional<Board> findBoard = boardService.findById(id);
         if(findBoard.isEmpty()) return "redirect:/learning_core/mentor";
         Board board = findBoard.get();
-        addBoardDTO.setTitle(board.getTitle());
-        addBoardDTO.setContent(board.getContent());
+        updateBoardDTO.setId(id);
+        updateBoardDTO.setTitle(board.getTitle());
+        updateBoardDTO.setContent(board.getContent());
 
-        model.addAttribute("addBoardDTO", addBoardDTO);
+        model.addAttribute("updateBoardDTO", updateBoardDTO);
         model.addAttribute("currentMenu", "one");
         return "learning_core/update_mentor_board";
     }
 
     @PostMapping("/update/{id}")
-    public String updateBoard(@PathVariable long id, @ModelAttribute AddBoardDTO addBoardDTO, Model model, HttpSession session)
+    public String updateBoard(@PathVariable long id, @ModelAttribute UpdateBoardDTO updateBoardDTO, Model model, HttpSession session)
     {
         Optional<Board> findBoard = boardService.findById(id);
         if(findBoard.isEmpty()) return "redirect:/learning_core/mentor";
 
         Board updatedBoard = findBoard.get().toBuilder()
-                .title(addBoardDTO.getTitle())
-                .content(addBoardDTO.getContent())
+                .title(updateBoardDTO.getTitle())
+                .content(updateBoardDTO.getContent())
                 .updatedAt(LocalDateTime.now())
                 .build();
+        log.info("creat : {}, update : {}", updatedBoard.getCreatedAt(), updatedBoard.getUpdatedAt());
         boardService.save(updatedBoard);
 
         model.addAttribute("currentMenu", "one");
-        return "redirect:/learning_core/mentor" + id;
+        return "redirect:/learning_core/mentor/" + id;
     }
 }

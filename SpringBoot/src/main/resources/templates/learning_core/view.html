@@ -21,7 +21,7 @@
   <!-- 콘텐츠 영역 -->
   <div class="content" th:object="${boardViewDTO}">
 
-    <p style="text-align: right; font-size: 14px;">작성일 : <span th:text="*{createdAt + '/ 업데이트 날짜 : ' + updatedAt}">작성일</span></p>
+    <p style="text-align: right; font-size: 14px;">작성일 : <span th:text="*{createdAt + ' | 업데이트 날짜 : ' + updatedAt + ' | 조회수 : ' + hits}">작성일</span></p>
     <hr>
     <h1>게시글 상세 보기</h1>
     <!-- 정보 테이블 -->
@@ -41,10 +41,6 @@
       <tr>
         <th>모집 여부</th>
         <td th:text="${boardViewDTO.isClosed} ? '모집 마감' : '모집중'"></td>
-      </tr>
-      <tr>
-        <th>조회수</th>
-        <td th:text="*{hits}"></td>
       </tr>
     </table>
 

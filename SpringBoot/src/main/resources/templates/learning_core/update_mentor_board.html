@@ -23,25 +23,31 @@
     <hr>
 
     <!-- 글 작성 폼 -->
-    <form th:action="@{/learning_core/mentor/add_board}" method="post" style="margin-top: 20px;">
+    <form th:action="@{/learning_core/mentor/update/{id}(id=${updateBoardDTO.id})}" method="post" style="margin-top: 20px;">
       <!-- 제목 입력 -->
       <div>
         <label for="title" class="add-label">제목</label>
         <input type="text" id="title" name="title" placeholder="제목을 입력하세요" class="add-input"
-               th:value="${addBoardDTO.title}" required>
+               th:value="${updateBoardDTO.title}" required>
       </div>
 
       <!-- 내용 입력 -->
       <div>
         <label for="content" class="add-label">내용</label>
         <textarea id="content" name="content" placeholder="내용을 입력하세요" rows="10" class="add-textarea" required
-                  th:text="${addBoardDTO.content}"></textarea>
+                  th:text="${updateBoardDTO.content}"></textarea>
       </div>
 
       <!-- 제출 버튼 -->
-      <div style="text-align: right;"><button type="submit">작성 완료</button></div>
-    </form>
+      <div style="text-align: right;">
+        <button type="submit">작성 완료</button>
 
+        <button type="button" id="cancel"
+                th:onclick="|location.href='@{/learning_core/mentor/{id}(id=${updateBoardDTO.id})}'|"
+                style="float: right;">취소
+        </button>
+      </div>
+    </form>
   </div>
 </div>
 
