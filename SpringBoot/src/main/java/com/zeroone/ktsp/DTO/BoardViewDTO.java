@@ -1,0 +1,20 @@
+package com.zeroone.ktsp.DTO;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter @Setter
+public class BoardViewDTO {
+    private long id;
+    private String title;
+    private String content;
+    private String userName;
+    private String createdAt;
+    private String updatedAt;
+    private Byte teamSize;
+    private Byte currentSize;
+    private long hits;
+    private boolean isClosed;
+    private boolean isModify;
+    private boolean isJoin;
+}

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KNU 재능 공유 플랫폼</title>
+  <link rel="stylesheet" href="/css/header.css">
+  <link rel="stylesheet" href="/css/footer.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/content.css">
+</head>
+<body>
+<div th:insert="~{fragments/header :: header}"></div>
+
+<!-- 사이드바와 콘텐츠를 포함하는 컨테이너 -->
+<div class="main-container" style="display: flex; max-width: 1200px; margin: 0 auto; padding-top: 20px;">
+  <!-- 사이드바 삽입 -->
+  <div th:insert="~{fragments/sidebar/learning_core_sidebar :: learning_core_sidebar}"></div>
+
+  <!-- 콘텐츠 영역 -->
+  <div class="content">
+    <h1>러닝코어 - 가르치미</h1>
+    <hr>
+
+    <!-- 데이터가 없는 경우 -->
+    <div th:if="${#lists.isEmpty(mentorBoards)}" class="no-data">
+      게시글이 없습니다.
+    </div>
+
+    <!-- 데이터가 있는 경우 -->
+    <table th:if="${!#lists.isEmpty(mentorBoards)}" class="board-table">
+      <thead>
+      <tr>
+        <th>번호</th>
+        <th>작성자</th>
+        <th>제목</th>
+        <th>팀원 수</th>
+        <th>작성일</th>
+        <th>모집 여부</th>
+        <th>조회수</th>
+      </tr>
+      </thead>
+      <tbody>
+      <!-- 데이터 순회 -->
+      <tr th:each="board, stat : ${mentorBoards}" th:onclick="|location.href='@{/learning_core/mentor/{id}(id=${board.id})}'|">
+        <td th:text="${#lists.size(mentorBoards) - stat.index}"></td> <!-- 글 번호 -->
+        <td th:text="${board.userName}"></td> <!-- 작성자 -->
+        <td class="title-column" th:text="${board.title}"></td> <!-- 제목 -->
+        <td th:text="${board.currentSize} + '/' + ${board.teamSize}"></td> <!-- 현재/최대 팀원 수 -->
+        <td th:text="${board.date}"></td> <!-- 작성일 -->
+        <td th:text="${board.isClosed ? '모집 마감' : '모집중'}"></td> <!-- 모집 여부 -->
+        <td th:text="${board.hits}"></td> <!-- 조회수 -->
+      </tr>
+      </tbody>
+    </table>
+    <hr>
+
+    <button type="button" id="addBoard" th:onclick="|location.href='@{/learning_core/mentor/add_board}'|" style="float: right;">글쓰기</button>
+    <!-- 페이지네이션 -->
+<!--    <div class="pagination" th:if="${totalPages > 1}">-->
+<!--      <a th:href="@{'?page=0'}" th:classappend="${currentPage == 0} ? 'disabled' : ''">&laquo; 처음</a>-->
+<!--      <a th:each="i : ${#numbers.sequence(1, totalPages)}"-->
+<!--         th:href="@{'?page=' + ${i - 1}}"-->
+<!--         th:classappend="${currentPage == i - 1} ? 'active' : ''"-->
+<!--         th:text="${i}"></a>-->
+<!--      <a th:href="@{'?page=' + ${totalPages - 1}}" th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">끝 &raquo;</a>-->
+<!--    </div>-->
+
+  </div>
+</div>
+
+<div th:insert="~{fragments/footer :: footer}"></div>
+</body>
+</html>

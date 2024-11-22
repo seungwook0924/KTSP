@@ -22,21 +22,21 @@ public class HomeController {
     public String learningCore(Model model)
     {
         model.addAttribute("currentMenu", "description");
-        return "learning_core/learning_core_main";
+        return "learning_core/main";
     }
 
     @GetMapping("/major_learner")
     public String majorLearner(Model model)
     {
         model.addAttribute("currentMenu", "description");
-        return "major_learner/major_learner_main";
+        return "major_learner/main";
     }
 
     @GetMapping("/project_contest")
     public String challengeLearner(Model model)
     {
         model.addAttribute("currentMenu", "description");
-        return "project_contest/project_contest_main";
+        return "project_contest/main";
     }
 
     @GetMapping("/introduction")

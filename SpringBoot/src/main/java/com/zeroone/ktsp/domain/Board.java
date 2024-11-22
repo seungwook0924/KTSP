@@ -46,6 +46,12 @@ public class Board {
     @Column(name = "is_closed", nullable = false)
     private Boolean isClosed;
 
+    @Column(nullable = false)
+    private long hits;
+
+    @Column(name = "team_size", nullable = false)
+    private Byte teamSize;
+
     // Board와 File은 1:N 관계
     // 하나의 게시글은 여러 파일을 가질 수 있다.
     @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE) // 연관관계 주인이 아님, 지연로딩, 게시글 삭제시 모든 파일 삭제
@@ -55,4 +61,10 @@ public class Board {
     // 하나의 게시글은 여러 댓글을 가질 수 있다.
     @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE) // 연관관계 주인이 아님, 지연로딩, 게시글 삭제시 모든 댓글 삭제
     private List<Comment> comments;
+
+    //조회수 증가 메서드
+    public void incrementHits()
+    {
+        this.hits++;
+    }
 }

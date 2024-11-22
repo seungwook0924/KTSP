@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KNU 재능 공유 플랫폼</title>
+  <link rel="stylesheet" href="/css/header.css">
+  <link rel="stylesheet" href="/css/footer.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/content.css">
+</head>
+<body>
+<!-- 헤더 -->
+<div th:insert="~{fragments/header :: header}"></div>
+
+<!-- 사이드바와 콘텐츠를 포함하는 컨테이너 -->
+<div class="main-container" style="display: flex; max-width: 1200px; margin: 0 auto; padding-top: 20px;">
+  <!-- 사이드바 -->
+  <div th:insert="~{fragments/sidebar/learning_core_sidebar :: learning_core_sidebar}"></div>
+
+  <!-- 콘텐츠 영역 -->
+  <div class="content" th:object="${boardViewDTO}">
+
+    <p style="text-align: right; font-size: 14px;">작성일 : <span th:text="*{createdAt + '/ 업데이트 날짜 : ' + updatedAt}">작성일</span></p>
+    <hr>
+    <h1>게시글 상세 보기</h1>
+    <!-- 정보 테이블 -->
+    <table>
+      <tr>
+        <th>제목</th>
+        <td th:text="*{title}">게시물 제목</td>
+      </tr>
+      <tr>
+        <th>작성자</th>
+        <td th:text="*{userName}">작성자 이름</td>
+      </tr>
+      <tr>
+        <th>팀원 수</th>
+        <td th:text="*{currentSize + '/' + teamSize}"></td>
+      </tr>
+      <tr>
+        <th>모집 여부</th>
+        <td th:text="${boardViewDTO.isClosed} ? '모집 마감' : '모집중'"></td>
+      </tr>
+      <tr>
+        <th>조회수</th>
+        <td th:text="*{hits}"></td>
+      </tr>
+    </table>
+
+    <!-- 게시물 내용 -->
+    <div class="content-section">
+      <p th:text="*{content}">게시물 내용</p>
+    </div>
+
+    <hr>
+    <button type="button" id="modify" th:if="${boardViewDTO.modify}"
+            th:onclick="|location.href='@{/learning_core/mentor/update/{id}(id=${boardViewDTO.id})}'|"
+            style="float: right; margin-left: 10px;">수정하기
+    </button>
+
+    <button type="button" id="join" th:if="${boardViewDTO.join}"
+            th:onclick="|location.href='@{/learning_core/mentor/{id}(id=${boardViewDTO.id})}'|"
+            style="float: right;">지원하기
+    </button>
+  </div>
+</div>
+
+<!-- 푸터 -->
+<div th:insert="~{fragments/footer :: footer}"></div>
+</body>
+</html>

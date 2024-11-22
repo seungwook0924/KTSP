@@ -41,8 +41,6 @@
     margin-left: 10px;
 }
 
-
-
 .content ul {
     list-style-type: disc;
     margin-left: 10px;
@@ -59,35 +57,6 @@
 hr {
     border: 1px solid #ccc; /* 색상 및 두께 설정 */
     margin: 20px 0; /* 위아래 여백 */
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-th, td {
-    padding: 12px;
-    text-align: left;
-    border: 1px solid #ddd;
-}
-
-th {
-    background-color: #f4f4f4;
-    font-weight: bold;
-}
-
-td {
-    background-color: #fafafa;
-}
-
-tr:nth-child(even) td {
-    background-color: #f9f9f9;
-}
-
-tr:hover td {
-    background-color: #f1f1f1;
 }
 
 /* 모달 스타일 */
@@ -186,7 +155,7 @@ button {
     border: none; /* 테두리 제거 */
     font-size: 16px; /* 기본 글자 크기 */
     cursor: pointer; /* 클릭 커서 표시 */
-    transition: background-color 0.3s, transform 0.2s; /* 애니메이션 */
+    margin-left: 10px; /* 왼쪽 간격 추가 */
 }
 
 /* 호버 상태 */
@@ -201,79 +170,128 @@ button:disabled {
     cursor: not-allowed; /* 클릭 불가 표시 */
 }
 
-/* 반응형 스타일 - 모바일 크기 */
-@media (max-width: 480px) {
-    button {
-        font-size: 14px; /* 글자 크기 축소 */
-        padding: 8px 15px; /* 여백 축소 */
-    }
+/*일반 표 css*/
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    border-left: none; /* 왼쪽 테두리 제거 */
+    border-right: none; /* 오른쪽 테두리 제거 */
 }
 
-/* 반응형 디자인 */
-
-/* 태블릿 크기 이하 (768px 이하) */
-@media (max-width: 768px) {
-    .content {
-        padding: 15px;
-        margin-left: 0; /* 좌측 여백 제거 */
-    }
-
-    .content h1 {
-        font-size: 24px;
-    }
-
-    .content h2 {
-        font-size: 20px;
-    }
-
-    .content h3 {
-        font-size: 18px;
-    }
-
-    table th, table td {
-        padding: 8px; /* 셀 간격 축소 */
-        font-size: 14px;
-    }
-
-    .modal-content {
-        width: 90%; /* 화면 너비에 더 맞춤 */
-    }
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-top: 1px solid #ddd; /* 위쪽 테두리 유지 */
+    border-bottom: 1px solid #ddd; /* 아래쪽 테두리 유지 */
 }
 
-/* 모바일 크기 이하 (480px 이하) */
-@media (max-width: 480px) {
-    .content {
-        padding: 10px;
-    }
+th {
+    background-color: #F8F8F8; /* 기존 스타일 유지 */
+    font-weight: bold; /* 기존 스타일 유지 */
+    width: 130px; /* 원하는 너비 값으로 설정 */
+    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+    overflow: hidden; /* 텍스트가 넘칠 경우 숨김 */
+    text-align: center; /* 텍스트 가운데 정렬 */
+}
 
-    .content h1 {
-        font-size: 20px;
-    }
+td {
+    background-color: white;
+}
 
-    .content h2 {
-        font-size: 18px;
-    }
+/*게시글 목록 표 css*/
+.board-table {
+    width: 100%;
+    border-collapse: collapse;
+}
 
-    .content h3 {
-        font-size: 16px;
-    }
+.board-table th, .board-table td {
+    border: 1px solid white;
+    padding: 8px;
+    text-align: center;
+}
 
-    table th, table td {
-        padding: 6px; /* 셀 간격 더 축소 */
-        font-size: 12px;
-    }
+.board-table th {
+    background-color: white;
+    font-weight: bold;
+}
 
-    .modal-content {
-        padding: 20px;
-        width: 95%;
-        font-size: 14px; /* 텍스트 크기 축소 */
-    }
+/* 제목 열의 너비를 설정 */
+.board-table .title-column {
+    width: 40%; /* 제목 열의 너비를 30%로 설정 */
+    text-align: center; /* 텍스트를 가운데 정렬 */
+    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+    overflow: hidden; /* 텍스트가 넘칠 경우 숨김 */
+    text-overflow: ellipsis; /* 넘친 텍스트에 '...' 표시 */
+}
 
-    .modal-content input {
-        padding: 10px;
-    }
+/* 행에 마우스를 올렸을 때 색상 변경 */
+.board-table tr:hover td {
+    background-color: #f5f5f5; /* 행의 배경색 변경 */
+}
 
-    .modal-content button {
-        padding: 10px 15px;
-    }
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination a {
+    margin: 0 5px;
+    text-decoration: none;
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    color: #333;
+}
+
+.pagination a:hover {
+    background-color: #0059B7;
+    color: white;
+}
+
+.no-data {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 18px;
+    color: #666;
+}
+
+/* Input 스타일 */
+.add-input {
+    width: 100%; /* 전체 너비 차지 */
+    padding: 10px; /* 내부 여백 */
+    font-size: 14px; /* 텍스트 크기 */
+    border: 1px solid #ccc; /* 기본 테두리 */
+    box-sizing: border-box; /* 패딩 포함 크기 조정 */
+    background-color: #f9f9f9; /* 연한 배경색 */
+    font-family: 'Noto Sans KR', 'Nanum Gothic', sans-serif; /* 폰트 설정 */
+}
+
+/* Label 스타일 */
+.add-label {
+    display: block; /* 라벨을 블록 형태로 */
+    font-weight: bold; /* 굵은 글씨로 강조 */
+    font-size: 14px; /* 적당한 글자 크기 */
+    margin-bottom: 8px; /* 아래 요소와의 간격 */
+    color: #333; /* 어두운 회색 텍스트 */
+}
+
+/* Textarea 스타일 */
+.add-textarea {
+    width: 100%; /* 전체 너비 차지 */
+    padding: 10px; /* 내부 여백 */
+    font-size: 14px; /* 텍스트 크기 */
+    border: 1px solid #ccc; /* 기본 테두리 */
+    box-sizing: border-box; /* 패딩 포함 크기 조정 */
+    resize: vertical; /* 세로 방향으로만 크기 조정 가능 */
+    background-color: #f9f9f9; /* 연한 배경색 */
+    font-family: 'Noto Sans KR', 'Nanum Gothic', sans-serif; /* 폰트 설정 */
+}
+
+/* Textarea 포커스 상태 */
+textarea:focus {
+    border-color: #007bff; /* 파란색 테두리 강조 */
+    outline: none; /* 기본 포커스 아웃라인 제거 */
+    background-color: #fff; /* 배경색을 흰색으로 변경 */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* 살짝 블루빛 그림자 */
 }

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KNU 재능 공유 플랫폼</title>
+  <link rel="stylesheet" href="/css/header.css">
+  <link rel="stylesheet" href="/css/footer.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/content.css">
+</head>
+<body>
+<div th:insert="~{fragments/header :: header}"></div>
+
+<!-- 사이드바와 콘텐츠를 포함하는 컨테이너 -->
+<div class="main-container" style="display: flex; max-width: 1200px; margin: 0 auto; padding-top: 20px;">
+  <!-- 사이드바 삽입 -->
+  <div th:insert="~{fragments/sidebar/learning_core_sidebar :: learning_core_sidebar}"></div>
+
+  <!-- 콘텐츠 영역 -->
+  <div class="content">
+    <h1>러닝코어 - 가르치미 게시글 작성</h1>
+    <hr>
+
+    <!-- 글 작성 폼 -->
+    <form th:action="@{/learning_core/mentor/add_board}" method="post" style="margin-top: 20px;">
+      <!-- 제목 입력 -->
+      <div style="margin-bottom: 15px;">
+        <label for="title" class="add-label">제목</label>
+        <input type="text" id="title" name="title" placeholder="제목을 입력하세요" class="add-input" required>
+      </div>
+
+      <!-- 내용 입력 -->
+      <div style="margin-bottom: 15px;">
+        <label for="content" class="add-label">내용</label>
+        <textarea id="content" name="content" placeholder="내용을 입력하세요" rows="10" class="add-textarea" required></textarea>
+      </div>
+
+      <!-- 제출 버튼 -->
+      <div style="text-align: right;">
+        <button type="submit">작성 완료</button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<div th:insert="~{fragments/footer :: footer}"></div>
+</body>
+</html>
