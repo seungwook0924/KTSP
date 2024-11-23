@@ -16,7 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.HtmlUtils;
 
 import java.time.LocalDateTime;
@@ -33,6 +32,7 @@ public class LearningCoreController
     private final TeamService teamService;
     private final FileService fileService;
 
+    //게시글 목록
     @GetMapping
     public String showMentor(Model model)
     {
@@ -59,6 +59,7 @@ public class LearningCoreController
         return "learning_core/mentor";
     }
 
+    // 게시글 추가
     @GetMapping("/add_board")
     public String addBoard(@ModelAttribute AddBoardDTO addBoardDTO, Model model)
     {
@@ -67,40 +68,37 @@ public class LearningCoreController
         return "learning_core/add_mentor_board";
     }
 
+    // 게시글 추가 프로세스
     @PostMapping("/add_board")
-    public String saveBoard(@ModelAttribute AddBoardDTO addBoardDTO, Model model, HttpSession session, RedirectAttributes redirectAttributes)
+    public String saveBoard(@ModelAttribute AddBoardDTO addBoardDTO, Model model, HttpSession session)
     {
         User user = (User) session.getAttribute("user");
 
-        try
+        // 게시판 저장
+        Board newBoard = Board.builder()
+                .title(addBoardDTO.getTitle())
+                .content(addBoardDTO.getContent())
+                .user(user)
+                .type(BoardType.mentor)
+                .createdAt(LocalDateTime.now())
+                .isClosed(false)
+                .hits(0L)
+                .teamSize((byte) 2)
+                .build();
+
+        boardService.save(newBoard);
+        teamService.save(user, newBoard);
+
+        if (addBoardDTO.getFiles() != null && addBoardDTO.getFiles().stream().anyMatch(file -> !file.isEmpty())) // 첨부 파일이 있다면
         {
-            // 게시판 저장
-            Board newBoard = Board.builder()
-                    .title(addBoardDTO.getTitle())
-                    .content(addBoardDTO.getContent())
-                    .user(user)
-                    .type(BoardType.mentor)
-                    .createdAt(LocalDateTime.now())
-                    .isClosed(false)
-                    .hits(0L)
-                    .teamSize((byte) 2)
-                    .build();
-
-            boardService.save(newBoard);
-            teamService.save(user, newBoard);
-
-            if(addBoardDTO.getFiles() != null) for(MultipartFile file : addBoardDTO.getFiles()) fileService.saveFile(file, newBoard); // 파일 저장
-
-        } catch (IllegalArgumentException e) {
-            log.warn("파일 유효성 검사 실패: {}", e.getMessage());
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-            return "redirect:/learning_core/mentor/add_board";
+            for (MultipartFile file : addBoardDTO.getFiles()) if (!file.isEmpty()) fileService.saveFile(file, newBoard); // 새로운 파일 저장
         }
 
         model.addAttribute("currentMenu", "one");
         return "redirect:/learning_core/mentor";
     }
 
+    //게시글 상세보기
     @GetMapping("/{id}")
     public String addBoard(@PathVariable long id, Model model, HttpSession session)
     {
@@ -179,7 +177,7 @@ public class LearningCoreController
     }
 
     @PostMapping("/update/{id}")
-    public String updateBoard(@PathVariable long id, @ModelAttribute UpdateSaveBoardDTO updateSaveBoardDTO, Model model, HttpSession session)
+    public String updateBoard(@PathVariable long id, @ModelAttribute UpdateSaveBoardDTO updateSaveBoardDTO, Model model)
     {
         Optional<Board> findBoard = boardService.findById(id);
         if(findBoard.isEmpty()) return "redirect:/learning_core/mentor";
@@ -193,10 +191,9 @@ public class LearningCoreController
                 .build();
         boardService.save(updatedBoard);
 
-        // 새로운 파일 저장
-        if (updateSaveBoardDTO.getNewFiles() != null)
+        if (updateSaveBoardDTO.getFiles() != null && updateSaveBoardDTO.getFiles().stream().anyMatch(file -> !file.isEmpty())) // 첨부 파일이 있다면
         {
-            for (MultipartFile newFile : updateSaveBoardDTO.getNewFiles()) fileService.saveFile(newFile, board);
+            for (MultipartFile file : updateSaveBoardDTO.getFiles()) if (!file.isEmpty()) fileService.saveFile(file, updatedBoard); // 새로운 파일 저장
         }
 
         model.addAttribute("currentMenu", "one");

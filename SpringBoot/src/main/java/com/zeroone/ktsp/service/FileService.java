@@ -60,7 +60,7 @@ public class FileService
         }
 
         fileRepository.delete(fileMapping);
-        log.info("게시판 id : {} 에 {}가 요청으로 인해 파일 삭제 완료 : {} / 원본 파일 이름 : {}", board.getId(), board.getUser().getName(), file.getAbsolutePath(), fileName);
+        log.info("게시판 id : {} 에 {}의 요청으로 인해 파일 삭제 완료 : {} / 원본 파일 이름 : {}", board.getId(), board.getUser().getName(), file.getAbsolutePath(), fileName);
     }
 
     public void saveFile(MultipartFile multipartFile, Board board)

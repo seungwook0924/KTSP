@@ -153,6 +153,18 @@ hr {
     margin-top: 5px;
 }
 
+.a-file {
+    text-decoration: none;
+    color: black; /* 링크 기본 색상 */
+    margin-top: 5px;
+    margin-bottom: 5px; /* 아래쪽 간격 */
+    display: inline-block; /* 블록 요소처럼 동작하여 간격 적용 */
+}
+
+.a-file:visited {
+    color: black; /* 클릭 후에도 동일한 색상 유지 */
+}
+
 /* 기본 버튼 스타일 */
 button {
     padding: 10px 20px; /* 여백 설정 */
@@ -271,14 +283,14 @@ td {
     box-sizing: border-box; /* 패딩 포함 크기 조정 */
     background-color: #f9f9f9; /* 연한 배경색 */
     font-family: 'Noto Sans KR', 'Nanum Gothic', sans-serif; /* 폰트 설정 */
+    margin-bottom: 20px;
 }
 
 /* Label 스타일 */
 .add-label {
     display: block; /* 라벨을 블록 형태로 */
-    font-weight: bold; /* 굵은 글씨로 강조 */
-    font-size: 14px; /* 적당한 글자 크기 */
-    margin-bottom: 8px; /* 아래 요소와의 간격 */
+    font-size: 20px; /* 적당한 글자 크기 */
+    margin-bottom: 10px; /* 아래 요소와의 간격 */
     color: #333; /* 어두운 회색 텍스트 */
 }
 
@@ -292,12 +304,26 @@ td {
     resize: vertical; /* 세로 방향으로만 크기 조정 가능 */
     background-color: #f9f9f9; /* 연한 배경색 */
     font-family: 'Noto Sans KR', 'Nanum Gothic', sans-serif; /* 폰트 설정 */
+    margin-bottom: 20px;
 }
 
 /* Textarea 포커스 상태 */
 textarea:focus {
-    border-color: #007bff; /* 파란색 테두리 강조 */
     outline: none; /* 기본 포커스 아웃라인 제거 */
     background-color: #fff; /* 배경색을 흰색으로 변경 */
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* 살짝 블루빛 그림자 */
+}
+
+.new-file {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-right: 10px;
+    text-align: center;
+}
+
+#selectedFiles li {
+    margin-bottom: 5px; /* 각 파일 이름 간 간격 추가 */
 }

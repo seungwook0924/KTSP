@@ -42,9 +42,15 @@
       </div>
 
       <!-- 파일 업로드 -->
-      <div>
-        <label for="files">파일 업로드</label>
-        <input type="file" id="files" name="files" multiple>
+      <div style="margin-top: 20px;">
+        <label for="files" class="add-label" style="display: block; font-weight: bold; margin-bottom: 10px;">파일 추가</label>
+        <div style="display: flex; align-items: flex-start;">
+          <label for="files" class="new-file">파일 선택</label>
+          <ul id="selectedFiles" style="list-style-type: none; margin: 0; padding: 0; font-size: 14px; color: #555;">
+            <li>선택된 파일 없음</li>
+          </ul>
+          <input type="file" id="files" name="files" multiple style="display: none;" onchange="checkFileSize(this)">
+        </div>
       </div>
 
       <!-- 제출 버튼 -->
@@ -57,5 +63,6 @@
 </div>
 
 <div th:insert="~{fragments/footer :: footer}"></div>
+<script src="/js/add_board.js"></script>
 </body>
 </html>

@@ -49,16 +49,20 @@
       <p th:utext="*{content}">게시물 내용</p>
     </div>
 
-    <div>
-      <label class="add-label">첨부 파일</label>
-      <ul>
-        <li th:each="fileName : ${boardViewDTO.files}">
-          <a th:href="@{/download(fileName=${fileName}, boardId=${boardViewDTO.id})}"
-             th:text="${fileName}">
-          </a>
-        </li>
-      </ul>
-    </div>
+    <table>
+      <tr>
+        <th>첨부파일</th>
+        <td>
+          <div th:if="${boardViewDTO.files != null and !boardViewDTO.files.isEmpty()}">
+            <div th:each="fileName : ${boardViewDTO.files}"><a class="a-file" th:href="@{/download(fileName=${fileName}, boardId=${boardViewDTO.id})}" th:text="${fileName}"></a></div>
+          </div>
+          <div th:unless="${boardViewDTO.files != null and !boardViewDTO.files.isEmpty()}">
+            첨부파일이 없습니다.
+          </div>
+        </td>
+      </tr>
+    </table>
+
 
     <hr>
     <button type="button" id="modify" th:if="${boardViewDTO.modify}"

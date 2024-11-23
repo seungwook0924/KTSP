@@ -11,5 +11,5 @@ public class UpdateSaveBoardDTO {
     private long id;
     private String title;
     private String content;
-    private List<MultipartFile> newFiles; // 새로 추가된 파일 리스트
+    private List<MultipartFile> files; // 새로 추가된 파일 리스트
 }

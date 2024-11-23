@@ -22,6 +22,11 @@
     <h1>러닝코어 - 가르치미 게시글 수정</h1>
     <hr>
 
+    <!-- 에러 메시지 -->
+    <div th:if="${errorMessage}" class="error">
+      <p th:text="${errorMessage}"></p>
+    </div>
+
     <!-- 글 작성 폼 -->
     <form th:action="@{/learning_core/mentor/update/{id}(id=${updateBoardDTO.id})}" method="post" style="margin-top: 20px;" enctype="multipart/form-data">
       <!-- 제목 입력 -->
@@ -39,25 +44,42 @@
       </div>
 
       <!-- 기존 파일 목록 -->
-      <div>
-        <label class="add-label">기존 파일 목록</label>
-        <ul>
-          <li th:each="fileName : ${updateBoardDTO.fileNames}" style="margin-bottom: 10px;">
-            <span th:text="${fileName}"></span>
+      <table style="width: 100%; border-collapse: collapse; margin-top: 10px; border: 1px solid #ccc;">
+        <thead>
+        <tr>
+          <th style="text-align: left; padding: 10px; background-color: #f9f9f9;">첨부파일</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${updateBoardDTO.fileNames == null or updateBoardDTO.fileNames.isEmpty()}" style="border-bottom: 1px solid #ddd;">
+          <td style="padding: 10px; text-align: center; color: #999;">첨부한 파일이 없습니다.</td>
+        </tr>
+        <tr th:each="fileName : ${updateBoardDTO.fileNames}" style="border-bottom: 1px solid #ddd;">
+          <td style="padding: 10px; display: flex; justify-content: space-between; align-items: center;">
+            <span th:text="${fileName}" style="flex: 1;"></span>
             <input type="hidden" class="file-name-hidden" th:value="${fileName}">
-            <button type="button" class="delete-button" style="margin-left: 10px;">삭제</button>
-          </li>
-        </ul>
-      </div>
+            <span class="delete-button" style="cursor: pointer; color: black; font-size: 16px; margin-left: 10px;">&#x2716;</span> <!-- X 아이콘 -->
+          </td>
+        </tr>
+        </tbody>
+      </table>
 
       <!-- AJAX 삭제 요청에 사용할 URL을 저장 -->
       <input type="hidden" id="boardId" th:value="${updateBoardDTO.id}">
       <input type="hidden" id="deleteUrl" th:value="@{/learning_core/mentor/delete-file}">
 
+      <br>
+
       <!-- 새 파일 추가 -->
-      <div>
-        <label for="newFiles" class="add-label">파일 추가</label>
-        <input type="file" id="newFiles" name="newFiles" multiple>
+      <div style="margin-top: 20px;">
+        <label for="files" class="add-label" style="display: block; font-weight: bold; margin-bottom: 10px;">파일 추가</label>
+        <div style="display: flex; align-items: flex-start;">
+          <label for="files" class="new-file">파일 선택</label>
+          <ul id="selectedFiles" style="list-style-type: none; margin: 0; padding: 0; font-size: 14px; color: #555;">
+            <li>선택된 파일 없음</li>
+          </ul>
+          <input type="file" id="files" name="files" multiple style="display: none;" onchange="checkFileSize(this)">
+        </div>
       </div>
 
       <!-- 제출 버튼 -->
@@ -75,7 +97,7 @@
 
 <div th:insert="~{fragments/footer :: footer}"></div>
 
-<script src="/js/update_board.js"></script>
+<script src="/js/add_board.js"></script>
 
 </body>
 </html>
