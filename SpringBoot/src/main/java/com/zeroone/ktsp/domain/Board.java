@@ -37,7 +37,7 @@ public class Board {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "title", nullable = false, length = 50)
+    @Column(name = "title", nullable = false, length = 20)
     private String title;
 
     @Column(name = "content", nullable = false)

@@ -49,11 +49,27 @@ document.getElementById("files").addEventListener("change", function () {
 //파일 크기 초과 방지 로직
 function checkFileSize(input) {
     const maxSize = 50 * 1024 * 1024; // 50MB
+    let totalSize = 0; // 총 파일 크기 합계 변수
+
     for (const file of input.files) {
-        if (file.size > maxSize) {
-            alert(`${file.name} 파일이 너무 큽니다. (최대 크기: 50MB)`);
+        totalSize += file.size; // 파일 크기 누적
+        if (totalSize > maxSize) { // 총합이 최대 크기를 초과하면 경고
+            alert(`선택된 파일들의 총 크기가 너무 큽니다. (파일 총합 최대 크기: 50MB)`);
             input.value = ""; // 입력 초기화
             break;
         }
     }
 }
+
+//제목의 글자수를 제한하는 로직
+document.getElementById("title").addEventListener("input", function () {
+    const titleInput = this.value;
+    const warningElement = document.getElementById("titleWarning");
+
+    if (titleInput.length > 20) {
+        warningElement.style.display = "block"; // 경고 메시지 표시
+        this.value = titleInput.slice(0, 20); // 글자수를 20자로 자름
+    } else {
+        warningElement.style.display = "none"; // 경고 메시지 숨김
+    }
+});

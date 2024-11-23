@@ -30,10 +30,10 @@
     <!-- 글 작성 폼 -->
     <form th:action="@{/learning_core/mentor/update/{id}(id=${updateBoardDTO.id})}" method="post" style="margin-top: 20px;" enctype="multipart/form-data">
       <!-- 제목 입력 -->
-      <div>
+      <div style="margin-bottom: 15px;">
         <label for="title" class="add-label">제목</label>
-        <input type="text" id="title" name="title" placeholder="제목을 입력하세요" class="add-input"
-               th:value="${updateBoardDTO.title}" required>
+        <input th:value="${updateBoardDTO.title}" type="text" id="title" name="title" placeholder="제목을 입력하세요" class="add-input" maxlength="20" required>
+        <small id="titleWarning" style="color: red; display: none;">제목은 최대 20자까지 입력 가능합니다.</small>
       </div>
 
       <!-- 내용 입력 -->

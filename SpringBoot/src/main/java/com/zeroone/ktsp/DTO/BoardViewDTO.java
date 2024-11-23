@@ -20,4 +20,5 @@ public class BoardViewDTO {
     private boolean isModify;
     private boolean isJoin;
     private List<String> files;
+    private List<String> imagePath;
 }

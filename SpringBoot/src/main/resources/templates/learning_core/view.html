@@ -47,6 +47,14 @@
     <!-- 게시물 내용 -->
     <div class="content-section">
       <p th:utext="*{content}">게시물 내용</p>
+
+      <!-- 첨부된 이미지 표시 -->
+      <div class="image-gallery">
+        <div th:if="${boardViewDTO.imagePath != null and !boardViewDTO.imagePath.isEmpty()}">
+          <div th:each="imagePath : ${boardViewDTO.imagePath}"><img th:src="@{${imagePath}}" alt="첨부된 이미지"></div>
+        </div>
+      </div>
+
     </div>
 
     <table>

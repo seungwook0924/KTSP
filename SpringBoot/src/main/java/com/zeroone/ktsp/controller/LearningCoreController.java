@@ -140,8 +140,18 @@ public class LearningCoreController
         if(!files.isEmpty())
         {
             List<String> fileNames = new ArrayList<>();
-            for(FileMapping file : files) fileNames.add(file.getFileName());
+            List<String> filePaths = new ArrayList<>();
+            for(FileMapping file : files)
+            {
+                fileNames.add(file.getFileName());
+                if (file.getExtension().equals("jpg") || file.getExtension().equals("jpeg") || file.getExtension().equals("png"))
+                {
+                    filePaths.add("/files/" + file.getUuid() + "." + file.getExtension());
+                    log.info("/files/{}", file.getUuid() + "." + file.getExtension());
+                }
+            }
             boardViewDTO.setFiles(fileNames);
+            boardViewDTO.setImagePath(filePaths);
         }
 
         boardViewDTO.setId(board.getId());

@@ -42,10 +42,10 @@
       </thead>
       <tbody>
       <!-- 데이터 순회 -->
-      <tr th:each="board, stat : ${mentorBoards}" th:onclick="|location.href='@{/learning_core/mentor/{id}(id=${board.id})}'|">
+      <tr th:each="board, stat : ${mentorBoards}" >
         <td th:text="${#lists.size(mentorBoards) - stat.index}"></td> <!-- 글 번호 -->
         <td th:text="${board.userName}"></td> <!-- 작성자 -->
-        <td class="title-column" th:text="${board.title}"></td> <!-- 제목 -->
+        <td class="title-column"><a class="board-select" th:text="${board.title}" th:href="@{/learning_core/mentor/{id}(id=${board.id})}">수정하기</a></td> <!-- 제목 -->
         <td th:text="${board.currentSize} + '/' + ${board.teamSize}"></td> <!-- 현재/최대 팀원 수 -->
         <td th:text="${board.date}"></td> <!-- 작성일 -->
         <td th:text="${board.isClosed ? '모집 마감' : '모집중'}"></td> <!-- 모집 여부 -->
@@ -53,8 +53,7 @@
       </tr>
       </tbody>
     </table>
-    <hr>
-
+    <br>
     <button type="button" id="addBoard" th:onclick="|location.href='@{/learning_core/mentor/add_board}'|" style="float: right;">글쓰기</button>
     <!-- 페이지네이션 -->
 <!--    <div class="pagination" th:if="${totalPages > 1}">-->
