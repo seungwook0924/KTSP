@@ -1,27 +1,27 @@
 package com.zeroone.ktsp.controller;
 
-import com.zeroone.ktsp.DTO.AddBoardDTO;
-import com.zeroone.ktsp.DTO.BoardDTO;
-import com.zeroone.ktsp.DTO.BoardViewDTO;
-import com.zeroone.ktsp.DTO.UpdateBoardDTO;
+import com.zeroone.ktsp.DTO.*;
 import com.zeroone.ktsp.domain.Board;
+import com.zeroone.ktsp.domain.FileMapping;
 import com.zeroone.ktsp.domain.User;
 import com.zeroone.ktsp.enumeration.BoardType;
 import com.zeroone.ktsp.service.BoardService;
+import com.zeroone.ktsp.service.FileService;
 import com.zeroone.ktsp.service.TeamService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.HtmlUtils;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Controller
@@ -31,7 +31,7 @@ public class LearningCoreController
 {
     private final BoardService boardService;
     private final TeamService teamService;
-
+    private final FileService fileService;
 
     @GetMapping
     public String showMentor(Model model)
@@ -68,21 +68,35 @@ public class LearningCoreController
     }
 
     @PostMapping("/add_board")
-    public String saveBoard(@ModelAttribute AddBoardDTO addBoardDTO, Model model, HttpSession session)
+    public String saveBoard(@ModelAttribute AddBoardDTO addBoardDTO, Model model, HttpSession session, RedirectAttributes redirectAttributes)
     {
         User user = (User) session.getAttribute("user");
-        Board newBoard = Board.builder()
-                .title(addBoardDTO.getTitle())
-                .content(addBoardDTO.getContent())
-                .user(user)
-                .type(BoardType.mentor)
-                .createdAt(LocalDateTime.now())
-                .isClosed(false)
-                .hits(0L)
-                .teamSize((byte) 2)
-                .build();
-        boardService.save(newBoard);
-        teamService.save(user, newBoard);
+
+        try
+        {
+            // 게시판 저장
+            Board newBoard = Board.builder()
+                    .title(addBoardDTO.getTitle())
+                    .content(addBoardDTO.getContent())
+                    .user(user)
+                    .type(BoardType.mentor)
+                    .createdAt(LocalDateTime.now())
+                    .isClosed(false)
+                    .hits(0L)
+                    .teamSize((byte) 2)
+                    .build();
+
+            boardService.save(newBoard);
+            teamService.save(user, newBoard);
+
+            if(addBoardDTO.getFiles() != null) for(MultipartFile file : addBoardDTO.getFiles()) fileService.saveFile(file, newBoard); // 파일 저장
+
+        } catch (IllegalArgumentException e) {
+            log.warn("파일 유효성 검사 실패: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/learning_core/mentor/add_board";
+        }
+
         model.addAttribute("currentMenu", "one");
         return "redirect:/learning_core/mentor";
     }
@@ -114,27 +128,34 @@ public class LearningCoreController
             viewedBoards.add(board.getId()); // 증가된 게시글 ID를 리스트에 추가
         }
 
-
         BoardViewDTO boardViewDTO = new BoardViewDTO();
         if(board.getUpdatedAt() == null) boardViewDTO.setUpdatedAt("없음");
         else boardViewDTO.setUpdatedAt(board.getUpdatedAt().format(formatter));
 
-        if(board.getIsClosed()) boardViewDTO.setJoin(false);
+        if(board.getIsClosed() || (board.getUser().getId() == user.getId())) boardViewDTO.setJoin(false);
         else boardViewDTO.setJoin(true);
 
         if(board.getUser().getId() == user.getId()) boardViewDTO.setModify(true);
         else boardViewDTO.setModify(false);
 
+        List<FileMapping> files = fileService.getFilesByBoard(board);
+        if(!files.isEmpty())
+        {
+            List<String> fileNames = new ArrayList<>();
+            for(FileMapping file : files) fileNames.add(file.getFileName());
+            boardViewDTO.setFiles(fileNames);
+        }
+
         boardViewDTO.setId(board.getId());
         boardViewDTO.setTitle(board.getTitle());
-        boardViewDTO.setContent(board.getContent());
+        boardViewDTO.setContent(HtmlUtils.htmlEscape(board.getContent()).replace("\n", "<br>")); // 줄바꿈 변환 처리
         boardViewDTO.setHits(board.getHits());
         boardViewDTO.setClosed(board.getIsClosed());
         boardViewDTO.setCurrentSize(teamService.getUserCountByBoardId(board.getId()));
         boardViewDTO.setCreatedAt(board.getCreatedAt().format(formatter));
         boardViewDTO.setTeamSize(board.getTeamSize());
         boardViewDTO.setClosed(board.getIsClosed());
-        boardViewDTO.setUserName(user.getName());
+        boardViewDTO.setUserName(board.getUser().getName());
 
         model.addAttribute("boardViewDTO", boardViewDTO);
         model.addAttribute("currentMenu", "one");
@@ -142,35 +163,51 @@ public class LearningCoreController
     }
 
     @GetMapping("/update/{id}")
-    public String modify(@PathVariable long id, Model model, HttpSession session, UpdateBoardDTO updateBoardDTO)
+    public String modify(@PathVariable long id, Model model, HttpSession session, UpdateViewBoardDTO updateViewBoardDTO)
     {
         Optional<Board> findBoard = boardService.findById(id);
         if(findBoard.isEmpty()) return "redirect:/learning_core/mentor";
         Board board = findBoard.get();
-        updateBoardDTO.setId(id);
-        updateBoardDTO.setTitle(board.getTitle());
-        updateBoardDTO.setContent(board.getContent());
+        updateViewBoardDTO.setId(id);
+        updateViewBoardDTO.setTitle(board.getTitle());
+        updateViewBoardDTO.setContent(board.getContent());
+        updateViewBoardDTO.setFileNames(fileService.getFileNamesByBoard(board));
 
-        model.addAttribute("updateBoardDTO", updateBoardDTO);
+        model.addAttribute("updateBoardDTO", updateViewBoardDTO);
         model.addAttribute("currentMenu", "one");
         return "learning_core/update_mentor_board";
     }
 
     @PostMapping("/update/{id}")
-    public String updateBoard(@PathVariable long id, @ModelAttribute UpdateBoardDTO updateBoardDTO, Model model, HttpSession session)
+    public String updateBoard(@PathVariable long id, @ModelAttribute UpdateSaveBoardDTO updateSaveBoardDTO, Model model, HttpSession session)
     {
         Optional<Board> findBoard = boardService.findById(id);
         if(findBoard.isEmpty()) return "redirect:/learning_core/mentor";
 
-        Board updatedBoard = findBoard.get().toBuilder()
-                .title(updateBoardDTO.getTitle())
-                .content(updateBoardDTO.getContent())
+        Board board = findBoard.get();
+
+        Board updatedBoard = board.toBuilder()
+                .title(updateSaveBoardDTO.getTitle())
+                .content(updateSaveBoardDTO.getContent())
                 .updatedAt(LocalDateTime.now())
                 .build();
-        log.info("creat : {}, update : {}", updatedBoard.getCreatedAt(), updatedBoard.getUpdatedAt());
         boardService.save(updatedBoard);
+
+        // 새로운 파일 저장
+        if (updateSaveBoardDTO.getNewFiles() != null)
+        {
+            for (MultipartFile newFile : updateSaveBoardDTO.getNewFiles()) fileService.saveFile(newFile, board);
+        }
 
         model.addAttribute("currentMenu", "one");
         return "redirect:/learning_core/mentor/" + id;
+    }
+
+    @DeleteMapping("/delete-file")
+    public ResponseEntity<Void> deleteFile(@RequestParam("fileName") String fileName, @RequestParam("boardId") Long boardId)
+    {
+        Board board = boardService.findById(boardId).orElseThrow(() -> new RuntimeException("게시판을 찾을 수 없습니다."));
+        fileService.deleteFile(board, fileName);
+        return ResponseEntity.ok().build();
     }
 }

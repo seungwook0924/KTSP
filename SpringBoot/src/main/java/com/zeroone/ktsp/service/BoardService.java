@@ -29,4 +29,11 @@ public class BoardService {
     {
         return boardRepository.findById(id);
     }
+
+    // 게시글 삭제
+    public void deleteById(long id)
+    {
+        if (boardRepository.existsById(id)) boardRepository.deleteById(id); // 삭제 전에 존재 여부 확인
+        else throw new IllegalArgumentException("해당 ID의 게시글이 존재하지 않습니다. ID: " + id);
+    }
 }

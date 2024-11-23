@@ -3,6 +3,8 @@ package com.zeroone.ktsp.DTO;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter @Setter
 public class BoardViewDTO {
     private long id;
@@ -17,4 +19,5 @@ public class BoardViewDTO {
     private boolean isClosed;
     private boolean isModify;
     private boolean isJoin;
+    private List<String> files;
 }

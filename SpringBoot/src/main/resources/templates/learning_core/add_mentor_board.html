@@ -22,8 +22,13 @@
     <h1>러닝코어 - 가르치미 게시글 작성</h1>
     <hr>
 
+    <!-- 에러 메시지 -->
+    <div th:if="${errorMessage}" class="error">
+      <p th:text="${errorMessage}"></p>
+    </div>
+
     <!-- 글 작성 폼 -->
-    <form th:action="@{/learning_core/mentor/add_board}" method="post" style="margin-top: 20px;">
+    <form th:action="@{/learning_core/mentor/add_board}" method="post" enctype="multipart/form-data" style="margin-top: 20px;">
       <!-- 제목 입력 -->
       <div style="margin-bottom: 15px;">
         <label for="title" class="add-label">제목</label>
@@ -33,7 +38,13 @@
       <!-- 내용 입력 -->
       <div style="margin-bottom: 15px;">
         <label for="content" class="add-label">내용</label>
-        <textarea id="content" name="content" placeholder="내용을 입력하세요" rows="10" class="add-textarea" required></textarea>
+        <textarea id="content" name="content" placeholder="내용을 입력하세요" rows="30" class="add-textarea" required></textarea>
+      </div>
+
+      <!-- 파일 업로드 -->
+      <div>
+        <label for="files">파일 업로드</label>
+        <input type="file" id="files" name="files" multiple>
       </div>
 
       <!-- 제출 버튼 -->

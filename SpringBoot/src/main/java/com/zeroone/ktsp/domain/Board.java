@@ -55,7 +55,7 @@ public class Board {
     // Board와 File은 1:N 관계
     // 하나의 게시글은 여러 파일을 가질 수 있다.
     @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE) // 연관관계 주인이 아님, 지연로딩, 게시글 삭제시 모든 파일 삭제
-    private List<FileMapping> fileMappings;
+    private List<FileMapping> files;
 
     // Board와 Comment는 1:N 관계
     // 하나의 게시글은 여러 댓글을 가질 수 있다.

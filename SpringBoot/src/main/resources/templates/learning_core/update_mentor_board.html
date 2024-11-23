@@ -23,7 +23,7 @@
     <hr>
 
     <!-- 글 작성 폼 -->
-    <form th:action="@{/learning_core/mentor/update/{id}(id=${updateBoardDTO.id})}" method="post" style="margin-top: 20px;">
+    <form th:action="@{/learning_core/mentor/update/{id}(id=${updateBoardDTO.id})}" method="post" style="margin-top: 20px;" enctype="multipart/form-data">
       <!-- 제목 입력 -->
       <div>
         <label for="title" class="add-label">제목</label>
@@ -34,8 +34,30 @@
       <!-- 내용 입력 -->
       <div>
         <label for="content" class="add-label">내용</label>
-        <textarea id="content" name="content" placeholder="내용을 입력하세요" rows="10" class="add-textarea" required
+        <textarea id="content" name="content" placeholder="내용을 입력하세요" rows="30" class="add-textarea" required
                   th:text="${updateBoardDTO.content}"></textarea>
+      </div>
+
+      <!-- 기존 파일 목록 -->
+      <div>
+        <label class="add-label">기존 파일 목록</label>
+        <ul>
+          <li th:each="fileName : ${updateBoardDTO.fileNames}" style="margin-bottom: 10px;">
+            <span th:text="${fileName}"></span>
+            <input type="hidden" class="file-name-hidden" th:value="${fileName}">
+            <button type="button" class="delete-button" style="margin-left: 10px;">삭제</button>
+          </li>
+        </ul>
+      </div>
+
+      <!-- AJAX 삭제 요청에 사용할 URL을 저장 -->
+      <input type="hidden" id="boardId" th:value="${updateBoardDTO.id}">
+      <input type="hidden" id="deleteUrl" th:value="@{/learning_core/mentor/delete-file}">
+
+      <!-- 새 파일 추가 -->
+      <div>
+        <label for="newFiles" class="add-label">파일 추가</label>
+        <input type="file" id="newFiles" name="newFiles" multiple>
       </div>
 
       <!-- 제출 버튼 -->
@@ -52,5 +74,8 @@
 </div>
 
 <div th:insert="~{fragments/footer :: footer}"></div>
+
+<script src="/js/update_board.js"></script>
+
 </body>
 </html>

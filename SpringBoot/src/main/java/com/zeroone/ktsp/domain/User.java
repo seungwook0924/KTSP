@@ -77,11 +77,6 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE) // 연관관계 주인이 아님, 지연로딩, 유저 삭제시 모든 댓글 삭제
     private List<Comment> comments;
 
-    // User와 Report 1:N 관계
-    // 한 명의 사용자는 여러 리포트를 작성할 수 있다.
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE) // 연관관계 주인이 아님, 지연로딩, 유저 삭제시 모든 리포트 삭제
-    private List<Report> reports;
-
 
     // UserDetails 메서드 구현
     @Override

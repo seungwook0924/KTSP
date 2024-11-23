@@ -46,7 +46,18 @@
 
     <!-- 게시물 내용 -->
     <div class="content-section">
-      <p th:text="*{content}">게시물 내용</p>
+      <p th:utext="*{content}">게시물 내용</p>
+    </div>
+
+    <div>
+      <label class="add-label">첨부 파일</label>
+      <ul>
+        <li th:each="fileName : ${boardViewDTO.files}">
+          <a th:href="@{/download(fileName=${fileName}, boardId=${boardViewDTO.id})}"
+             th:text="${fileName}">
+          </a>
+        </li>
+      </ul>
     </div>
 
     <hr>
