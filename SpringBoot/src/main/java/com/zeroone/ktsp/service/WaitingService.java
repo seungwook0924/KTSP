@@ -17,18 +17,21 @@ public class WaitingService
 
     public Waiting save(Board board, User user, String content)
     {
-
-        // Wating 엔티티 생성
         Waiting waiting = Waiting.builder()
                 .board(board)
                 .user(user)
                 .content(content)
                 .build();
 
-        // 저장
         Waiting savedWaiting = waitingRepository.save(waiting);
         log.info("대기열 저장 완료 - 게시판 Id={}, userId={}, content={}", board.getId(), user.getId(), content);
 
         return savedWaiting;
+    }
+
+    // 게시글과 사용자에 대해 지원 여부 확인
+    public boolean existsByBoardAndUser(Board board, User user)
+    {
+        return waitingRepository.existsByBoardAndUser(board, user);
     }
 }

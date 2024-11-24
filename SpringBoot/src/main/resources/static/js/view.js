@@ -7,7 +7,6 @@ function confirmDelete() {
 
 // HTML 요소를 올바르게 참조하기 위해 DOMContentLoaded 이벤트를 사용
 document.addEventListener("DOMContentLoaded", function () {
-    // HTML의 버튼과 입력 필드 등 요소를 가져옴
     const joinButton = document.getElementById("join"); // 지원 버튼
     const joinModal = document.getElementById("joinModal"); // 모달 창
     const closeModalBtn = document.getElementById("closeModalBtn"); // 모달 닫기 버튼
@@ -16,8 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const charCount = document.getElementById("charCount"); // 글자 수 카운터
     const modalError = document.getElementById("modalError"); // 에러 메시지
 
-    // boardId를 숨겨진 필드에서 가져옴
-    const boardId = document.getElementById("boardId").value;
+    const boardId = document.getElementById("boardId").value; // 숨겨진 필드에서 boardId 가져옴
 
     // 지원 버튼 클릭 시 모달 열기
     joinButton.onclick = function () {
@@ -59,12 +57,15 @@ document.addEventListener("DOMContentLoaded", function () {
             body: JSON.stringify({ content }),
         })
             .then((response) => {
-                if (response.ok) {
-                    alert("지원이 완료되었습니다!");
-                    joinModal.style.display = "none"; // 모달 닫기
-                } else {
-                    alert("지원 요청 중 오류가 발생했습니다.");
-                }
+                return response.text().then((message) => {
+                    alert(message); // 서버에서 반환된 메시지를 알림으로 표시
+                    joinModal.style.display = "none";
+
+                    if (response.ok)
+                    {
+                        joinModal.style.display = "none"; // 성공 시 모달 닫기
+                    }
+                });
             })
             .catch((error) => {
                 console.error("Error:", error);

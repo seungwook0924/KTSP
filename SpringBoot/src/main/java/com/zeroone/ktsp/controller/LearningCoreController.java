@@ -243,16 +243,17 @@ public class LearningCoreController
     {
         User user = (User) session.getAttribute("user");
 
-        // DTO에서 content 값 확인
         String content = joinTeamDTO.getContent();
         if (content == null || content.isBlank()) return ResponseEntity.badRequest().body("내용을 입력해야 합니다.");
 
         Optional<Board> findBoard = boardService.findById(boardId);
-        if(findBoard.isEmpty()) return ResponseEntity.badRequest().body("지원하려는 게시글을 찾을 수 없습니다.");
+        if (findBoard.isEmpty()) return ResponseEntity.badRequest().body("지원하려는 게시글을 찾을 수 없습니다.");
 
         Board board = findBoard.get();
-        watingService.save(board, user, content);
 
-        return ResponseEntity.ok("지원이 완료되었습니다.");
+        if (watingService.existsByBoardAndUser(board, user)) return ResponseEntity.badRequest().body("이미 지원하셨습니다."); // 이미 지원했는지 확인
+
+        watingService.save(board, user, content);
+        return ResponseEntity.ok("지원이 성공적으로 완료되었습니다.");
     }
 }
