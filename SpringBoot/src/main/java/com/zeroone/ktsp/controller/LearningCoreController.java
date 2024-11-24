@@ -8,6 +8,7 @@ import com.zeroone.ktsp.enumeration.BoardType;
 import com.zeroone.ktsp.service.BoardService;
 import com.zeroone.ktsp.service.FileService;
 import com.zeroone.ktsp.service.TeamService;
+import com.zeroone.ktsp.service.WaitingService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.HtmlUtils;
 
 import java.time.LocalDateTime;
@@ -31,6 +33,7 @@ public class LearningCoreController
     private final BoardService boardService;
     private final TeamService teamService;
     private final FileService fileService;
+    private final WaitingService watingService;
 
     //게시글 목록
     @GetMapping
@@ -95,7 +98,7 @@ public class LearningCoreController
         }
 
         model.addAttribute("currentMenu", "one");
-        return "redirect:/learning_core/mentor";
+        return "redirect:/learning_core/mentor/" + newBoard.getId();
     }
 
     //게시글 상세보기
@@ -133,8 +136,8 @@ public class LearningCoreController
         if(board.getIsClosed() || (board.getUser().getId() == user.getId())) boardViewDTO.setJoin(false);
         else boardViewDTO.setJoin(true);
 
-        if(board.getUser().getId() == user.getId()) boardViewDTO.setModify(true);
-        else boardViewDTO.setModify(false);
+        if(board.getUser().getId() == user.getId()) boardViewDTO.setMine(true);
+        else boardViewDTO.setMine(false);
 
         List<FileMapping> files = fileService.getFilesByBoard(board);
         if(!files.isEmpty())
@@ -167,6 +170,7 @@ public class LearningCoreController
 
         model.addAttribute("boardViewDTO", boardViewDTO);
         model.addAttribute("currentMenu", "one");
+        model.addAttribute("joinTeamDTO", new JoinTeamDTO());
         return "learning_core/view";
     }
 
@@ -216,5 +220,39 @@ public class LearningCoreController
         Board board = boardService.findById(boardId).orElseThrow(() -> new RuntimeException("게시판을 찾을 수 없습니다."));
         fileService.deleteFile(board, fileName);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/delete/{id}")
+    public String deleteBoard(@PathVariable long id, RedirectAttributes redirectAttributes)
+    {
+        try
+        {
+            fileService.deleteAllFilesByBoard(id);
+            boardService.deleteById(id);
+        }
+        catch (IllegalArgumentException e)
+        {
+            redirectAttributes.addFlashAttribute("errorMessage", true);
+            return "redirect:learning_core/mentor/" + id;
+        }
+        return "redirect:/learning_core/mentor";
+    }
+
+    @PostMapping("/join/{boardId}")
+    public ResponseEntity<String> joinTeam(@PathVariable Long boardId, @RequestBody JoinTeamDTO joinTeamDTO, HttpSession session)
+    {
+        User user = (User) session.getAttribute("user");
+
+        // DTO에서 content 값 확인
+        String content = joinTeamDTO.getContent();
+        if (content == null || content.isBlank()) return ResponseEntity.badRequest().body("내용을 입력해야 합니다.");
+
+        Optional<Board> findBoard = boardService.findById(boardId);
+        if(findBoard.isEmpty()) return ResponseEntity.badRequest().body("지원하려는 게시글을 찾을 수 없습니다.");
+
+        Board board = findBoard.get();
+        watingService.save(board, user, content);
+
+        return ResponseEntity.ok("지원이 완료되었습니다.");
     }
 }

@@ -41,15 +41,11 @@ public class Comment {
 
     // 댓글 내용
     @Column(nullable = false, length = 100)
-    private String content;
+    private String comment;
 
     // 댓글 생성 시간
     @Column(nullable = false)
     private LocalDateTime createdAt;
-
-    // 댓글 깊이
-    @Column(nullable = false)
-    private int depth;
 
     // 생성자 빌더에 깊이 설정
     @Builder
@@ -57,15 +53,12 @@ public class Comment {
         this.user = user;
         this.board = board;
         this.parentComment = parentComment;
-        this.content = content;
+        this.comment = content;
         this.createdAt = createdAt;
+    }
 
-        // 부모 댓글이 있으면 깊이를 부모 깊이 + 1로 설정, 없으면 0
-        this.depth = (parentComment != null) ? parentComment.getDepth() + 1 : 0;
-
-        // 깊이가 2를 초과하면 예외를 발생시킴
-        if (this.depth > 2) {
-            throw new IllegalArgumentException("댓글 최대 깊이 초과");
-        }
+    // 동적으로 깊이 계산
+    public int calculateDepth() {
+        return (parentComment != null) ? parentComment.calculateDepth() + 1 : 0;
     }
 }

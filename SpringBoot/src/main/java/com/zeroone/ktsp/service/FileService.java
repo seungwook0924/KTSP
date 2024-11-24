@@ -110,6 +110,34 @@ public class FileService
         }
     }
 
+    public void deleteAllFilesByBoard(long id)
+    {
+        List<FileMapping> fileMappings = fileRepository.findByBoardId(id);
+
+        // 매핑된 파일이 없는 경우 처리
+        if (fileMappings.isEmpty()) return;
+
+        for (FileMapping fileMapping : fileMappings)
+        {
+            String absolutePath = fileMapping.getPath() + fileMapping.getUuid() + "." + fileMapping.getExtension();
+            File file = new File(absolutePath);
+
+            // 파일 삭제
+            if (file.exists())
+            {
+                if (file.delete()) log.info("파일 삭제 성공: {}", absolutePath);
+                else log.warn("파일 삭제 실패: {}", absolutePath);
+            }
+            else log.warn("파일을 찾을 수 없습니다: {}", absolutePath);
+
+            // 매핑 정보 삭제
+            fileRepository.delete(fileMapping);
+            log.info("게시판 ID: {}에서 파일 매핑 정보 삭제: {}", id, fileMapping.getFileName());
+        }
+
+        log.info("게시판 ID: {}와 매핑된 모든 파일 삭제 완료.", id);
+    }
+
     // 파일 확장자 추출 메서드
     private String getFileExtension(String filename)
     {

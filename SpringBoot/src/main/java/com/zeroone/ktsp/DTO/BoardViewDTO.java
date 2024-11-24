@@ -17,7 +17,7 @@ public class BoardViewDTO {
     private Byte currentSize;
     private long hits;
     private boolean isClosed;
-    private boolean isModify;
+    private boolean isMine;
     private boolean isJoin;
     private List<String> files;
     private List<String> imagePath;

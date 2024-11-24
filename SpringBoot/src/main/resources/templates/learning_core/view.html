@@ -24,6 +24,12 @@
     <p style="text-align: right; font-size: 14px;">작성일 : <span th:text="*{createdAt + ' | 업데이트 날짜 : ' + updatedAt + ' | 조회수 : ' + hits}">작성일</span></p>
     <hr>
     <h1>게시글 상세 보기</h1>
+
+    <!-- 에러 메시지 -->
+    <div th:if="${errorMessage}" class="error">
+      <p th:text="${errorMessage}"></p>
+    </div>
+
     <!-- 정보 테이블 -->
     <table>
       <tr>
@@ -73,19 +79,46 @@
 
 
     <hr>
-    <button type="button" id="modify" th:if="${boardViewDTO.modify}"
+
+    <button type="button" id="back"
+            th:onclick="|location.href='@{/learning_core/mentor}'|"
+            style="float: right;">목록
+    </button>
+    <form id="deleteForm" th:action="@{/learning_core/mentor/delete/{id}(id=${boardViewDTO.id})}" method="post" style="float: right; margin-left: 10px;">
+      <button type="button" th:if="${boardViewDTO.mine}" onclick="confirmDelete()">삭제</button>
+    </form>
+    <button type="button" id="modify" th:if="${boardViewDTO.mine}"
             th:onclick="|location.href='@{/learning_core/mentor/update/{id}(id=${boardViewDTO.id})}'|"
-            style="float: right; margin-left: 10px;">수정하기
+            style="float: right; margin-left: 10px;">수정
     </button>
 
-    <button type="button" id="join" th:if="${boardViewDTO.join}"
-            th:onclick="|location.href='@{/learning_core/mentor/{id}(id=${boardViewDTO.id})}'|"
-            style="float: right;">지원하기
-    </button>
+
+    <!-- 지원하기 모달 -->
+    <div id="joinModal" class="modal" style="display: none;">
+      <div class="modal-content">
+        <span class="close" id="closeModalBtn">&times;</span>
+        <h2>지원하기</h2>
+        <label for="content">자신을 소개하는 글을 작성해주세요.</label>
+        <textarea id="content" placeholder="소개글을 입력" maxlength="255" rows="5" style="width: 100%;"></textarea>
+        <small id="charCount">0/255</small>
+        <button id="submit" type="button">확인</button>
+        <div id="modalError" class="error-message" style="color: red; display: none;">소개 글을 입력해주세요.</div>
+      </div>
+    </div>
+    <!-- 숨겨진 필드로 boardId 전달 -->
+    <input type="hidden" id="boardId" th:value="${boardViewDTO.id}">
+
+    <!-- 지원 버튼 -->
+    <button type="button" id="join" th:if="${boardViewDTO.join}" style="float: right;">지원</button>
+
   </div>
 </div>
 
+
 <!-- 푸터 -->
 <div th:insert="~{fragments/footer :: footer}"></div>
+
+<script src="/js/view.js"></script>
+
 </body>
 </html>

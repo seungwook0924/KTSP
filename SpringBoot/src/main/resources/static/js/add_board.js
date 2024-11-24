@@ -73,3 +73,40 @@ document.getElementById("title").addEventListener("input", function () {
         warningElement.style.display = "none"; // 경고 메시지 숨김
     }
 });
+
+let isFormSubmitted = false;
+
+// beforeunload 이벤트 핸들러
+function beforeUnloadHandler(e) {
+    if (!isFormSubmitted) {
+        e.preventDefault();
+        e.returnValue = ''; // 최신 브라우저를 위한 설정
+    }
+}
+
+let isFormSubmitted = false;
+
+// beforeunload 이벤트 핸들러
+function beforeUnloadHandler(e) {
+    if (!isFormSubmitted) {
+        e.preventDefault();
+        e.returnValue = ''; // 최신 브라우저를 위한 설정
+    }
+}
+
+// 페이지를 떠날 때 경고 메시지 표시
+window.addEventListener('beforeunload', beforeUnloadHandler);
+
+// 폼 제출 시 이벤트 제거
+document.querySelector('form').addEventListener('submit', function (event) {
+    console.log("Form is being submitted...");
+    isFormSubmitted = true;
+
+    // beforeunload 이벤트 제거
+    window.removeEventListener('beforeunload', beforeUnloadHandler);
+
+    // 디버깅: 제출 이벤트 이후를 로그로 확인
+    setTimeout(() => {
+        console.log("Submit event completed. Listener removed.");
+    }, 500);
+});

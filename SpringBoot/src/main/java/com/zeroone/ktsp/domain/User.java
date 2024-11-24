@@ -65,7 +65,7 @@ public class User implements UserDetails {
     // User와 Wating은 1:N 관계
     // 한 명의 사용자는 여러 대기줄에 참여할 수 있다.
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE) // 연관관계 주인이 아님, 지연로딩, 유저 삭제시 모든 대기줄 삭제
-    private List<Wating> watings;
+    private List<Waiting> watings;
 
     // User와 Team은 1:N 관계
     // 한 명의 사용자는 여러 팀에 소속될 수 있다.

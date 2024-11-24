@@ -4,12 +4,12 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
-@Table(name = "wating")
+@Table(name = "waiting")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Entity
 @Builder(toBuilder = true) // 객체 수정 허용
-public class Wating {
+public class Waiting {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
