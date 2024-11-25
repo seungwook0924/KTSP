@@ -1,9 +1,7 @@
 package com.zeroone.ktsp.controller;
 
 import com.zeroone.ktsp.DTO.*;
-import com.zeroone.ktsp.domain.Board;
-import com.zeroone.ktsp.domain.FileMapping;
-import com.zeroone.ktsp.domain.User;
+import com.zeroone.ktsp.domain.*;
 import com.zeroone.ktsp.enumeration.BoardType;
 import com.zeroone.ktsp.service.BoardService;
 import com.zeroone.ktsp.service.FileService;
@@ -33,7 +31,7 @@ public class LearningCoreController
     private final BoardService boardService;
     private final TeamService teamService;
     private final FileService fileService;
-    private final WaitingService watingService;
+    private final WaitingService waitingService;
 
     //게시글 목록
     @GetMapping
@@ -90,7 +88,7 @@ public class LearningCoreController
                 .build();
 
         boardService.save(newBoard);
-        teamService.save(user, newBoard);
+        teamService.save(newBoard, user);
 
         if (addBoardDTO.getFiles() != null && addBoardDTO.getFiles().stream().anyMatch(file -> !file.isEmpty())) // 첨부 파일이 있다면
         {
@@ -178,8 +176,12 @@ public class LearningCoreController
     public String modify(@PathVariable long id, Model model, HttpSession session, UpdateViewBoardDTO updateViewBoardDTO)
     {
         Optional<Board> findBoard = boardService.findById(id);
+        User user = (User) session.getAttribute("user");
         if(findBoard.isEmpty()) return "redirect:/learning_core/mentor";
         Board board = findBoard.get();
+
+        if(user.getId() != board.getUser().getId()) return "redirect:/learning_core/mentor"; //본인이 아닌 다른 사람이 접근했을 때 리다이렉트
+
         updateViewBoardDTO.setId(id);
         updateViewBoardDTO.setTitle(board.getTitle());
         updateViewBoardDTO.setContent(board.getContent());
@@ -251,9 +253,99 @@ public class LearningCoreController
 
         Board board = findBoard.get();
 
-        if (watingService.existsByBoardAndUser(board, user)) return ResponseEntity.badRequest().body("이미 지원하셨습니다."); // 이미 지원했는지 확인
+        if (waitingService.existsByBoardAndUser(board, user)) return ResponseEntity.badRequest().body("이미 지원하셨습니다. 지원 내역 및 결과는 마이페이지에서 확인할 수 있습니다."); // 이미 지원했는지 확인
 
-        watingService.save(board, user, content);
+        waitingService.save(board, user, content);
         return ResponseEntity.ok("지원이 성공적으로 완료되었습니다.");
+    }
+
+    @GetMapping("/manage/{id}")
+    public String showManageView(@PathVariable long id, HttpSession session, Model model)
+    {
+        User user = (User) session.getAttribute("user");
+        Optional<Board> findBoard = boardService.findById(id);
+
+        if(findBoard.isEmpty()) return "redirect:/learning_core/mentor"; //게시글이 존재하지 않을 때 리다이렉트
+        Board board = findBoard.get();
+        if(user.getId() != board.getUser().getId()) return "redirect:/learning_core/mentor"; //본인이 아닌 다른 사람이 접근했을 때 리다이렉트
+
+        List<ManagementDTO> waitingList = new ArrayList<>();
+        List<Waiting> allWaitings = waitingService.findAllByBoard(board);
+        if(!allWaitings.isEmpty())
+        {
+            for(Waiting waiting : allWaitings)
+            {
+                if(!waiting.getIsValid()) continue;
+                ManagementDTO waitingDTO = new ManagementDTO();
+                waitingDTO.setWaitingId(waiting.getId());
+                waitingDTO.setName(waiting.getUser().getName());
+                waitingDTO.setMajor(waiting.getUser().getMajor());
+                waitingDTO.setContent(waiting.getContent());
+                waitingList.add(waitingDTO);
+            }
+        }
+
+        List<ManagementDTO> teamList = new ArrayList<>();
+        List<Team> allTeams = teamService.findTeamsByBoard(board);
+        if(!allTeams.isEmpty())
+        {
+            for(Team team : allTeams)
+            {
+                if(team.getUser().getId() == user.getId() || !team.getIsValid()) continue;
+                ManagementDTO teamDTO = new ManagementDTO();
+                teamDTO.setTeamId(team.getId());
+                teamDTO.setName(team.getUser().getName());
+                teamDTO.setTel(team.getUser().getTel());
+                teamDTO.setMajor(team.getUser().getMajor());
+
+                teamList.add(teamDTO);
+            }
+        }
+
+        model.addAttribute("waitingList", waitingList);
+        model.addAttribute("teamList", teamList);
+        model.addAttribute("currentMenu", "one");
+        return "learning_core/management";
+    }
+
+    @PostMapping("/approve/{id}")
+    public String waitingApprove(@PathVariable long id, Model model)
+    {
+        Optional<Waiting> findWaiting = waitingService.findByID(id);
+        if(findWaiting.isEmpty()) return "redirect:/learning_core/mentor";
+
+        Waiting waiting = findWaiting.get();
+        teamService.save(waiting.getBoard(), waiting.getUser());
+        waitingService.delete(waiting);
+
+        model.addAttribute("boardID", waiting.getBoard().getId());
+        model.addAttribute("currentMenu", "one");
+        return "redirect:/learning_core/mentor/manage/" + waiting.getBoard().getId();
+    }
+
+    @PostMapping("/reject/{id}")
+    public String teamReject(@PathVariable long id, Model model)
+    {
+        Optional<Waiting> findWaiting = waitingService.findByID(id);
+        if(findWaiting.isEmpty()) return "redirect:/learning_core/mentor";
+
+        Waiting waiting = findWaiting.get();
+        waitingService.rejectWaiting(waiting);
+
+        model.addAttribute("currentMenu", "one");
+        return "redirect:/learning_core/mentor/manage/" + waiting.getBoard().getId();
+    }
+
+    @PostMapping("/expulsion/{id}")
+    public String teamExpulsion(@PathVariable long id, Model model)
+    {
+        Optional<Team> findTeam = teamService.findById(id);
+        if(findTeam.isEmpty()) return "redirect:/learning_core/mentor";
+
+        Team team = findTeam.get();
+        teamService.expulsionTeam(team);
+
+        model.addAttribute("currentMenu", "one");
+        return "redirect:/learning_core/mentor/manage/" + team.getBoard().getId();
     }
 }

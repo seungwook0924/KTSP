@@ -77,8 +77,13 @@
       </tr>
     </table>
 
-
     <hr>
+
+    <!-- 지원자 현황 및 팀관리 버튼 -->
+    <a th:if="${boardViewDTO.mine}"
+       th:href="@{/learning_core/mentor/manage/{id}(id=${boardViewDTO.id})}"
+       class="board-select"
+       style="float: left; margin-right: 10px;">[지원자 현황 및 팀관리]</a>
 
     <button type="button" id="back"
             th:onclick="|location.href='@{/learning_core/mentor}'|"
@@ -110,6 +115,9 @@
 
     <!-- 지원 버튼 -->
     <button type="button" id="join" th:if="${boardViewDTO.join}" style="float: right;">지원</button>
+
+    <br>
+
 
   </div>
 </div>

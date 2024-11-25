@@ -342,3 +342,7 @@ textarea:focus {
     text-decoration: underline; /* 마우스를 올렸을 때 밑줄 표시 */
     text-decoration-color: blue; /* 밑줄 색상을 파란색으로 설정 */
 }
+
+.management-table{
+
+}

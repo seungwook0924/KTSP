@@ -16,7 +16,7 @@ public class Team {
 
     // Team과 Board는 1:1 관계
     // 하나의 팀은 하나의 게시글에서 만들어진다.
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE) //1:1 매핑, 지연로딩, 게시글 삭제시 팀도 삭제됨
+    @OneToOne(fetch = FetchType.LAZY) //1:1 매핑, 지연로딩
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 
@@ -25,4 +25,7 @@ public class Team {
     @ManyToOne(fetch = FetchType.LAZY) //연관관계 주인, 지연로딩
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Column(name = "is_valid", nullable = false)
+    private Boolean isValid; //추방 당했는지 여부
 }

@@ -16,7 +16,7 @@ public class Waiting {
 
     // Wating과 Board는 1:1 관계
     // 하나의 승인 대기 줄은 하나의 게시글을 가진다.
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE) //1:1 매핑, 지연로딩, 게시글 삭제시 대기줄 삭제
+    @OneToOne(fetch = FetchType.LAZY) //1:1 매핑, 지연로딩
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 
@@ -26,6 +26,9 @@ public class Waiting {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false, columnDefinition = "TEXT") // TEXT 타입으로 생성되도록 명시
-    private String content;
+    @Column(nullable = false)
+    private String content; // 소개글
+
+    @Column(name = "is_valid", nullable = false)
+    private Boolean isValid; // 거절당했는지 여부
 }
