@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,7 +23,7 @@
 
     <p style="text-align: right; font-size: 14px;">작성일 : <span th:text="*{createdAt + ' | 업데이트 날짜 : ' + updatedAt + ' | 조회수 : ' + hits}">작성일</span></p>
     <hr>
-    <h1>게시글 상세 보기</h1>
+    <h1>러닝코어</h1>
 
     <!-- 에러 메시지 -->
     <div th:if="${errorMessage}" class="error">
@@ -117,16 +117,16 @@
     <button type="button" id="join" th:if="${boardViewDTO.join}" style="float: right;">지원</button>
 
     <br>
-
+    <br>
+    <h2 class="section-title">댓글</h2>
+    <div th:replace="~{fragments/comment :: commentFragment(comments=${comments}, boardId=${boardViewDTO.id})}"></div>
 
   </div>
 </div>
 
-
 <!-- 푸터 -->
 <div th:insert="~{fragments/footer :: footer}"></div>
-
-<script src="/js/view.js"></script>
-
+<script th:src="@{/js/view.js}" defer></script>
+<script th:src="@{/js/comment.js}" defer></script>
 </body>
 </html>

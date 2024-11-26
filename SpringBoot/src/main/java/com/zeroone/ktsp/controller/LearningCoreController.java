@@ -3,10 +3,7 @@ package com.zeroone.ktsp.controller;
 import com.zeroone.ktsp.DTO.*;
 import com.zeroone.ktsp.domain.*;
 import com.zeroone.ktsp.enumeration.BoardType;
-import com.zeroone.ktsp.service.BoardService;
-import com.zeroone.ktsp.service.FileService;
-import com.zeroone.ktsp.service.TeamService;
-import com.zeroone.ktsp.service.WaitingService;
+import com.zeroone.ktsp.service.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +29,7 @@ public class LearningCoreController
     private final TeamService teamService;
     private final FileService fileService;
     private final WaitingService waitingService;
+    private final CommentService commentService;
 
     //게시글 목록
     @GetMapping
@@ -109,9 +107,19 @@ public class LearningCoreController
 
         User user = (User) session.getAttribute("user");
         Board board = findBoard.get();
+        List<Comment> findComments = commentService.findCommentsByBoard(board);
+
+        List<CommentDTO> comments = new ArrayList<>();
+        if (!findComments.isEmpty()) {
+            for (Comment comment : findComments)
+            {
+                CommentDTO commentDTO = toCommentDTO(comment);
+                comments.add(commentDTO);
+            }
+        }
 
         // 세션에서 viewedBoards 가져오기
-        @SuppressWarnings("unchecked") // session.getAttribute가 Object 타입을 반환하기 때문에 캐스팅 시 경고를 억제
+        @SuppressWarnings("unchecked") // session.getAttribute가 Object 타입을 반환하기 때문에 캐스팅 시 경고를 억제(조회수 관련 로직)
         List<Long> viewedBoards = (List<Long>) session.getAttribute("viewedBoards");
         if (viewedBoards == null)
         {
@@ -166,6 +174,7 @@ public class LearningCoreController
         boardViewDTO.setClosed(board.getIsClosed());
         boardViewDTO.setUserName(board.getUser().getName());
 
+        model.addAttribute("comments", comments);
         model.addAttribute("boardViewDTO", boardViewDTO);
         model.addAttribute("currentMenu", "one");
         model.addAttribute("joinTeamDTO", new JoinTeamDTO());
@@ -347,5 +356,28 @@ public class LearningCoreController
 
         model.addAttribute("currentMenu", "one");
         return "redirect:/learning_core/mentor/manage/" + team.getBoard().getId();
+    }
+
+    // Comment 엔티티를 CommentDTO로 변환하는 메서드
+    private CommentDTO toCommentDTO(Comment comment) {
+        // CommentDTO 객체 생성
+        CommentDTO commentDTO = new CommentDTO();
+
+        // 기본 필드 설정
+        commentDTO.setId(comment.getId());
+        commentDTO.setComment(comment.getComment());
+        commentDTO.setUserName(comment.getUser().getName());
+        commentDTO.setCreatedAt(comment.getCreatedAt());
+        commentDTO.setMajor(comment.getUser().getMajor());
+        commentDTO.setLevelName(comment.getUser().getLevel()); // DTO의 levelName 설정 메서드 활용
+        commentDTO.setParentCommentId(comment.getParentComment() != null ? comment.getParentComment().getId() : null);
+
+        // 자식 댓글을 변환하여 childCommentDTOs에 추가
+        if (comment.getChildComments() != null && !comment.getChildComments().isEmpty())
+        {
+            for (Comment child : comment.getChildComments()) commentDTO.getChildCommentDTOs().add(toCommentDTO(child)); // 자식 댓글 변환 후 추가
+        }
+
+        return commentDTO;
     }
 }

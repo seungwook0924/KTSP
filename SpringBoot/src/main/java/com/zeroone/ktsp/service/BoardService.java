@@ -11,7 +11,8 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class BoardService {
+public class BoardService
+{
     private final BoardRepository boardRepository;
 
     // 특정 BoardType의 게시글 목록 반환

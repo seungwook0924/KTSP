@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<div th:fragment="commentFragment(comments, boardId)">
+    <!-- 댓글 작성 폼 -->
+    <form class="comment-form">
+        <input type="hidden" name="boardId" th:value="${boardId}">
+        <textarea name="content" placeholder="댓글 내용을 입력하세요" required></textarea>
+        <button type="submit">댓글 작성</button>
+    </form>
+
+    <!-- 댓글이 없는 경우 메시지 -->
+    <div th:if="${comments == null or comments.isEmpty()}">
+        <p>댓글이 없습니다.</p>
+    </div>
+
+    <!-- 댓글 리스트 -->
+    <ul class="comments-list" th:if="${comments != null and !comments.isEmpty()}">
+        <li th:each="comment : ${comments}">
+            <div class="comment">
+                <!-- 댓글 정보 -->
+                <p>
+                    <strong><span th:text="${comment.userName}"></span></strong>
+                    <span th:text="' / ' + ${comment.major}"></span>
+                    <span th:text="' / ' + ${comment.levelName}"></span>
+                    <span th:text="' / ' + ${#temporals.format(comment.createdAt, 'yy-MM-dd HH:mm')}"></span>
+                    <!-- 대댓글 작성 텍스트 -->
+                    <a href="javascript:void(0)" class="toggle-reply-form-link" style="margin-left: 10px; text-decoration: underline; color: blue;">대댓글 작성</a>
+                </p>
+
+                <!-- 대댓글 리스트 -->
+                <ul th:if="${comment.childCommentDTOs != null and !comment.childCommentDTOs.isEmpty()}" class="child-comments" style="margin-left: 20px;">
+                    <li th:each="child : ${comment.childCommentDTOs}" class="child-comment">
+                        <div>
+                            <p>
+                                <strong><span th:text="${child.userName}"></span></strong>
+                                <span th:text="' / ' + ${child.major}"></span>
+                                <span th:text="' / ' + ${child.levelName}"></span>
+                                <span th:text="' / ' + ${#temporals.format(child.createdAt, 'yy-MM-dd HH:mm')}"></span>
+                            </p>
+                            <p th:text="${child.comment}"></p>
+                        </div>
+                    </li>
+                </ul>
+
+                <!-- 대댓글 입력 폼 (대댓글 리스트 아래에 위치) -->
+                <form class="reply-form" style="display: none; margin-left: 20px;">
+                    <input type="hidden" name="boardId" th:value="${boardId}">
+                    <input type="hidden" name="parentCommentId" th:value="${comment.id}">
+                    <textarea name="content" placeholder="대댓글 내용을 입력하세요" required></textarea>
+                    <button type="submit">대댓글 작성</button>
+                </form>
+            </div>
+        </li>
+    </ul>
+</div>
+<script src="/js/comment.js" defer></script>
+</body>
+</html>
