@@ -6,10 +6,11 @@
 <body>
 <div th:fragment="commentFragment(comments, boardId)">
     <!-- 댓글 작성 폼 -->
-    <form class="comment-form">
-        <input type="hidden" name="boardId" th:value="${boardId}">
-        <textarea name="content" placeholder="댓글 내용을 입력하세요" required></textarea>
-        <button type="submit">댓글 작성</button>
+    <form class="comment-form" style="display: flex; align-items: center; gap: 10px;">
+        <input type="text" name="content" class="add-input" placeholder="댓글 내용을 입력하세요" required style="flex-grow: 1; font-size: 14px;">
+        <button type="submit" class="submit-button" style="padding: 0; background-color: transparent; border: none; cursor: pointer;">
+            <img src="/images/write.png" alt="작성" style="width: 32px; height: 32px;">
+        </button>
     </form>
 
     <!-- 댓글이 없는 경우 메시지 -->
@@ -28,8 +29,9 @@
                     <span th:text="' / ' + ${comment.levelName}"></span>
                     <span th:text="' / ' + ${#temporals.format(comment.createdAt, 'yy-MM-dd HH:mm')}"></span>
                     <!-- 대댓글 작성 텍스트 -->
-                    <a href="javascript:void(0)" class="toggle-reply-form-link" style="margin-left: 10px; text-decoration: underline; color: blue;">대댓글 작성</a>
+                    <a href="javascript:void(0)" class="toggle-reply-form-link" style="margin-left: 10px; text-decoration: underline; color: black;">대댓글 작성</a>
                 </p>
+                <p th:text="${comment.comment}"></p>
 
                 <!-- 대댓글 리스트 -->
                 <ul th:if="${comment.childCommentDTOs != null and !comment.childCommentDTOs.isEmpty()}" class="child-comments" style="margin-left: 20px;">
@@ -46,12 +48,14 @@
                     </li>
                 </ul>
 
-                <!-- 대댓글 입력 폼 (대댓글 리스트 아래에 위치) -->
-                <form class="reply-form" style="display: none; margin-left: 20px;">
+                <!-- 대댓글 입력 폼 -->
+                <form class="reply-form" style="display: none; margin-left: 20px; width: 100%; align-items: center; gap: 10px;">
                     <input type="hidden" name="boardId" th:value="${boardId}">
                     <input type="hidden" name="parentCommentId" th:value="${comment.id}">
-                    <textarea name="content" placeholder="대댓글 내용을 입력하세요" required></textarea>
-                    <button type="submit">대댓글 작성</button>
+                    <input type="text" name="content" class="add-input" placeholder="대댓글 내용을 입력하세요" required style="flex-grow: 1; font-size: 14px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+                    <button type="submit" class="submit-button" style="padding: 0; background-color: transparent; border: none; cursor: pointer;">
+                        <img src="/images/write.png" alt="작성" style="width: 32px; height: 32px;">
+                    </button>
                 </form>
             </div>
         </li>

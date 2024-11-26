@@ -1,7 +1,7 @@
 // 댓글 작성 폼 처리
 document.addEventListener("DOMContentLoaded", function () {
     const commentForm = document.querySelector(".comment-form");
-    const contentInput = commentForm.querySelector("textarea[name='content']");
+    const contentInput = commentForm.querySelector("input[name='content']");
     const boardIdInput = commentForm.querySelector("input[name='boardId']");
 
     commentForm.addEventListener("submit", function (event) {
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const boardId = form.querySelector("input[name='boardId']").value;
             const parentCommentId = form.querySelector("input[name='parentCommentId']").value;
-            const content = form.querySelector("textarea[name='content']").value.trim();
+            const content = form.querySelector("input[name='content']").value.trim();
 
             if (!content) {
                 alert("대댓글 내용을 입력해주세요.");
@@ -94,8 +94,10 @@ document.addEventListener("DOMContentLoaded", function () {
         link.addEventListener("click", function () {
             const commentDiv = link.closest(".comment");
             const replyForm = commentDiv.querySelector(".reply-form");
+
+            // 토글 로직
             if (replyForm.style.display === "none" || !replyForm.style.display) {
-                replyForm.style.display = "block";
+                replyForm.style.display = "flex";
             } else {
                 replyForm.style.display = "none";
             }
