@@ -81,28 +81,32 @@
     </table>
 
     <hr>
-
     <!-- 지원자 현황 및 팀관리 버튼 -->
     <a th:if="${boardViewDTO.mine}"
-       th:href="@{/learning_core/mentor/manage/{id}(id=${boardViewDTO.id}, type=${boardViewDTO.type})}"
+       th:href="@{/team/manage/{id}(id=${boardViewDTO.id}, sidebarType=${sidebarType}, boardType=${currentMenu})}"
        class="board-select"
        style="float: left; margin-right: 10px; color: blue">[지원자 현황 및 팀관리]</a>
 
-    <button type="button" id="back"
-            th:onclick="|location.href='@{/mentor}'|"
-            style="float: right;">목록
-    </button>
-    <form id="deleteForm" th:action="@{/delete/{id}(id=${boardViewDTO.id})}" method="post" style="float: right; margin-left: 10px;">
-      <!-- 게시글 타입(히든) -->
-      <input type="hidden" name="type" th:value="${boardViewDTO.type}">
-      <button type="button" th:if="${boardViewDTO.mine}" onclick="confirmDelete()">삭제</button>
-    </form>
-    <a th:if="${boardViewDTO.mine}"
-       th:href="@{/update/{id}(id=${boardViewDTO.id}, sidebarType=${sidebarType}, boardType=${currentMenu})}"
-       class="button-link"
-       style="float: right;">
-      수정
-    </a>
+    <div class="button-container" style="display: flex; justify-content: flex-end; gap: 5px; margin-top: 20px;">
+      <!-- 삭제 버튼 -->
+      <form id="deleteForm" th:action="@{/delete/{id}(id=${boardViewDTO.id})}" method="post" style="margin: 0;">
+        <input type="hidden" name="type" th:value="${boardViewDTO.type}">
+        <button type="button" th:if="${boardViewDTO.mine}" onclick="confirmDelete()">삭제</button>
+      </form>
+
+      <!-- 수정 버튼 -->
+      <a th:if="${boardViewDTO.mine}"
+         th:href="@{/update/{id}(id=${boardViewDTO.id}, sidebarType=${sidebarType}, boardType=${currentMenu})}"
+         class="button-link">
+        수정
+      </a>
+
+      <!-- 목록 버튼 -->
+      <a id="back" class="button-link"
+         th:href="@{/{board}(board=${currentMenu})}">
+        목록
+      </a>
+    </div>
 
 
     <!-- 지원하기 모달 -->
