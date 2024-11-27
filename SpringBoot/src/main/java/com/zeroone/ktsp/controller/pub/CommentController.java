@@ -1,10 +1,11 @@
-package com.zeroone.ktsp.controller;
+package com.zeroone.ktsp.controller.pub;
 
 import com.zeroone.ktsp.domain.Board;
 import com.zeroone.ktsp.domain.Comment;
 import com.zeroone.ktsp.domain.User;
 import com.zeroone.ktsp.service.BoardService;
 import com.zeroone.ktsp.service.CommentService;
+import com.zeroone.ktsp.util.MethodUtil;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,11 +25,12 @@ public class CommentController
 {
     private final CommentService commentService;
     private final BoardService boardService;
+    private final MethodUtil methodUtil;
 
     @PostMapping("/add")
     public ResponseEntity<String> addComment(@RequestParam String content, @RequestParam Long boardId, HttpSession session)
     {
-        User user = (User) session.getAttribute("user");
+        User user = methodUtil.getSessionUser(session);
         Optional<Board> findBoard = boardService.findById(boardId);
         if(findBoard.isEmpty()) return ResponseEntity.status(404).body("Board not found");
         Board board = findBoard.get();
@@ -39,7 +41,7 @@ public class CommentController
     @PostMapping("/addReply")
     public ResponseEntity<String> addReply(@RequestParam String content, @RequestParam Long boardId, @RequestParam Long parentCommentId, HttpSession session)
     {
-        User user = (User) session.getAttribute("user");
+        User user = methodUtil.getSessionUser(session);
         Optional<Board> findBoard = boardService.findById(boardId);
         if(findBoard.isEmpty()) return ResponseEntity.status(404).body("게시글을 찾을 수 없습니다.");
         Board board = findBoard.get();

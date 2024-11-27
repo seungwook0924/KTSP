@@ -1,4 +1,4 @@
-package com.zeroone.ktsp.controller;
+package com.zeroone.ktsp.controller.pub;
 
 import com.zeroone.ktsp.DTO.JoinTeamDTO;
 import com.zeroone.ktsp.DTO.ManagementDTO;

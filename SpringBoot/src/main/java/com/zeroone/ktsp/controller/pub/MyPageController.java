@@ -1,4 +1,4 @@
-package com.zeroone.ktsp.controller;
+package com.zeroone.ktsp.controller.pub;
 
 import com.zeroone.ktsp.DTO.UpdateUserDTO;
 import com.zeroone.ktsp.domain.User;

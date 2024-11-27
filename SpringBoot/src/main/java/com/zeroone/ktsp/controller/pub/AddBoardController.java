@@ -1,4 +1,4 @@
-package com.zeroone.ktsp.controller;
+package com.zeroone.ktsp.controller.pub;
 
 import com.zeroone.ktsp.DTO.AddBoardDTO;
 import com.zeroone.ktsp.domain.Board;
@@ -55,7 +55,7 @@ public class AddBoardController
             addBoardDTO.setType(BoardType.major3);
             addBoardDTO.setTeamSize((byte) 6);
         }
-        else if(boardType.equals("makeTeam"))
+        else if(boardType.equals("projectContest"))
         {
             addBoardDTO.setType(BoardType.project_contest);
             addBoardDTO.setTeamSize((byte) 6);

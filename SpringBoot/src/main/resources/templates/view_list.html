@@ -23,11 +23,7 @@
 
   <!-- 콘텐츠 영역 -->
   <div class="content">
-    <h1 th:switch="${sidebarType}">
-      <span th:case="'learningCore'">러닝코어</span>
-      <span th:case="'majorLearner'">메이저러너</span>
-      <span th:case="'projectContest'">공모전·프로젝트</span>
-    </h1>
+    <h1 th:text="${title}">타이틀</h1>
     <hr>
 
     <!-- 데이터가 없는 경우 -->

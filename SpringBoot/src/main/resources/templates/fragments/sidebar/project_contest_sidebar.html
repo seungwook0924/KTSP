@@ -4,9 +4,8 @@
 <div th:fragment="project_contest_sidebar">
   <aside class="sidebar">
     <ul>
-      <li><a href="/project" th:classappend="${currentMenu == 'description'} ? 'active' : ''">프로젝트·공모전</a></li>
-      <li><a href="#" th:classappend="${currentMenu == 'joinTeam'} ? 'active' : ''">팀 들어가기</a></li>
-      <li><a href="#" th:classappend="${currentMenu == 'makeTeam'} ? 'active' : ''">팀 만들기</a></li>
+      <li><a href="/project_contest" th:classappend="${currentMenu == 'description'} ? 'active' : ''">프로젝트·공모전</a></li>
+      <li><a href="/projectContest" th:classappend="${currentMenu == 'projectContest'} ? 'active' : ''">팀 들어가기</a></li>
     </ul>
   </aside>
 </div>

@@ -1,4 +1,4 @@
-package com.zeroone.ktsp.controller;
+package com.zeroone.ktsp.controller.pub;
 
 import com.zeroone.ktsp.DTO.LoginDTO;
 import com.zeroone.ktsp.DTO.RegisterDTO;
@@ -22,21 +22,21 @@ public class HomeController {
     public String learningCore(Model model)
     {
         model.addAttribute("currentMenu", "description");
-        return "learning_core/main";
+        return "main_pages/learning_core";
     }
 
     @GetMapping("/major_learner")
     public String majorLearner(Model model)
     {
         model.addAttribute("currentMenu", "description");
-        return "major_learner/main";
+        return "main_pages/major_learner";
     }
 
     @GetMapping("/project_contest")
     public String challengeLearner(Model model)
     {
         model.addAttribute("currentMenu", "description");
-        return "project_contest/main";
+        return "main_pages/project_contest";
     }
 
     @GetMapping("/introduction")

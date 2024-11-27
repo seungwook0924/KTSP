@@ -1,4 +1,4 @@
-package com.zeroone.ktsp.controller;
+package com.zeroone.ktsp.controller.pub;
 
 import com.zeroone.ktsp.DTO.BoardViewDTO;
 import com.zeroone.ktsp.DTO.CommentDTO;
@@ -7,7 +7,6 @@ import com.zeroone.ktsp.domain.Board;
 import com.zeroone.ktsp.domain.Comment;
 import com.zeroone.ktsp.domain.FileMapping;
 import com.zeroone.ktsp.domain.User;
-import com.zeroone.ktsp.enumeration.BoardType;
 import com.zeroone.ktsp.service.BoardService;
 import com.zeroone.ktsp.service.CommentService;
 import com.zeroone.ktsp.service.FileService;
