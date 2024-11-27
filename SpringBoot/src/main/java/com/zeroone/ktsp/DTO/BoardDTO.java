@@ -1,5 +1,6 @@
 package com.zeroone.ktsp.DTO;
 
+import com.zeroone.ktsp.enumeration.BoardType;
 import lombok.Getter;
 import lombok.Setter;
 

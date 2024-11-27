@@ -34,33 +34,50 @@ public class AddBoardController
         {
             addBoardDTO.setType(BoardType.mentor);
             addBoardDTO.setTeamSize((byte) 2);
+            model.addAttribute("addTitle", "러닝코어 - 가르치미 게시글 작성");
         }
         else if(boardType.equals("mentee"))
         {
             addBoardDTO.setType(BoardType.mentee);
             addBoardDTO.setTeamSize((byte) 2);
+            model.addAttribute("addTitle", "러닝코어 - 배우미 게시글 작성");
         }
         else if(boardType.equals("major1"))
         {
             addBoardDTO.setType(BoardType.major1);
             addBoardDTO.setTeamSize((byte) 6);
+            model.addAttribute("addTitle", "메이저러너 - 전공 학습 공동체 게시글 작성");
         }
         else if(boardType.equals("major2"))
         {
             addBoardDTO.setType(BoardType.major2);
             addBoardDTO.setTeamSize((byte) 6);
+            model.addAttribute("addTitle", "메이저러너 - 신입·재입학생 게시글 작성");
         }
         else if(boardType.equals("major3"))
         {
             addBoardDTO.setType(BoardType.major3);
             addBoardDTO.setTeamSize((byte) 6);
+            model.addAttribute("addTitle", "메이저러너 - 전과·편입학생 게시글 작성");
         }
         else if(boardType.equals("projectContest"))
         {
             addBoardDTO.setType(BoardType.project_contest);
             addBoardDTO.setTeamSize((byte) 6);
+            model.addAttribute("addTitle", "프로젝트·공모전 게시글 작성");
         }
-        else addBoardDTO.setType(BoardType.notice);
+        else if(boardType.equals("notice"))
+        {
+            addBoardDTO.setType(BoardType.notice);
+            addBoardDTO.setTeamSize((byte) 1);
+            model.addAttribute("addTitle", "공지사항 작성");
+        }
+        else
+        {
+            addBoardDTO.setType(BoardType.report);
+            addBoardDTO.setTeamSize((byte) 1);
+            model.addAttribute("addTitle", "불편 접수 게시글 작성");
+        }
 
         model.addAttribute("sidebarType", sidebarType);
         model.addAttribute("currentMenu", boardType);

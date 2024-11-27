@@ -7,10 +7,12 @@ import com.zeroone.ktsp.domain.Board;
 import com.zeroone.ktsp.domain.Comment;
 import com.zeroone.ktsp.domain.FileMapping;
 import com.zeroone.ktsp.domain.User;
+import com.zeroone.ktsp.enumeration.UserRole;
 import com.zeroone.ktsp.service.BoardService;
 import com.zeroone.ktsp.service.CommentService;
 import com.zeroone.ktsp.service.FileService;
 import com.zeroone.ktsp.service.TeamService;
+import com.zeroone.ktsp.util.MethodUtil;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +39,7 @@ public class ViewController
     private final CommentService commentService;
     private final TeamService teamService;
     private final FileService fileService;
+    private final MethodUtil methodUtil;
 
     //게시글 상세보기
     @GetMapping("/{id}")
@@ -115,6 +118,9 @@ public class ViewController
         boardViewDTO.setClosed(board.getIsClosed());
         boardViewDTO.setUserName(board.getUser().getName());
         boardViewDTO.setType(board.getType());
+
+
+        if(methodUtil.getSessionUser(session).getRole().equals((UserRole.admin))) model.addAttribute("isAdmin", true);
 
         model.addAttribute("isClosed", board.getIsClosed());
         model.addAttribute("comments", comments);

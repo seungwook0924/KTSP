@@ -2,10 +2,13 @@ package com.zeroone.ktsp.controller;
 
 import com.zeroone.ktsp.DTO.BoardDTO;
 import com.zeroone.ktsp.domain.Board;
+import com.zeroone.ktsp.domain.User;
 import com.zeroone.ktsp.enumeration.BoardType;
+import com.zeroone.ktsp.enumeration.UserRole;
 import com.zeroone.ktsp.service.BoardService;
 import com.zeroone.ktsp.service.TeamService;
 import com.zeroone.ktsp.util.MethodUtil;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -71,6 +74,24 @@ public class CategoriesController {
     {
         List<BoardDTO> boardsList = getBoardsList(BoardType.project_contest);
         setModelAttributes(model, "프로젝트·콘테스트", "projectContest", "projectContest", boardsList);
+        return "view_list";
+    }
+
+    @GetMapping("/notice")
+    public String showNotice(Model model, HttpSession session)
+    {
+        List<BoardDTO> boardsList = getBoardsList(BoardType.notice);
+        User user = methodUtil.getSessionUser(session);
+        if(user.getRole().equals(UserRole.admin)) model.addAttribute("isAdmin", true);
+        setModelAttributes(model, "공지사항", "community", "notice", boardsList);
+        return "view_list";
+    }
+
+    @GetMapping("/report")
+    public String showReport(Model model)
+    {
+        List<BoardDTO> boardsList = getBoardsList(BoardType.report);
+        setModelAttributes(model, "불편 접수", "community", "report", boardsList);
         return "view_list";
     }
 

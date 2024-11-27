@@ -20,6 +20,7 @@
     <div th:case="'learningCore'" th:insert="~{fragments/sidebar/learning_core_sidebar :: learning_core_sidebar}"></div>
     <div th:case="'majorLearner'" th:insert="~{fragments/sidebar/major_learner_sidebar :: major_learner_sidebar}"></div>
     <div th:case="'projectContest'" th:insert="~{fragments/sidebar/project_contest_sidebar :: project_contest_sidebar}"></div>
+    <div th:case="'community'" th:insert="~{fragments/sidebar/community_sidebar :: community_sidebar}"></div>
   </div>
 
   <!-- 콘텐츠 영역 -->
@@ -43,13 +44,13 @@
         <th>작성자</th>
         <td th:text="*{userName}">작성자 이름</td>
       </tr>
-      <tr>
-        <th>팀원 수</th>
+      <tr th:if="${(currentMenu != 'notice') and (currentMenu != 'report')}">
+        <th th:if="${(currentMenu != 'notice') and (currentMenu != 'report')}">팀원 수</th>
         <td th:text="*{currentSize + '/' + teamSize}"></td>
       </tr>
       <tr>
-        <th>모집 여부</th>
-        <td th:text="${boardViewDTO.isClosed} ? '모집 마감' : '모집중'"></td>
+        <th th:if="${(currentMenu != 'notice') and (currentMenu != 'report')}">모집 여부</th>
+        <td th:text="${boardViewDTO.isClosed} ? '모집 마감' : '모집중'" th:if="${(currentMenu != 'notice') and (currentMenu != 'report')}"></td>
       </tr>
     </table>
 
@@ -82,7 +83,7 @@
 
     <hr>
     <!-- 지원자 현황 및 팀관리 버튼 -->
-    <a th:if="${boardViewDTO.mine}"
+    <a th:if="${boardViewDTO.mine and (currentMenu != 'notice') and (currentMenu != 'report')}"
        th:href="@{/team/manage/{id}(id=${boardViewDTO.id}, sidebarType=${sidebarType}, boardType=${currentMenu})}"
        class="board-select"
        style="float: left; margin-right: 10px; color: blue">[지원자 현황 및 팀관리]</a>
@@ -100,7 +101,7 @@
          style="float: right;">수정
       </a>
 
-      <a th:if="(${!isClosed}) and (${boardViewDTO.mine})"
+      <a th:if="${!isClosed and boardViewDTO.mine and (currentMenu != 'notice') and (currentMenu != 'report')}"
          href="javascript:void(0);"
          onclick="closeBoard()"
          class="button-link"
@@ -125,7 +126,7 @@
     <input type="hidden" id="boardId" th:value="${boardViewDTO.id}">
 
     <!-- 지원 버튼 -->
-    <button type="button" id="join" th:if="${boardViewDTO.join}" style="float: right;">지원</button>
+    <button type="button" id="join" th:if="${(boardViewDTO.join)  and currentMenu != 'report' and currentMenu != 'notice'}" style="float: right;">지원</button>
 
     <br>
     <br>
