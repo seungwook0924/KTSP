@@ -16,14 +16,17 @@
 <!-- 사이드바와 콘텐츠를 포함하는 컨테이너 -->
 <div class="main-container" style="display: flex; max-width: 1200px; margin: 0 auto; padding-top: 20px;">
   <!-- 사이드바 -->
-  <div th:insert="~{fragments/sidebar/learning_core_sidebar :: learning_core_sidebar}"></div>
+  <div th:switch="${sidebarType}">
+    <div th:case="'learningCore'" th:insert="~{fragments/sidebar/learning_core_sidebar :: learning_core_sidebar}"></div>
+    <div th:case="'majorLearner'" th:insert="~{fragments/sidebar/major_learner_sidebar :: major_learner_sidebar}"></div>
+    <div th:case="'projectContest'" th:insert="~{fragments/sidebar/project_contest_sidebar :: project_contest_sidebar}"></div>
+  </div>
 
   <!-- 콘텐츠 영역 -->
   <div class="content" th:object="${boardViewDTO}">
-
     <p style="text-align: right; font-size: 14px;">작성일 : <span th:text="*{createdAt + ' | 업데이트 날짜 : ' + updatedAt + ' | 조회수 : ' + hits}">작성일</span></p>
     <hr>
-    <h1>러닝코어</h1>
+    <h1>게시글 상세보기</h1>
 
     <!-- 에러 메시지 -->
     <div th:if="${errorMessage}" class="error">
@@ -81,21 +84,25 @@
 
     <!-- 지원자 현황 및 팀관리 버튼 -->
     <a th:if="${boardViewDTO.mine}"
-       th:href="@{/learning_core/mentor/manage/{id}(id=${boardViewDTO.id})}"
+       th:href="@{/learning_core/mentor/manage/{id}(id=${boardViewDTO.id}, type=${boardViewDTO.type})}"
        class="board-select"
-       style="float: left; margin-right: 10px;">[지원자 현황 및 팀관리]</a>
+       style="float: left; margin-right: 10px; color: blue">[지원자 현황 및 팀관리]</a>
 
     <button type="button" id="back"
-            th:onclick="|location.href='@{/learning_core/mentor}'|"
+            th:onclick="|location.href='@{/mentor}'|"
             style="float: right;">목록
     </button>
-    <form id="deleteForm" th:action="@{/learning_core/mentor/delete/{id}(id=${boardViewDTO.id})}" method="post" style="float: right; margin-left: 10px;">
+    <form id="deleteForm" th:action="@{/delete/{id}(id=${boardViewDTO.id})}" method="post" style="float: right; margin-left: 10px;">
+      <!-- 게시글 타입(히든) -->
+      <input type="hidden" name="type" th:value="${boardViewDTO.type}">
       <button type="button" th:if="${boardViewDTO.mine}" onclick="confirmDelete()">삭제</button>
     </form>
-    <button type="button" id="modify" th:if="${boardViewDTO.mine}"
-            th:onclick="|location.href='@{/learning_core/mentor/update/{id}(id=${boardViewDTO.id})}'|"
-            style="float: right; margin-left: 10px;">수정
-    </button>
+    <a th:if="${boardViewDTO.mine}"
+       th:href="@{/update/{id}(id=${boardViewDTO.id}, sidebarType=${sidebarType}, boardType=${currentMenu})}"
+       class="button-link"
+       style="float: right;">
+      수정
+    </a>
 
 
     <!-- 지원하기 모달 -->

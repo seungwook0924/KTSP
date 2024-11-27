@@ -7,6 +7,7 @@
 <div th:fragment="commentFragment(comments, boardId)">
     <!-- 댓글 작성 폼 -->
     <form class="comment-form" style="display: flex; align-items: center; gap: 10px;">
+        <input type="hidden" name="boardId" th:value="${boardId}">
         <input type="text" name="content" class="add-input" placeholder="댓글 내용을 입력하세요" required style="flex-grow: 1; font-size: 14px;">
         <button type="submit" class="submit-button" style="padding: 0; background-color: transparent; border: none; cursor: pointer;">
             <img src="/images/write.png" alt="작성" style="width: 32px; height: 32px;">

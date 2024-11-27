@@ -47,19 +47,19 @@ document.getElementById("files").addEventListener("change", function () {
 });
 
 //파일 크기 초과 방지 로직
-function checkFileSize(input) {
+window.checkFileSize = function(input) {
     const maxSize = 50 * 1024 * 1024; // 50MB
-    let totalSize = 0; // 총 파일 크기 합계 변수
+    let totalSize = 0;
 
     for (const file of input.files) {
-        totalSize += file.size; // 파일 크기 누적
-        if (totalSize > maxSize) { // 총합이 최대 크기를 초과하면 경고
+        totalSize += file.size;
+        if (totalSize > maxSize) {
             alert(`선택된 파일들의 총 크기가 너무 큽니다. (파일 총합 최대 크기: 50MB)`);
             input.value = ""; // 입력 초기화
             break;
         }
     }
-}
+};
 
 //제목의 글자수를 제한하는 로직
 document.getElementById("title").addEventListener("input", function () {
@@ -72,41 +72,4 @@ document.getElementById("title").addEventListener("input", function () {
     } else {
         warningElement.style.display = "none"; // 경고 메시지 숨김
     }
-});
-
-let isFormSubmitted = false;
-
-// beforeunload 이벤트 핸들러
-function beforeUnloadHandler(e) {
-    if (!isFormSubmitted) {
-        e.preventDefault();
-        e.returnValue = ''; // 최신 브라우저를 위한 설정
-    }
-}
-
-let isFormSubmitted = false;
-
-// beforeunload 이벤트 핸들러
-function beforeUnloadHandler(e) {
-    if (!isFormSubmitted) {
-        e.preventDefault();
-        e.returnValue = ''; // 최신 브라우저를 위한 설정
-    }
-}
-
-// 페이지를 떠날 때 경고 메시지 표시
-window.addEventListener('beforeunload', beforeUnloadHandler);
-
-// 폼 제출 시 이벤트 제거
-document.querySelector('form').addEventListener('submit', function (event) {
-    console.log("Form is being submitted...");
-    isFormSubmitted = true;
-
-    // beforeunload 이벤트 제거
-    window.removeEventListener('beforeunload', beforeUnloadHandler);
-
-    // 디버깅: 제출 이벤트 이후를 로그로 확인
-    setTimeout(() => {
-        console.log("Submit event completed. Listener removed.");
-    }, 500);
 });

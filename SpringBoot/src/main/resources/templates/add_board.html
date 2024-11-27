@@ -15,7 +15,11 @@
 <!-- 사이드바와 콘텐츠를 포함하는 컨테이너 -->
 <div class="main-container" style="display: flex; max-width: 1200px; margin: 0 auto; padding-top: 20px;">
   <!-- 사이드바 삽입 -->
-  <div th:insert="~{fragments/sidebar/learning_core_sidebar :: learning_core_sidebar}"></div>
+  <div th:switch="${sidebarType}">
+    <div th:case="'learningCore'" th:insert="~{fragments/sidebar/learning_core_sidebar :: learning_core_sidebar}"></div>
+    <div th:case="'majorLearner'" th:insert="~{fragments/sidebar/major_learner_sidebar :: major_learner_sidebar}"></div>
+    <div th:case="'projectContest'" th:insert="~{fragments/sidebar/project_contest_sidebar :: project_contest_sidebar}"></div>
+  </div>
 
   <!-- 콘텐츠 영역 -->
   <div class="content">
@@ -28,7 +32,11 @@
     </div>
 
     <!-- 글 작성 폼 -->
-    <form th:action="@{/learning_core/mentor/add_board}" method="post" enctype="multipart/form-data" style="margin-top: 20px;">
+    <form th:action="@{/add_board}" method="post" enctype="multipart/form-data">
+      <!-- 히든 필드(게시판 타입과 팀 사이즈) -->
+      <input type="hidden" name="type" th:value="${addBoardDTO.type}">
+      <input type="hidden" name="teamSize" th:value="${addBoardDTO.teamSize}">
+
       <!-- 제목 입력 -->
       <div style="margin-bottom: 15px;">
         <label for="title" class="add-label">제목</label>
@@ -56,8 +64,10 @@
 
       <!-- 제출 버튼 -->
       <div style="text-align: right;">
+        <input type="hidden" name="sidebarType" th:value="${sidebarType}">
+        <input type="hidden" name="boardType" th:value="${currentMenu}">
         <button type="submit">작성 완료</button>
-        <button type="button" id="cancel" th:onclick="|location.href='@{/learning_core/mentor}'|" style="float: right;">취소</button>
+        <button type="button" id="cancel" th:href="@{/add_board}" style="float: right;">취소</button>
       </div>
     </form>
 

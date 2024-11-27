@@ -15,7 +15,11 @@
 <!-- 사이드바와 콘텐츠를 포함하는 컨테이너 -->
 <div class="main-container" style="display: flex; max-width: 1200px; margin: 0 auto; padding-top: 20px;">
   <!-- 사이드바 삽입 -->
-  <div th:insert="~{fragments/sidebar/learning_core_sidebar :: learning_core_sidebar}"></div>
+  <div th:switch="${sidebarType}">
+    <div th:case="'learningCore'" th:insert="~{fragments/sidebar/learning_core_sidebar :: learning_core_sidebar}"></div>
+    <div th:case="'majorLearner'" th:insert="~{fragments/sidebar/major_learner_sidebar :: major_learner_sidebar}"></div>
+    <div th:case="'projectContest'" th:insert="~{fragments/sidebar/project_contest_sidebar :: project_contest_sidebar}"></div>
+  </div>
 
   <!-- 콘텐츠 영역 -->
   <div class="content">
@@ -28,7 +32,7 @@
     </div>
 
     <!-- 글 작성 폼 -->
-    <form th:action="@{/learning_core/mentor/update/{id}(id=${updateBoardDTO.id})}" method="post" style="margin-top: 20px;" enctype="multipart/form-data">
+    <form th:action="@{/update/{id}(id=${updateBoardDTO.id}, sidebarType=${sidebarType}, boardType=${currentMenu})}" method="post" style="margin-top: 20px;" enctype="multipart/form-data">
       <!-- 제목 입력 -->
       <div style="margin-bottom: 15px;">
         <label for="title" class="add-label">제목</label>
@@ -52,7 +56,7 @@
         </thead>
         <tbody>
         <tr th:if="${updateBoardDTO.fileNames == null or updateBoardDTO.fileNames.isEmpty()}" style="border-bottom: 1px solid #ddd;">
-          <td style="padding: 10px; text-align: center; color: #999;">첨부한 파일이 없습니다.</td>
+          <td style="padding: 10px; text-align: center; color: #999;">기존에 첨부한 파일이 없습니다.</td>
         </tr>
         <tr th:each="fileName : ${updateBoardDTO.fileNames}" style="border-bottom: 1px solid #ddd;">
           <td style="padding: 10px; display: flex; justify-content: space-between; align-items: center;">
@@ -66,7 +70,7 @@
 
       <!-- AJAX 삭제 요청에 사용할 URL을 저장 -->
       <input type="hidden" id="boardId" th:value="${updateBoardDTO.id}">
-      <input type="hidden" id="deleteUrl" th:value="@{/learning_core/mentor/delete-file}">
+      <input type="hidden" id="deleteUrl" th:value="@{/delete/delete-file}">
 
       <br>
 
@@ -86,10 +90,7 @@
       <div style="text-align: right;">
         <button type="submit">작성 완료</button>
 
-        <button type="button" id="cancel"
-                th:onclick="|location.href='@{/learning_core/mentor/{id}(id=${updateBoardDTO.id})}'|"
-                style="float: right;">취소
-        </button>
+        <button type="button" id="cancel" th:href="@{/add_board}" style="float: right;">취소</button>
       </div>
     </form>
   </div>

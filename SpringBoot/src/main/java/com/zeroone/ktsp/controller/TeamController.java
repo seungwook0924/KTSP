@@ -1,9 +1,15 @@
 package com.zeroone.ktsp.controller;
 
-import com.zeroone.ktsp.DTO.*;
-import com.zeroone.ktsp.domain.*;
+import com.zeroone.ktsp.DTO.JoinTeamDTO;
+import com.zeroone.ktsp.DTO.ManagementDTO;
+import com.zeroone.ktsp.domain.Board;
+import com.zeroone.ktsp.domain.Team;
+import com.zeroone.ktsp.domain.User;
+import com.zeroone.ktsp.domain.Waiting;
 import com.zeroone.ktsp.enumeration.BoardType;
-import com.zeroone.ktsp.service.*;
+import com.zeroone.ktsp.service.BoardService;
+import com.zeroone.ktsp.service.TeamService;
+import com.zeroone.ktsp.service.WaitingService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,26 +17,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.util.HtmlUtils;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Controller
-@RequestMapping("/learning_core/mentor")
+@RequestMapping("/team")
 @RequiredArgsConstructor
-public class LearningCoreController
+public class TeamController
 {
     private final BoardService boardService;
     private final TeamService teamService;
-    private final FileService fileService;
     private final WaitingService waitingService;
-    private final CommentService commentService;
-
 
     @PostMapping("/join/{boardId}")
     public ResponseEntity<String> joinTeam(@PathVariable Long boardId, @RequestBody JoinTeamDTO joinTeamDTO, HttpSession session)
@@ -52,14 +52,14 @@ public class LearningCoreController
     }
 
     @GetMapping("/manage/{id}")
-    public String showManageView(@PathVariable long id, HttpSession session, Model model)
+    public String showManageView(@PathVariable long id, @RequestParam BoardType type, HttpSession session, Model model)
     {
         User user = (User) session.getAttribute("user");
         Optional<Board> findBoard = boardService.findById(id);
 
-        if(findBoard.isEmpty()) return "redirect:/learning_core/mentor"; //게시글이 존재하지 않을 때 리다이렉트
+        if(findBoard.isEmpty()) return "redirect:/" + type; //게시글이 존재하지 않을 때 리다이렉트
         Board board = findBoard.get();
-        if(user.getId() != board.getUser().getId()) return "redirect:/learning_core/mentor"; //본인이 아닌 다른 사람이 접근했을 때 리다이렉트
+        if(user.getId() != board.getUser().getId()) return "redirect:/" + type; //본인이 아닌 다른 사람이 접근했을 때 리다이렉트
 
         List<ManagementDTO> waitingList = new ArrayList<>();
         List<Waiting> allWaitings = waitingService.findAllByBoard(board);

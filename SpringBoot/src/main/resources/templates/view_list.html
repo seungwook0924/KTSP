@@ -15,20 +15,28 @@
 <!-- 사이드바와 콘텐츠를 포함하는 컨테이너 -->
 <div class="main-container" style="display: flex; max-width: 1200px; margin: 0 auto; padding-top: 20px;">
   <!-- 사이드바 삽입 -->
-  <div th:insert="~{fragments/sidebar/learning_core_sidebar :: learning_core_sidebar}"></div>
+  <div th:switch="${sidebarType}">
+    <div th:case="'learningCore'" th:insert="~{fragments/sidebar/learning_core_sidebar :: learning_core_sidebar}"></div>
+    <div th:case="'majorLearner'" th:insert="~{fragments/sidebar/major_learner_sidebar :: major_learner_sidebar}"></div>
+    <div th:case="'projectContest'" th:insert="~{fragments/sidebar/project_contest_sidebar :: project_contest_sidebar}"></div>
+  </div>
 
   <!-- 콘텐츠 영역 -->
   <div class="content">
-    <h1>러닝코어 - 가르치미</h1>
+    <h1 th:switch="${sidebarType}">
+      <span th:case="'learningCore'">러닝코어</span>
+      <span th:case="'majorLearner'">메이저러너</span>
+      <span th:case="'projectContest'">공모전·프로젝트</span>
+    </h1>
     <hr>
 
     <!-- 데이터가 없는 경우 -->
-    <div th:if="${#lists.isEmpty(mentorBoards)}" class="no-data">
+    <div th:if="${#lists.isEmpty(boards)}" class="no-data">
       게시글이 없습니다.
     </div>
 
     <!-- 데이터가 있는 경우 -->
-    <table th:if="${!#lists.isEmpty(mentorBoards)}" class="board-table">
+    <table th:if="${!#lists.isEmpty(boards)}" class="board-table">
       <thead>
       <tr>
         <th>번호</th>
@@ -42,10 +50,10 @@
       </thead>
       <tbody>
       <!-- 데이터 순회 -->
-      <tr th:each="board, stat : ${mentorBoards}" >
-        <td th:text="${#lists.size(mentorBoards) - stat.index}"></td> <!-- 글 번호 -->
+      <tr th:each="board, stat : ${boards}" >
+        <td th:text="${#lists.size(boards) - stat.index}"></td> <!-- 글 번호 -->
         <td th:text="${board.userName}"></td> <!-- 작성자 -->
-        <td class="title-column"><a class="board-select" th:text="${board.title}" th:href="@{/learning_core/mentor/{id}(id=${board.id})}">수정하기</a></td> <!-- 제목 -->
+        <td class="title-column"><a class="board-select" th:text="${board.title}" th:href="@{/boards/{id}(id=${board.id}, sidebarType=${sidebarType}, boardType=${currentMenu})}">수정하기</a></td> <!-- 제목 -->
         <td th:text="${board.currentSize} + '/' + ${board.teamSize}"></td> <!-- 현재/최대 팀원 수 -->
         <td th:text="${board.date}"></td> <!-- 작성일 -->
         <td th:text="${board.isClosed ? '모집 마감' : '모집중'}"></td> <!-- 모집 여부 -->
@@ -54,7 +62,7 @@
       </tbody>
     </table>
     <br>
-    <button type="button" id="addBoard" th:onclick="|location.href='@{/learning_core/mentor/add_board}'|" style="float: right;">글쓰기</button>
+    <a class="button-link" th:href="@{/add_board(sidebarType=${sidebarType}, boardType=${currentMenu})}" style="float: right;">글쓰기</a>
     <!-- 페이지네이션 -->
 <!--    <div class="pagination" th:if="${totalPages > 1}">-->
 <!--      <a th:href="@{'?page=0'}" th:classappend="${currentPage == 0} ? 'disabled' : ''">&laquo; 처음</a>-->

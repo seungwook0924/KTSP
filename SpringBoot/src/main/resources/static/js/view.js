@@ -5,7 +5,7 @@ function confirmDelete() {
     }
 }
 
-// HTML 요소를 올바르게 참조하기 위해 DOMContentLoaded 이벤트를 사용
+// 팀 지원 로직
 document.addEventListener("DOMContentLoaded", function () {
     const joinButton = document.getElementById("join"); // 지원 버튼
     const joinModal = document.getElementById("joinModal"); // 모달 창
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // 에러 메시지 숨기기
         modalError.style.display = "none";
 
-        const requestUrl = `/learning_core/mentor/join/${boardId}`;
+        const requestUrl = `/team/join/${boardId}`;
 
         // 서버로 데이터 전송
         fetch(requestUrl, {

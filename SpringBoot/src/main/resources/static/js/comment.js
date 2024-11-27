@@ -2,7 +2,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     const commentForm = document.querySelector(".comment-form");
     const contentInput = commentForm.querySelector("input[name='content']");
-    const boardIdInput = commentForm.querySelector("input[name='boardId']");
+    const boardIdInput = commentForm.querySelector("input[type='hidden'][name='boardId']");
 
     commentForm.addEventListener("submit", function (event) {
         event.preventDefault(); // 기본 폼 제출 방지

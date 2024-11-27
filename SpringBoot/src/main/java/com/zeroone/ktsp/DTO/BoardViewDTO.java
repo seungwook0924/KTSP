@@ -1,5 +1,6 @@
 package com.zeroone.ktsp.DTO;
 
+import com.zeroone.ktsp.enumeration.BoardType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,6 +16,7 @@ public class BoardViewDTO {
     private String updatedAt;
     private Byte teamSize;
     private Byte currentSize;
+    private BoardType type;
     private long hits;
     private boolean isClosed;
     private boolean isMine;
