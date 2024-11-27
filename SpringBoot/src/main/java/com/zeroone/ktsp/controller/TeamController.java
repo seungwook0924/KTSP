@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,6 +75,7 @@ public class TeamController
             }
         }
 
+        model.addAttribute("isClosed", board.getIsClosed());
         model.addAttribute("waitingList", waitingList);
         model.addAttribute("teamList", teamList);
         model.addAttribute("id", id);
@@ -102,38 +104,47 @@ public class TeamController
     }
 
     @PostMapping("/approve/{id}")
-    public String waitingApprove(@PathVariable long id, Model model, @RequestParam String sidebarType, @RequestParam String boardType)
+    public String waitingApprove(@PathVariable long id, @RequestParam String sidebarType, @RequestParam String boardType, RedirectAttributes redirectAttributes)
     {
         Optional<Waiting> findWaiting = waitingService.findByID(id);
         if(findWaiting.isEmpty()) return "redirect:/team/manage/" + id;
 
         Waiting waiting = findWaiting.get();
+
+        if(teamService.countValidTeamsByBoardId(waiting.getBoard().getId()) >= waiting.getBoard().getTeamSize()) //이미 팀원의 수가 최대일 경우
+        {
+            redirectAttributes.addFlashAttribute("errorMessage", "이미 팀원의 수가 최대입니다.");
+            return "redirect:/team/manage/" + waiting.getBoard().getId() + "?sidebarType=" + sidebarType + "&boardType=" + boardType;
+        }
+
         teamService.save(waiting.getBoard(), waiting.getUser());
         waitingService.delete(waiting);
 
-        model.addAttribute("boardID", waiting.getBoard().getId());
-        model.addAttribute("sidebarType", sidebarType);
-        model.addAttribute("currentMenu", boardType);
+        if(teamService.countValidTeamsByBoardId(waiting.getBoard().getId()).equals(waiting.getBoard().getTeamSize())) //팀원의 수가 최대일 경우 게시판을 닫음
+        {
+            Board updateBoard = waiting.getBoard().toBuilder()
+                    .isClosed(true)
+                    .build();
+            boardService.save(updateBoard);
+        }
+
         return "redirect:/team/manage/" + waiting.getBoard().getId() + "?sidebarType=" + sidebarType + "&boardType=" + boardType;
     }
 
     @PostMapping("/reject/{id}")
-    public String teamReject(@PathVariable long id, Model model, @RequestParam String sidebarType, @RequestParam String boardType)
+    public String teamReject(@PathVariable long id, @RequestParam String sidebarType, @RequestParam String boardType)
     {
         Optional<Waiting> findWaiting = waitingService.findByID(id);
         if(findWaiting.isEmpty()) return "redirect:/" + boardType;
 
         Waiting waiting = findWaiting.get();
         waitingService.rejectWaiting(waiting);
-        log.info("거절됨 : {} / id : {}", waiting.getUser().getName(), id);
 
-        model.addAttribute("sidebarType", sidebarType);
-        model.addAttribute("currentMenu", boardType);
         return "redirect:/team/manage/" + waiting.getBoard().getId() + "?sidebarType=" + sidebarType + "&boardType=" + boardType;
     }
 
     @PostMapping("/expulsion/{id}")
-    public String teamExpulsion(@PathVariable long id, Model model, @RequestParam String sidebarType, @RequestParam String boardType)
+    public String teamExpulsion(@PathVariable long id, @RequestParam String sidebarType, @RequestParam String boardType)
     {
         Optional<Team> findTeam = teamService.findById(id);
         if(findTeam.isEmpty()) return "redirect:/" + boardType;
@@ -141,8 +152,34 @@ public class TeamController
         Team team = findTeam.get();
         teamService.expulsionTeam(team);
 
-        model.addAttribute("sidebarType", sidebarType);
-        model.addAttribute("currentMenu", boardType);
+        if(team.getBoard().getIsClosed().equals(true)) //게시판이 닫혔을 경우
+        {
+            Board updateBoard = team.getBoard().toBuilder()
+                    .isClosed(false)
+                    .build();
+            boardService.save(updateBoard);
+        }
         return "redirect:/team/manage/" + team.getBoard().getId() + "?sidebarType=" + sidebarType + "&boardType=" + boardType;
     }
+
+    @PostMapping("/close/{boardId}")
+    public ResponseEntity<String> teamClose(@PathVariable Long boardId, HttpSession session)
+    {
+        User user = (User) session.getAttribute("user");
+
+        Optional<Board> findBoard = boardService.findById(boardId);
+        if (findBoard.isEmpty()) return ResponseEntity.badRequest().body("지원하려는 게시글을 찾을 수 없습니다.");
+
+        Board board = findBoard.get();
+
+        if(user.getId() != board.getUser().getId()) return ResponseEntity.badRequest().body("잘못된 접근입니다.");
+
+        Board updateBoard = board.toBuilder()
+                .isClosed(true)
+                .build();
+        boardService.save(updateBoard);
+
+        return ResponseEntity.ok("모집 마감 처리되었습니다.");
+    }
+
 }

@@ -28,6 +28,9 @@
     <h1>지원자 정보 및 팀원 관리</h1>
     <hr>
 
+    <!-- 에러 메시지 -->
+    <div th:if="${errorMessage}" class="error"><p th:text="${errorMessage}"></p></div>
+
     <!-- 팀 리스트 -->
     <h2 class="section-title">팀원 리스트</h2>
     <div th:if="${teamList.empty}" class="no-data">등록된 팀원이 없습니다.</div>
@@ -37,7 +40,7 @@
         <th>이름</th>
         <th>전화번호</th>
         <th>전공</th>
-        <th>관리</th>
+        <th th:if="${!isClosed}">관리</th>
       </tr>
       </thead>
       <tbody>
@@ -45,7 +48,7 @@
         <td th:text="${team.name}" style="text-align: center;">팀원 이름</td>
         <td th:text="${team.tel}" style="text-align: center;">전화번호</td>
         <td th:text="${team.major}" style="text-align: center;">전공</td>
-        <td style="text-align: center;"> <!-- 여기에 스타일 추가 -->
+        <td th:if="${!isClosed}" style="text-align: center;"> <!-- 여기에 스타일 추가 -->
           <form id="expulsion_form_${team.teamId}" th:action="@{/team/expulsion/{id}(id=${team.teamId}, sidebarType=${sidebarType}, boardType=${currentMenu})}" method="post" style="display: inline-block;">
             <button type="button" th:attr="data-team-id=${team.teamId}" onclick="confirmExpulsion(this)">추방</button>
           </form>
@@ -63,7 +66,6 @@
         <th>이름</th>
         <th>전공</th>
         <th>소개글</th>
-        <th>id</th>
         <th>관리</th>
       </tr>
       </thead>
@@ -72,9 +74,12 @@
         <td th:text="${waiting.name}" style="text-align: center; width: 15%">지원자 이름</td>
         <td th:text="${waiting.major}" style="text-align: center;">전공</td>
         <td th:text="${waiting.content}" style="text-align: center;">소개글</td>
-        <td th:text="${waiting.waitingId}" style="text-align: center;">id</td>
         <td style="text-align: center;">
-          <form id="approve" th:action="@{/team/approve/{id}(id=${waiting.waitingId}, sidebarType=${sidebarType}, boardType=${currentMenu})}" method="post" style="display: inline-block; margin: 0 5px;">
+          <form id="approve"
+                th:if="${!isClosed}"
+                th:action="@{/team/approve/{id}(id=${waiting.waitingId}, sidebarType=${sidebarType}, boardType=${currentMenu})}"
+                method="post"
+                style="display: inline-block; margin: 0 5px;">
             <button type="submit">승인</button>
           </form>
           <form th:action="@{/team/reject/{id}(id=${waiting.waitingId}, sidebarType=${sidebarType}, boardType=${currentMenu})}" method="post" style="display: inline-block; margin: 0 5px;">
@@ -86,10 +91,7 @@
     </table>
 
     <hr>
-    <a id="back" class="button-link" style="float: right;"
-       th:href="@{/boards/{id}(id=${id}, sidebarType=${sidebarType}, boardType=${currentMenu})}">
-      뒤로
-    </a>
+    <a id="back" class="button-link" style="float: right;" th:href="@{/boards/{id}(id=${id}, sidebarType=${sidebarType}, boardType=${currentMenu})}">뒤로</a>
   </div>
 </div>
 

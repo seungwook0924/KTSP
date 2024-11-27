@@ -110,16 +110,14 @@ public class ViewController
         boardViewDTO.setContent(HtmlUtils.htmlEscape(board.getContent()).replace("\n", "<br>")); // 줄바꿈 변환 처리
         boardViewDTO.setHits(board.getHits());
         boardViewDTO.setClosed(board.getIsClosed());
-        boardViewDTO.setCurrentSize(teamService.getUserCountByBoardId(board.getId()));
+        boardViewDTO.setCurrentSize(teamService.countValidTeamsByBoardId(board.getId()));
         boardViewDTO.setCreatedAt(board.getCreatedAt().format(formatter));
         boardViewDTO.setTeamSize(board.getTeamSize());
         boardViewDTO.setClosed(board.getIsClosed());
         boardViewDTO.setUserName(board.getUser().getName());
         boardViewDTO.setType(board.getType());
 
-//        if(board.getType().equals(BoardType.mentor) || board.getType().equals(BoardType.mentee)) model.addAttribute("sidebarType", "learningCore");
-//        else if(board.getType().equals(BoardType.major1) || board.getType().equals(BoardType.major2) || board.getType().equals(BoardType.major3)) model.addAttribute("sidebarType", "majorLearner");
-//        else model.addAttribute("sidebarType", "projectContest");
+        model.addAttribute("isClosed", board.getIsClosed());
         model.addAttribute("comments", comments);
         model.addAttribute("boardViewDTO", boardViewDTO);
         model.addAttribute("sidebarType", sidebarType);

@@ -73,3 +73,34 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     };
 });
+
+function closeBoard() {
+    // 히든 필드에서 boardId 값 가져오기
+    const boardId = document.getElementById("boardId").value;
+
+    if (!boardId)
+    {
+        alert("게시글 ID를 찾을 수 없습니다.");
+        return;
+    }
+
+    if (!confirm("정말로 모집을 마감하시겠습니까?")) return;
+
+    fetch(`/team/close/${boardId}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+        .then(response => {
+            if (!response.ok) return alert("오류가 발생했습니다. 나중에 다시 시도해주세요."); // 서버에서 오류 응답을 받은 경우
+            return response.text(); // 성공 메시지 반환
+        })
+        .then(message => {
+            alert(message); // 성공 메시지 출력
+            location.reload(); // 페이지 새로고침으로 상태 업데이트
+        })
+        .catch(error => {
+            alert(`오류: ${error.message}`); // 오류 메시지 출력
+        });
+}

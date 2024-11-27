@@ -67,7 +67,7 @@
         <input type="hidden" name="sidebarType" th:value="${sidebarType}">
         <input type="hidden" name="boardType" th:value="${currentMenu}">
         <button type="submit">작성 완료</button>
-        <button type="button" id="cancel" th:href="@{/add_board}" style="float: right;">취소</button>
+        <a id="back" class="button-link" style="float: right;" th:href="@{/{board}(board=${currentMenu}, sidebarType=${sidebarType})}">취소</a>
       </div>
     </form>
 

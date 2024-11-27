@@ -15,11 +15,12 @@ import java.util.Optional;
 public class TeamService
 {
     private final TeamRepository teamRepository;
+    private final BoardService boardService;
 
-    // 특정 board_id에 매핑된 user 수 반환
-    public Byte getUserCountByBoardId(long boardId)
+    // 특정 boardId에 매핑된 isValid가 true인 Team 개수를 반환
+    public Byte countValidTeamsByBoardId(long boardId)
     {
-        return teamRepository.countUsersByBoardId(boardId);
+        return teamRepository.countValidTeamsByBoardId(boardId);
     }
 
     public void save(Board board, User user)
@@ -36,6 +37,9 @@ public class TeamService
     {
         Team updateTeam = team.toBuilder().isValid(false).build();
         teamRepository.save(updateTeam);
+
+        Board updateBoard = team.getBoard().toBuilder().isClosed(true).build();
+        boardService.save(updateBoard);
     }
 
     // 특정 board에 매핑된 모든 Team 객체를 반환하는 메서드

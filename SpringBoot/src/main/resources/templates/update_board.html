@@ -90,7 +90,7 @@
       <div style="text-align: right;">
         <button type="submit">작성 완료</button>
 
-        <button type="button" id="cancel" th:href="@{/add_board}" style="float: right;">취소</button>
+        <a id="back" class="button-link" style="float: right;" th:href="@{/boards/{id}(id=${updateBoardDTO.id}, sidebarType=${sidebarType}, boardType=${currentMenu})}">취소</a>
       </div>
     </form>
   </div>

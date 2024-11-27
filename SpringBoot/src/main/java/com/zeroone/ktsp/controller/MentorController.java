@@ -1,6 +1,5 @@
 package com.zeroone.ktsp.controller;
 
-import com.zeroone.ktsp.DTO.AddBoardDTO;
 import com.zeroone.ktsp.DTO.BoardDTO;
 import com.zeroone.ktsp.domain.Board;
 import com.zeroone.ktsp.enumeration.BoardType;
@@ -11,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.format.DateTimeFormatter;
@@ -43,10 +41,10 @@ public class MentorController
             newDto.setUserName(board.getUser().getName());
             newDto.setTitle(board.getTitle());
             newDto.setTeamSize(board.getTeamSize());
-            newDto.setCurrentSize(teamService.getUserCountByBoardId(board.getId())); //같은 board에 매핑된 팀원의 수를 불러옴
+            newDto.setCurrentSize(teamService.countValidTeamsByBoardId(board.getId())); //같은 board에 매핑된 팀원의 수를 불러옴
             newDto.setHits(board.getHits());
             newDto.setDate(board.getCreatedAt().format(formatter)); //포맷터를 이용해서 반환
-            newDto.setClosed(false);
+            newDto.setClosed(board.getIsClosed());
             dtoList.add(newDto);
         }
 
