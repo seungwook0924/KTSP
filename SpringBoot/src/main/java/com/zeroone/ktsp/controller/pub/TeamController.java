@@ -9,6 +9,7 @@ import com.zeroone.ktsp.domain.Waiting;
 import com.zeroone.ktsp.service.BoardService;
 import com.zeroone.ktsp.service.TeamService;
 import com.zeroone.ktsp.service.WaitingService;
+import com.zeroone.ktsp.util.MethodUtil;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,10 +32,13 @@ public class TeamController
     private final BoardService boardService;
     private final TeamService teamService;
     private final WaitingService waitingService;
+    private final MethodUtil methodUtil;
 
     @GetMapping("/manage/{id}")
     public String showManageView(@PathVariable long id, HttpSession session, Model model, @RequestParam String sidebarType, @RequestParam String boardType)
     {
+        if(!methodUtil.isValidSidebarTypeAndMenu(sidebarType,boardType)) return "redirect:/";
+
         User user = (User) session.getAttribute("user");
         Optional<Board> findBoard = boardService.findById(id);
 
@@ -87,7 +91,7 @@ public class TeamController
     @PostMapping("/join/{boardId}")
     public ResponseEntity<String> joinTeam(@PathVariable Long boardId, @RequestBody JoinTeamDTO joinTeamDTO, HttpSession session)
     {
-        User user = (User) session.getAttribute("user");
+        User user = methodUtil.getSessionUser(session);
 
         String content = joinTeamDTO.getContent();
         if (content == null || content.isBlank()) return ResponseEntity.badRequest().body("내용을 입력해야 합니다.");
@@ -106,6 +110,8 @@ public class TeamController
     @PostMapping("/approve/{id}")
     public String waitingApprove(@PathVariable long id, @RequestParam String sidebarType, @RequestParam String boardType, RedirectAttributes redirectAttributes)
     {
+        if(!methodUtil.isValidSidebarTypeAndMenu(sidebarType,boardType)) return "redirect:/";
+
         Optional<Waiting> findWaiting = waitingService.findByID(id);
         if(findWaiting.isEmpty()) return "redirect:/team/manage/" + id;
 
@@ -134,6 +140,8 @@ public class TeamController
     @PostMapping("/reject/{id}")
     public String teamReject(@PathVariable long id, @RequestParam String sidebarType, @RequestParam String boardType)
     {
+        if(!methodUtil.isValidSidebarTypeAndMenu(sidebarType,boardType)) return "redirect:/";
+
         Optional<Waiting> findWaiting = waitingService.findByID(id);
         if(findWaiting.isEmpty()) return "redirect:/" + boardType;
 
@@ -146,6 +154,8 @@ public class TeamController
     @PostMapping("/expulsion/{id}")
     public String teamExpulsion(@PathVariable long id, @RequestParam String sidebarType, @RequestParam String boardType)
     {
+        if(!methodUtil.isValidSidebarTypeAndMenu(sidebarType,boardType)) return "redirect:/";
+
         Optional<Team> findTeam = teamService.findById(id);
         if(findTeam.isEmpty()) return "redirect:/" + boardType;
 
@@ -165,7 +175,7 @@ public class TeamController
     @PostMapping("/close/{boardId}")
     public ResponseEntity<String> teamClose(@PathVariable Long boardId, HttpSession session)
     {
-        User user = (User) session.getAttribute("user");
+        User user = methodUtil.getSessionUser(session);
 
         Optional<Board> findBoard = boardService.findById(boardId);
         if (findBoard.isEmpty()) return ResponseEntity.badRequest().body("지원하려는 게시글을 찾을 수 없습니다.");

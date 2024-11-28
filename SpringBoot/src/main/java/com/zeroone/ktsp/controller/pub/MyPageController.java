@@ -3,6 +3,7 @@ package com.zeroone.ktsp.controller.pub;
 import com.zeroone.ktsp.DTO.UpdateUserDTO;
 import com.zeroone.ktsp.domain.User;
 import com.zeroone.ktsp.service.UserService;
+import com.zeroone.ktsp.util.MethodUtil;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,13 +28,14 @@ public class MyPageController {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
+    private final MethodUtil methodUtil;
 
     private static final Pattern PHONE_PATTERN = Pattern.compile("^010-\\d{4}-\\d{4}$");
 
     @GetMapping("/update")
     public String showMypage(Model model, UpdateUserDTO updateUserDTO, HttpSession session)
     {
-        User user = (User) session.getAttribute("user");
+        User user = methodUtil.getSessionUser(session);
 
         model.addAttribute("user", user);
         updateUserDTO.setLevel(user.getLevel());
@@ -57,7 +59,7 @@ public class MyPageController {
             return "redirect:/mypage/update";
         }
 
-        User user = (User) session.getAttribute("user");
+        User user = methodUtil.getSessionUser(session);
         User updateUser = user.toBuilder()
                 .level(updateUserDTO.getLevel())
                 .tel(updateUserDTO.getTel())
@@ -76,7 +78,7 @@ public class MyPageController {
     @PostMapping("/updatePassword")
     public String updatePassword(@ModelAttribute UpdateUserDTO updateUserDTO, RedirectAttributes redirectAttributes, HttpSession session)
     {
-        User user = (User) session.getAttribute("user");
+        User user = methodUtil.getSessionUser(session);
 
         if (!updateUserDTO.getNewPassword().equals(updateUserDTO.getConfirmPassword()))
         {

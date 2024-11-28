@@ -12,6 +12,8 @@ public class BoardViewDTO {
     private String title;
     private String content;
     private String userName;
+    private String major;
+    private String level;
     private String createdAt;
     private String updatedAt;
     private Byte teamSize;

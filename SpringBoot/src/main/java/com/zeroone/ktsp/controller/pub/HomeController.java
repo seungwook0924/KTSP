@@ -4,14 +4,18 @@ import com.zeroone.ktsp.DTO.LoginDTO;
 import com.zeroone.ktsp.DTO.RegisterDTO;
 import com.zeroone.ktsp.domain.User;
 import com.zeroone.ktsp.enumeration.UserLevel;
+import com.zeroone.ktsp.util.MethodUtil;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class HomeController {
-
+@RequiredArgsConstructor
+public class HomeController
+{
+    private final MethodUtil methodUtil;
     @GetMapping("/")
     public String home()
     {
@@ -66,22 +70,12 @@ public class HomeController {
         if(session != null)
         {
             User user = (User)session.getAttribute("user");
-            String levelText = convertUserLevel(user.getLevel());
+            String levelText = methodUtil.convertUserLevel(user.getLevel());
 
             model.addAttribute("user", user);
             model.addAttribute("levelText", levelText);
         }
         model.addAttribute("currentMenu", "mypage_main");
         return "my_page/mypage";
-    }
-
-    private String convertUserLevel(UserLevel level) {
-        switch (level) {
-            case freshman: return "1학년";
-            case sophomore: return "2학년";
-            case junior: return "3학년";
-            case senior: return "4학년";
-            default: return "기타";
-        }
     }
 }

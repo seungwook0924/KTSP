@@ -27,7 +27,17 @@
   <div class="content" th:object="${boardViewDTO}">
     <p style="text-align: right; font-size: 14px;">작성일 : <span th:text="*{createdAt + ' | 업데이트 날짜 : ' + updatedAt + ' | 조회수 : ' + hits}">작성일</span></p>
     <hr>
-    <h1>게시글 상세보기</h1>
+    <h1 th:switch="${currentMenu}">
+      <span th:case="'mentor'">가르치미 - 게시글 상세보기</span>
+      <span th:case="'mentee'">배우미 - 게시글 상세보기</span>
+      <span th:case="'major1'">전공 학습 공동체 - 게시글 상세보기</span>
+      <span th:case="'major2'">신입·재입학 공동체 - 게시글 상세보기</span>
+      <span th:case="'major3'">전과·편입학생 공동체 - 게시글 상세보기</span>
+      <span th:case="'projectContest'">프로젝트·공모전 - 게시글 상세보기</span>
+      <span th:case="'notice'">공지사항 - 상세보기</span>
+      <span th:case="'report'">불편 접수 - 상세보기</span>
+      <span th:case="*">게시글 상세보기</span> <!-- 기본값 -->
+    </h1>
 
     <!-- 에러 메시지 -->
     <div th:if="${errorMessage}" class="error">
@@ -43,6 +53,14 @@
       <tr>
         <th>작성자</th>
         <td th:text="*{userName}">작성자 이름</td>
+      </tr>
+      <tr th:if="${(currentMenu != 'notice') and (currentMenu != 'report')}">
+        <th th:if="${(currentMenu != 'notice') and (currentMenu != 'report')}">전공</th>
+        <td th:text="*{major}">작성자 전공</td>
+      </tr>
+      <tr th:if="${(currentMenu != 'notice') and (currentMenu != 'report')}">
+        <th th:if="${(currentMenu != 'notice') and (currentMenu != 'report')}">학년</th>
+        <td th:text="*{level}">작성자 학년</td>
       </tr>
       <tr th:if="${(currentMenu != 'notice') and (currentMenu != 'report')}">
         <th th:if="${(currentMenu != 'notice') and (currentMenu != 'report')}">팀원 수</th>

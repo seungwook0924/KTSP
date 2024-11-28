@@ -45,25 +45,25 @@ public class AddBoardController
         else if(boardType.equals("major1"))
         {
             addBoardDTO.setType(BoardType.major1);
-            addBoardDTO.setTeamSize((byte) 6);
+            addBoardDTO.setTeamSize((byte) 7);
             model.addAttribute("addTitle", "메이저러너 - 전공 학습 공동체 게시글 작성");
         }
         else if(boardType.equals("major2"))
         {
             addBoardDTO.setType(BoardType.major2);
-            addBoardDTO.setTeamSize((byte) 6);
+            addBoardDTO.setTeamSize((byte) 7);
             model.addAttribute("addTitle", "메이저러너 - 신입·재입학생 게시글 작성");
         }
         else if(boardType.equals("major3"))
         {
             addBoardDTO.setType(BoardType.major3);
-            addBoardDTO.setTeamSize((byte) 6);
+            addBoardDTO.setTeamSize((byte) 7);
             model.addAttribute("addTitle", "메이저러너 - 전과·편입학생 게시글 작성");
         }
         else if(boardType.equals("projectContest"))
         {
             addBoardDTO.setType(BoardType.project_contest);
-            addBoardDTO.setTeamSize((byte) 6);
+            addBoardDTO.setTeamSize((byte) 10);
             model.addAttribute("addTitle", "프로젝트·공모전 게시글 작성");
         }
         else if(boardType.equals("notice"))

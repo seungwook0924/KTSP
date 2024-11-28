@@ -7,6 +7,7 @@ import com.zeroone.ktsp.domain.Board;
 import com.zeroone.ktsp.domain.User;
 import com.zeroone.ktsp.service.BoardService;
 import com.zeroone.ktsp.service.FileService;
+import com.zeroone.ktsp.util.MethodUtil;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,10 +27,13 @@ public class UpdateController
 {
     private final BoardService boardService;
     private final FileService fileService;
+    private final MethodUtil methodUtil;
 
     @GetMapping("/{id}")
     public String modify(@PathVariable long id, Model model, HttpSession session, UpdateViewBoardDTO updateViewBoardDTO, @RequestParam String sidebarType, @RequestParam String boardType)
     {
+        if(!methodUtil.isValidSidebarTypeAndMenu(sidebarType,boardType)) return "redirect:/";
+
         Optional<Board> findBoard = boardService.findById(id);
         User user = (User) session.getAttribute("user");
         if(findBoard.isEmpty()) return "redirect:/learning_core/mentor";
@@ -51,6 +55,8 @@ public class UpdateController
     @PostMapping("/{id}")
     public String updateBoard(@PathVariable long id, @ModelAttribute UpdateSaveBoardDTO updateSaveBoardDTO, @RequestParam String sidebarType, @RequestParam String boardType)
     {
+        if(!methodUtil.isValidSidebarTypeAndMenu(sidebarType,boardType)) return "redirect:/";
+
         Optional<Board> findBoard = boardService.findById(id);
         if(findBoard.isEmpty()) return "redirect:/learning_core/mentor";
 

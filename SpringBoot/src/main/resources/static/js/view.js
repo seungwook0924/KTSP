@@ -38,14 +38,14 @@ document.addEventListener("DOMContentLoaded", function () {
         const content = contentInput.value.trim();
 
         // 유효성 검사: 내용이 비어있으면 에러 메시지 표시
-        if (!content) {
+        if (!content)
+        {
             modalError.style.display = "block";
             return;
         }
 
         // 에러 메시지 숨기기
         modalError.style.display = "none";
-
         const requestUrl = `/team/join/${boardId}`;
 
         // 서버로 데이터 전송
