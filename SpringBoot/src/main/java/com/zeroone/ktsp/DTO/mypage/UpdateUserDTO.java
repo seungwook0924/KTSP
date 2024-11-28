@@ -1,11 +1,8 @@
-package com.zeroone.ktsp.DTO;
+package com.zeroone.ktsp.DTO.mypage;
 
 import com.zeroone.ktsp.enumeration.UserLevel;
-import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.math.BigDecimal;
 
 @Getter
 @Setter

@@ -1,6 +1,6 @@
 package com.zeroone.ktsp.controller.pub;
 
-import com.zeroone.ktsp.DTO.RegisterDTO;
+import com.zeroone.ktsp.DTO.login.RegisterDTO;
 import com.zeroone.ktsp.domain.User;
 import com.zeroone.ktsp.service.EmailService;
 import com.zeroone.ktsp.service.UserService;

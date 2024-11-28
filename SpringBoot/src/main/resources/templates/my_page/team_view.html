@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KNU 재능 공유 플랫폼</title>
+  <link rel="stylesheet" href="/css/header.css">
+  <link rel="stylesheet" href="/css/footer.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <link rel="stylesheet" href="/css/content.css">
+</head>
+<body>
+<div th:insert="~{fragments/header :: header}"></div>
+
+<!-- 사이드바와 콘텐츠를 포함하는 컨테이너 -->
+<div class="main-container" style="display: flex; max-width: 1200px; margin: 0 auto; padding-top: 20px;">
+  <!-- 사이드바 삽입 -->
+  <div th:insert="~{fragments/sidebar/mypage_sidebar :: mypage_sidebar}"></div>
+
+  <!-- 콘텐츠 영역 -->
+  <div class="content">
+    <h1>팀원 목록</h1>
+    <hr>
+
+    <!-- 팀원이 없는 경우 -->
+    <div th:if="${#lists.isEmpty(teamMemberDTOList)}" class="no-data">
+      팀원이 없습니다.
+    </div>
+
+    <!-- 팀원이 있는 경우 -->
+    <table th:if="${!#lists.isEmpty(teamMemberDTOList)}">
+      <thead>
+      <tr>
+        <th>이름</th>
+        <th>학과</th>
+        <th>학년</th>
+        <th>연락처</th>
+      </tr>
+      </thead>
+      <tbody>
+      <!-- teamMemberDTOList 순회 -->
+      <tr th:each="member : ${teamMemberDTOList}">
+        <td th:text="${member.name}"></td> <!-- 이름 -->
+        <td th:text="${member.major}"></td> <!-- 학과 -->
+        <td th:text="${member.level}"></td> <!-- 학년 -->
+        <td th:text="${member.tel}"></td> <!-- 연락처 -->
+      </tr>
+      </tbody>
+    </table>
+    <hr>
+    <a id="back" class="button-link" style="float: right; cursor: pointer;" onclick="history.back()">뒤로</a>
+  </div>
+</div>
+
+<div th:insert="~{fragments/footer :: footer}"></div>
+</body>
+</html>

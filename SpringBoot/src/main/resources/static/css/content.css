@@ -386,3 +386,56 @@ textarea:focus {
 .pagination span {
     margin: 0 2px;
 }
+
+.team-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+}
+
+.team-table th, .team-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.team-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+    text-align: center;
+}
+
+.team-table td {
+    text-align: center;
+}
+
+.team-table td a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.team-table td a:hover {
+    text-decoration: underline;
+}
+
+/* 각 컬럼의 너비 조정 */
+.team-table th:nth-child(1), /* 종류 */
+.team-table td:nth-child(1) {
+    width: 20%;
+}
+
+.team-table th:nth-child(2), /* 작성자 */
+.team-table td:nth-child(2) {
+    width: 15%;
+}
+
+.team-table th:nth-child(3), /* 게시글 제목 */
+.team-table td:nth-child(3) {
+    width: 50%; /* 게시글 제목 컬럼 넓힘 */
+}
+
+.team-table th:nth-child(4), /* 소속 여부 / 상태 */
+.team-table td:nth-child(4) {
+    width: 15%;
+}

@@ -1,4 +1,4 @@
-package com.zeroone.ktsp.DTO;
+package com.zeroone.ktsp.DTO.login;
 
 import com.zeroone.ktsp.enumeration.UserLevel;
 import jakarta.validation.constraints.*;

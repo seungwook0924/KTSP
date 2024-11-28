@@ -63,4 +63,10 @@ public class WaitingService
     {
         waitingRepository.delete(waiting);
     }
+
+    // User를 기반으로 모든 Waiting 객체를 반환하는 메서드
+    public List<Waiting> findAllByUser(User user)
+    {
+        return waitingRepository.findAllByUser(user);
+    }
 }

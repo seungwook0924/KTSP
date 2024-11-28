@@ -1,9 +1,8 @@
 package com.zeroone.ktsp.controller.pub;
 
-import com.zeroone.ktsp.DTO.LoginDTO;
-import com.zeroone.ktsp.DTO.RegisterDTO;
+import com.zeroone.ktsp.DTO.login.LoginDTO;
+import com.zeroone.ktsp.DTO.login.RegisterDTO;
 import com.zeroone.ktsp.domain.User;
-import com.zeroone.ktsp.enumeration.UserLevel;
 import com.zeroone.ktsp.util.MethodUtil;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -70,7 +69,7 @@ public class HomeController
         if(session != null)
         {
             User user = (User)session.getAttribute("user");
-            String levelText = methodUtil.convertUserLevel(user.getLevel());
+            String levelText = methodUtil.convertUserLevelToString(user.getLevel());
 
             model.addAttribute("user", user);
             model.addAttribute("levelText", levelText);

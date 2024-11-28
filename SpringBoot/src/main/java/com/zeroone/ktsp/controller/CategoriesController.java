@@ -182,12 +182,12 @@ public class CategoriesController
     }
 
     // 공통 Model 설정 메서드
-    private void setModelAttributes(Model model, String title, String sidebarType, String currentMenu, List<BoardDTO> boards, int currentPage, int totalPages, long totalItems, int pageSize)
+    private void setModelAttributes(Model model, String title, String sidebarType, String boardType, List<BoardDTO> boards, int currentPage, int totalPages, long totalItems, int pageSize)
     {
         model.addAttribute("title", title);
         model.addAttribute("sidebarType", sidebarType);
         model.addAttribute("boards", boards);
-        model.addAttribute("currentMenu", currentMenu);
+        model.addAttribute("currentMenu", boardType);
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("totalItems", totalItems);

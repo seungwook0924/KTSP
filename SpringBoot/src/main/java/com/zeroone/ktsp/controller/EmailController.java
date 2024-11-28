@@ -1,6 +1,6 @@
 package com.zeroone.ktsp.controller;
 
-import com.zeroone.ktsp.DTO.RegisterDTO;
+import com.zeroone.ktsp.DTO.login.RegisterDTO;
 import com.zeroone.ktsp.service.EmailService;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;

@@ -17,4 +17,6 @@ public interface WaitingRepository extends JpaRepository<Waiting, Long>
     List<Waiting> findAllByBoard(Board board); // Board를 기반으로 모든 Waiting 객체를 조회
 
     Optional<Waiting> findById(long id); // id를 기반으로 Waiting 객체를 조회
+
+    List<Waiting> findAllByUser(User user); // User를 기반으로 모든 Waiting 객체를 조회
 }

@@ -1,8 +1,16 @@
 package com.zeroone.ktsp.controller.pub;
 
-import com.zeroone.ktsp.DTO.UpdateUserDTO;
+import com.zeroone.ktsp.DTO.mypage.MyTeamDTO;
+import com.zeroone.ktsp.DTO.mypage.MyWaitingDTO;
+import com.zeroone.ktsp.DTO.mypage.TeamMemberDTO;
+import com.zeroone.ktsp.DTO.mypage.UpdateUserDTO;
+import com.zeroone.ktsp.domain.Team;
 import com.zeroone.ktsp.domain.User;
+import com.zeroone.ktsp.domain.Waiting;
+import com.zeroone.ktsp.enumeration.BoardType;
+import com.zeroone.ktsp.service.TeamService;
 import com.zeroone.ktsp.service.UserService;
+import com.zeroone.ktsp.service.WaitingService;
 import com.zeroone.ktsp.util.MethodUtil;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -11,13 +19,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 @Controller
@@ -29,8 +37,10 @@ public class MyPageController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final MethodUtil methodUtil;
+    private final WaitingService waitingService;
 
     private static final Pattern PHONE_PATTERN = Pattern.compile("^010-\\d{4}-\\d{4}$");
+    private final TeamService teamService;
 
     @GetMapping("/update")
     public String showMypage(Model model, UpdateUserDTO updateUserDTO, HttpSession session)
@@ -99,6 +109,88 @@ public class MyPageController {
         return "redirect:/mypage";
     }
 
+    @GetMapping("/myTeam")
+    public String showMyTeams(Model model, HttpSession session)
+    {
+        User user = methodUtil.getSessionUser(session);
+        List<Team> teams = teamService.findTeamsByUser(user);
+
+        List<MyTeamDTO> myTeamDTOList = new ArrayList<>();
+        if(!teams.isEmpty())
+        {
+            for(Team team : teams)
+            {
+                if((team.getBoard().getType().equals(BoardType.report)) || team.getBoard().getType().equals(BoardType.notice)) continue; // 불편 신고 및 공지사항은 전달하지 않음
+                MyTeamDTO newDto = new MyTeamDTO();
+                newDto.setId(team.getId());
+                newDto.setWriter(team.getBoard().getUser().getName());
+                newDto.setBoardId(team.getBoard().getId());
+                newDto.setBoardName(team.getBoard().getTitle());
+                newDto.setBoardType(methodUtil.convertBoardTypeToString(team.getBoard().getType()));
+                newDto.setIsValid(team.getIsValid() ? "소속됨" : "추방됨");
+                myTeamDTOList.add(newDto);
+            }
+        }
+
+        List<Waiting> waitings = waitingService.findAllByUser(user);
+        List<MyWaitingDTO> myWaitingDTOList = new ArrayList<>();
+        if(!waitings.isEmpty())
+        {
+            for(Waiting waiting : waitings)
+            {
+                MyWaitingDTO newDto = new MyWaitingDTO();
+                newDto.setBoardId(waiting.getBoard().getId());
+                newDto.setWriter(waiting.getBoard().getUser().getName());
+                newDto.setBoardType(methodUtil.convertBoardTypeToString(waiting.getBoard().getType()));
+                newDto.setBoardName(waiting.getBoard().getTitle());
+                newDto.setIsValid(waiting.getIsValid() ? "승인 대기중" : "거절됨");
+                myWaitingDTOList.add(newDto);
+            }
+        }
+
+        model.addAttribute("myWaitingDTOList", myWaitingDTOList);
+        model.addAttribute("myTeamDTOList", myTeamDTOList);
+        model.addAttribute("currentMenu", "two");
+        return "my_page/my_team";
+    }
+
+    @GetMapping("myTeam/{id}")
+    public String showTeamView(@PathVariable long id, Model model, RedirectAttributes redirectAttributes, HttpSession session)
+    {
+        User user = methodUtil.getSessionUser(session);
+        Optional<Team> findTeam = teamService.findById(id);
+        if(findTeam.isEmpty())
+        {
+            redirectAttributes.addFlashAttribute("errorMessage", "게시글이 삭제되었습니다.");
+            return "redirect:/mypage/myTeam";
+        }
+
+        Team team = findTeam.get();
+
+        List<Team> members = teamService.findTeamsByBoard(team.getBoard());
+        List<TeamMemberDTO> teamMemberDTOList = new ArrayList<>();
+        if(!members.isEmpty())
+        {
+            boolean flag = true;
+            for(Team member : members)
+            {
+                if(!member.getIsValid()) continue;
+                TeamMemberDTO newDto = new TeamMemberDTO();
+                newDto.setName(member.getUser().getName());
+                newDto.setTel(member.getUser().getTel());
+                newDto.setLevel(methodUtil.convertUserLevelToString(member.getUser().getLevel()));
+                newDto.setMajor(member.getUser().getMajor());
+                teamMemberDTOList.add(newDto);
+                if(member.getUser().getId() == user.getId()) flag = false;
+            }
+            if(flag) return "redirect:/mypage"; //팀원 소속이 아니라면 리다이렉트
+        }
+
+        model.addAttribute("teamMemberDTOList", teamMemberDTOList);
+        model.addAttribute("currentMenu", "two");
+        return "my_page/team_view";
+    }
+
     private String validateUserData(UpdateUserDTO updateUserDTO)
     {
         // 전공 필드 유효성 검사
@@ -127,4 +219,6 @@ public class MyPageController {
 
         return null;
     }
+
+
 }

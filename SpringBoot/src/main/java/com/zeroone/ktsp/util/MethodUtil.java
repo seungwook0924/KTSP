@@ -1,6 +1,7 @@
 package com.zeroone.ktsp.util;
 
 import com.zeroone.ktsp.domain.User;
+import com.zeroone.ktsp.enumeration.BoardType;
 import com.zeroone.ktsp.enumeration.UserLevel;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Component;
@@ -25,7 +26,7 @@ public class MethodUtil
         return validSidebarTypes.contains(sidebarType) && validMenus.contains(currentMenu);
     }
 
-    public String convertUserLevel(UserLevel level)
+    public String convertUserLevelToString(UserLevel level)
     {
         switch (level)
         {
@@ -34,6 +35,35 @@ public class MethodUtil
             case junior: return "3학년";
             case senior: return "4학년";
             default: return "기타";
+        }
+    }
+
+    public String convertBoardTypeToString(BoardType boardType)
+    {
+        switch (boardType)
+        {
+            case mentor: return "가르치미";
+            case mentee: return "배우미";
+            case major1: return "전공 학습 공동체";
+            case major2: return "신입·재입학생 공동체";
+            case major3: return "전과·편입학생 공동체";
+            case project_contest: return "프로젝트·공모전";
+            default: return "불편신고";
+        }
+    }
+
+    public String convertBoardTypeToCode(BoardType boardType)
+    {
+        switch (boardType)
+        {
+            case mentor: return "mentor";
+            case mentee: return "mentee";
+            case major1: return "major1";
+            case major2: return "major2";
+            case major3: return "major3";
+            case project_contest: return "projectContest";
+            case report: return "report";
+            default: return "notice";
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.zeroone.ktsp.DTO;
+package com.zeroone.ktsp.DTO.login;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;

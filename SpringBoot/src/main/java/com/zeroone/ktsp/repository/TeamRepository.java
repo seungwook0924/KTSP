@@ -14,4 +14,6 @@ public interface TeamRepository extends JpaRepository<Team, Long>
     // 같은 board_id에 매핑된 user 수 계산(isValid가 true인 값만 리턴)
     @Query("SELECT COUNT(t) FROM Team t WHERE t.board.id = :boardId AND t.isValid = true")
     byte countValidTeamsByBoardId(long boardId);
+
+    List<Team> findAllByUserId(Long userId); // User에 매핑된 모든 팀 객체를 가져오는 메서드
 }

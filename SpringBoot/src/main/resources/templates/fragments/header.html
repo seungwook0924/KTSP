@@ -7,6 +7,7 @@
 <div th:fragment="header">
     <header>
         <div class="top-links">
+            <a th:if="${isAdmin}" href="/admin">관리자 페이지</a>
             <a th:if="${isLoggedIn}" href="/mypage">마이페이지</a> <!-- 로그인 되어있으면 마이페이지 표시 -->
             <a th:unless="${isLoggedIn}" href="/register">회원가입</a> <!-- 로그인 안되어있으면 회원 가입 표시 -->
             <a th:if="${isLoggedIn}" href="/logout">로그아웃</a> <!-- 로그인 되어있으면 로그아웃 표시 -->

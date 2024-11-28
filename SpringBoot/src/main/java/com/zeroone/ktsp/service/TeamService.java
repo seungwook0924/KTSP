@@ -33,6 +33,7 @@ public class TeamService
         teamRepository.save(team);
     }
 
+    // 팀 추방 메서드
     public void expulsionTeam(Team team)
     {
         Team updateTeam = team.toBuilder().isValid(false).build();
@@ -51,5 +52,11 @@ public class TeamService
     public Optional<Team> findById(long id)
     {
         return teamRepository.findById(id);
+    }
+
+    // 특정 User에 매핑된 모든 팀 객체를 반환하는 메서드
+    public List<Team> findTeamsByUser(User user)
+    {
+        return teamRepository.findAllByUserId(user.getId());
     }
 }

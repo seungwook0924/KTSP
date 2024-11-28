@@ -72,7 +72,7 @@ public class ViewController {
     private BoardViewDTO populateBoardViewDTO(Board board, User user, HttpSession session)
     {
         BoardViewDTO boardViewDTO = new BoardViewDTO();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy년 MM월 dd일 hh시 mm분 ss초");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy년 MM월 dd일 HH시 mm분 ss초");
 
         // 조회수 증가 처리
         handleBoardViewCount(board, user, session);
@@ -89,7 +89,7 @@ public class ViewController {
         boardViewDTO.setTeamSize(board.getTeamSize());
         boardViewDTO.setUserName(board.getUser().getName());
         boardViewDTO.setMajor(board.getUser().getMajor());
-        boardViewDTO.setLevel(methodUtil.convertUserLevel(board.getUser().getLevel()));
+        boardViewDTO.setLevel(methodUtil.convertUserLevelToString(board.getUser().getLevel()));
         boardViewDTO.setType(board.getType());
         boardViewDTO.setJoin(!board.getIsClosed() && board.getUser().getId() != user.getId()); // 지원 가능 여부
         boardViewDTO.setMine(board.getUser().getId() == user.getId()); // 사용자가 작성자인지 여부

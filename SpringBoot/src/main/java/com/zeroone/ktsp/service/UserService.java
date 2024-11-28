@@ -1,6 +1,6 @@
 package com.zeroone.ktsp.service;
 
-import com.zeroone.ktsp.DTO.RegisterDTO;
+import com.zeroone.ktsp.DTO.login.RegisterDTO;
 import com.zeroone.ktsp.domain.User;
 import com.zeroone.ktsp.enumeration.UserRole;
 import com.zeroone.ktsp.repository.UserRepository;
