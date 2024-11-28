@@ -50,7 +50,7 @@
       <tr th:each="board, stat : ${boards}" >
         <td th:text="${#lists.size(boards) - stat.index}"></td> <!-- 글 번호 -->
         <td th:text="${board.userName}"></td> <!-- 작성자 -->
-        <td class="title-column"><a class="board-select" th:text="${board.title}" th:href="@{/boards/{id}(id=${board.id}, sidebarType=${sidebarType}, boardType=${currentMenu})}">수정하기</a></td> <!-- 제목 -->
+        <td class="title-column"><a class="board-select" th:text="${board.title}" th:href="@{/boards/{id}(id=${board.id}, sidebarType=${sidebarType}, boardType=${currentMenu})}">제목</a></td> <!-- 제목 -->
         <td th:text="${board.currentSize} + '/' + ${board.teamSize}" th:if="${(currentMenu != 'notice') and (currentMenu != 'report')}"></td> <!-- 현재/최대 팀원 수 -->
         <td th:text="${board.date}"></td> <!-- 작성일 -->
         <td th:text="${board.isClosed ? '모집 마감' : '모집중'}" th:if="${(currentMenu != 'notice') and (currentMenu != 'report')}"></td> <!-- 모집 여부 -->
@@ -58,19 +58,32 @@
       </tr>
       </tbody>
     </table>
+
+    <!-- 페이지네이션 -->
+    <div class="pagination" style="text-align: center; margin-top: 20px;">
+      <a th:if="${currentPage > 0}"
+         th:href="@{${currentMenu}(page=${currentPage - 1})}"
+         class="page-link">이전</a>
+
+      <span th:each="page : ${#numbers.sequence(0, totalPages - 1)}">
+        <a th:if="${page != currentPage}"
+           th:href="@{${currentMenu}(page=${page})}"
+           th:text="${page + 1}"
+           class="page-link"></a>
+        <span th:if="${page == currentPage}"
+              th:text="${page + 1}"
+              class="page-current"></span>
+      </span>
+
+      <a th:if="${currentPage < totalPages - 1}"
+         th:href="@{${currentMenu}(page=${currentPage + 1})}"
+         class="page-link">다음</a>
+    </div>
+
     <br>
     <a class="button-link" th:href="@{/add_board(sidebarType=${sidebarType}, boardType=${currentMenu})}" th:if="${currentMenu != 'notice'}" style="float: right;">글쓰기</a>
     <a class="button-link" th:href="@{/add_board(sidebarType=${sidebarType}, boardType=${currentMenu})}"
        th:if="${(currentMenu == 'notice') and (isAdmin != null) and (isAdmin)}" style="float: right;">공지사항 작성</a>
-    <!-- 페이지네이션 -->
-<!--    <div class="pagination" th:if="${totalPages > 1}">-->
-<!--      <a th:href="@{'?page=0'}" th:classappend="${currentPage == 0} ? 'disabled' : ''">&laquo; 처음</a>-->
-<!--      <a th:each="i : ${#numbers.sequence(1, totalPages)}"-->
-<!--         th:href="@{'?page=' + ${i - 1}}"-->
-<!--         th:classappend="${currentPage == i - 1} ? 'active' : ''"-->
-<!--         th:text="${i}"></a>-->
-<!--      <a th:href="@{'?page=' + ${totalPages - 1}}" th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">끝 &raquo;</a>-->
-<!--    </div>-->
 
   </div>
 </div>

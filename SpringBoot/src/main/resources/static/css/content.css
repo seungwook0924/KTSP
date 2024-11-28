@@ -244,25 +244,6 @@ td {
     text-overflow: ellipsis; /* 넘친 텍스트에 '...' 표시 */
 }
 
-.pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-.pagination a {
-    margin: 0 5px;
-    text-decoration: none;
-    padding: 5px 10px;
-    border: 1px solid #ddd;
-    color: #333;
-}
-
-.pagination a:hover {
-    background-color: #0059B7;
-    color: white;
-}
-
 .no-data {
     text-align: center;
     margin-top: 20px;
@@ -359,4 +340,49 @@ textarea:focus {
 /* 호버 상태 */
 .button-link:hover {
     text-decoration: underline; /* 호버 시 밑줄 표시 */
+}
+
+.pagination {
+    text-align: center;
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.page-link, .page-current {
+    display: inline-block;
+    margin: 0 5px;
+    padding: 8px 12px;
+    text-decoration: none;
+    border: 1px solid #ddd;
+    color: black;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.page-link:hover {
+    text-decoration: underline;
+}
+
+.page-current {
+    background-color: black;
+    color: #fff;
+    pointer-events: none;
+}
+
+.page-link:disabled, .page-link.disabled {
+    background-color: #f8f9fa;
+    color: #ddd;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.pagination a:first-child {
+    margin-left: 0;
+}
+
+.pagination a:last-child {
+    margin-right: 0;
+}
+
+.pagination span {
+    margin: 0 2px;
 }

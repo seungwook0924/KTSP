@@ -45,11 +45,11 @@ public class ViewController
     @GetMapping("/{id}")
     public String addBoard(@PathVariable long id, Model model, HttpSession session, @RequestParam String sidebarType, @RequestParam String boardType)
     {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy년 MM월 dd일 hh시 mm분 ss초");//포맷터로 작성일 포맷 변경
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy년 MM월 dd일 hh시 mm분 ss초"); // 포맷터로 작성일 포맷 변경
         Optional<Board> findBoard = boardService.findById(id);
         if(findBoard.isEmpty()) return "redirect:/learning_core/mentor";
 
-        User user = (User) session.getAttribute("user");
+        User user = methodUtil.getSessionUser(session);
         Board board = findBoard.get();
         List<Comment> findComments = commentService.findCommentsByBoard(board);
 
@@ -80,16 +80,16 @@ public class ViewController
         }
 
         BoardViewDTO boardViewDTO = new BoardViewDTO();
-        if(board.getUpdatedAt() == null) boardViewDTO.setUpdatedAt("없음");
+        if(board.getUpdatedAt() == null) boardViewDTO.setUpdatedAt("없음"); // 게시글을 처음 생성할 때는 업데이트 날짜는 없음
         else boardViewDTO.setUpdatedAt(board.getUpdatedAt().format(formatter));
 
-        if(board.getIsClosed() || (board.getUser().getId() == user.getId())) boardViewDTO.setJoin(false);
-        else boardViewDTO.setJoin(true);
+        if(board.getIsClosed() || (board.getUser().getId() == user.getId())) boardViewDTO.setJoin(false); // 게시글이 마감되었거나, 작성자라면 지원 버튼을 비활성화
+        else boardViewDTO.setJoin(true); // 그 외의 경우에는 지원 버튼 활성화
 
-        if(board.getUser().getId() == user.getId()) boardViewDTO.setMine(true);
+        if(board.getUser().getId() == user.getId()) boardViewDTO.setMine(true); // 현재 접속자가 게시글 작성자인지 확인하는 로직
         else boardViewDTO.setMine(false);
 
-        List<FileMapping> files = fileService.getFilesByBoard(board);
+        List<FileMapping> files = fileService.getFilesByBoard(board); // 게시글에 매핑된 파일들을 불러옴
         if(!files.isEmpty())
         {
             List<String> fileNames = new ArrayList<>();
@@ -97,14 +97,13 @@ public class ViewController
             for(FileMapping file : files)
             {
                 fileNames.add(file.getFileName());
-                if (file.getExtension().equals("jpg") || file.getExtension().equals("jpeg") || file.getExtension().equals("png"))
+                if (file.getExtension().equals("jpg") || file.getExtension().equals("jpeg") || file.getExtension().equals("png")) // 이미지라면 화면에 표시하기 위해
                 {
-                    filePaths.add("/files/" + file.getUuid() + "." + file.getExtension());
-                    log.info("/files/{}", file.getUuid() + "." + file.getExtension());
+                    filePaths.add("/files/" + file.getUuid() + "." + file.getExtension()); // 파일 저장 경로를 담음
                 }
             }
-            boardViewDTO.setFiles(fileNames);
-            boardViewDTO.setImagePath(filePaths);
+            boardViewDTO.setFiles(fileNames); // 파일들의 이름을 담음
+            boardViewDTO.setImagePath(filePaths); // 이미지 파일의 경로를 담음
         }
 
         boardViewDTO.setId(board.getId());
@@ -132,11 +131,10 @@ public class ViewController
     }
 
     // Comment 엔티티를 CommentDTO로 변환하는 메서드
-    private CommentDTO toCommentDTO(Comment comment) {
-        // CommentDTO 객체 생성
+    private CommentDTO toCommentDTO(Comment comment)
+    {
         CommentDTO commentDTO = new CommentDTO();
 
-        // 기본 필드 설정
         commentDTO.setId(comment.getId());
         commentDTO.setComment(comment.getComment());
         commentDTO.setUserName(comment.getUser().getName());
