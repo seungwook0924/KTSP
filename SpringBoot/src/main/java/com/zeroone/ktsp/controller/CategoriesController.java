@@ -84,12 +84,68 @@ public class CategoriesController
         return handleBoardRequest(model, BoardType.report, "불편 접수", "community", "report", page);
     }
 
+    @GetMapping("/search")
+    public String showSearchResult(Model model, @RequestParam String category, @RequestParam String q, @RequestParam(defaultValue = "0") int page)
+    {
+        BoardType boardType;
+        String title;
+        String sidebarType;
+
+        switch (category)
+        {
+            case "mentor":
+                boardType = BoardType.mentor;
+                title = "가르치미";
+                sidebarType = "learningCore";
+                break;
+            case "mentee":
+                boardType = BoardType.mentee;
+                title = "배우미";
+                sidebarType = "learningCore";
+                break;
+            case "major1":
+                boardType = BoardType.major1;
+                title = "전공 학습 공동체";
+                sidebarType = "majorLearner";
+                break;
+            case "major2":
+                boardType = BoardType.major2;
+                title = "신입·재입학생 공동체";
+                sidebarType = "majorLearner";
+                break;
+            case "major3":
+                boardType = BoardType.major3;
+                title = "전과·편입학생 공동체";
+                sidebarType = "majorLearner";
+                break;
+            case "projectContest":
+                boardType = BoardType.project_contest;
+                title = "프로젝트·공모전";
+                sidebarType = "projectContest";
+                break;
+            default:
+                boardType = null; // 전체 검색
+                title = "검색 결과";
+                sidebarType = "community"; // 기본값
+                break;
+        }
+
+        Pageable pageable = PageRequest.of(page, 10);
+        Page<Board> boardPage;
+
+        boardPage = paginatedBoardService.searchByKeyword(boardType, q, pageable);
+
+        List<BoardDTO> boardsList = convertToBoardDTOList(boardPage);
+        setModelAttributes(model, title, sidebarType, category, boardsList, boardPage.getNumber(), boardPage.getTotalPages(), boardPage.getTotalElements(), boardPage.getSize());
+        return "view_list";
+    }
+
     // 공통 Board 요청 처리 메서드
     private String handleBoardRequest(Model model, BoardType boardType, String title, String sidebarType, String currentMenu, int page)
     {
         Page<Board> boardPage = getPagedBoards(boardType, page); // 페이지네이션 처리
         List<BoardDTO> boardsList = convertToBoardDTOList(boardPage); // DTO 변환
-        setModelAttributes(model, title, sidebarType, currentMenu, boardsList, boardPage.getNumber(), boardPage.getTotalPages(), boardPage.getTotalElements());
+        setModelAttributes(model, title, sidebarType, currentMenu, boardsList, boardPage.getNumber(), boardPage.getTotalPages(), boardPage.getTotalElements(), boardPage.getSize());
         //getNumber : 현재 페이지 번호, getTotalPages : 총 페이지 수, getTotalElements : 전체 게시글 수, getSize : 한 페이지당 게시글 수
         return "view_list";
     }
@@ -126,7 +182,7 @@ public class CategoriesController
     }
 
     // 공통 Model 설정 메서드
-    private void setModelAttributes(Model model, String title, String sidebarType, String currentMenu, List<BoardDTO> boards, int currentPage, int totalPages, long totalItems)
+    private void setModelAttributes(Model model, String title, String sidebarType, String currentMenu, List<BoardDTO> boards, int currentPage, int totalPages, long totalItems, int pageSize)
     {
         model.addAttribute("title", title);
         model.addAttribute("sidebarType", sidebarType);
@@ -135,5 +191,6 @@ public class CategoriesController
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("totalItems", totalItems);
+        model.addAttribute("pageSize", pageSize);
     }
 }

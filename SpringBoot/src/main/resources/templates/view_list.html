@@ -47,8 +47,8 @@
       </thead>
       <tbody>
       <!-- 데이터 순회 -->
-      <tr th:each="board, stat : ${boards}" >
-        <td th:text="${#lists.size(boards) - stat.index}"></td> <!-- 글 번호 -->
+      <tr th:each="board, stat : ${boards}">
+        <td th:text="${totalItems - (currentPage * pageSize) - stat.index}"></td> <!-- 전체 글 번호 -->
         <td th:text="${board.userName}"></td> <!-- 작성자 -->
         <td class="title-column"><a class="board-select" th:text="${board.title}" th:href="@{/boards/{id}(id=${board.id}, sidebarType=${sidebarType}, boardType=${currentMenu})}">제목</a></td> <!-- 제목 -->
         <td th:text="${board.currentSize} + '/' + ${board.teamSize}" th:if="${(currentMenu != 'notice') and (currentMenu != 'report')}"></td> <!-- 현재/최대 팀원 수 -->

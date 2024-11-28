@@ -24,4 +24,10 @@ public class PaginatedBoardServiceImpl implements PaginatedBoardService
     {
         return boardRepository.findByType(boardType, pageable);
     }
+
+    @Override
+    public Page<Board> searchByKeyword(BoardType boardType, String keyword, Pageable pageable)
+    {
+        return boardRepository.findByTypeAndTitleContainingIgnoreCase(boardType, keyword, pageable); // 게시글 타입과, 키워드를 바탕으로 검색 결과 리턴
+    }
 }

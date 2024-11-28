@@ -8,4 +8,6 @@ import org.springframework.data.domain.Pageable;
 public interface PaginatedBoardService
 {
     Page<Board> findBoardsByTypeWithPaging(BoardType boardType, Pageable pageable); // 페이지네이션 메서드
+
+    Page<Board> searchByKeyword(BoardType boardType, String keyword, Pageable pageable); // 검색 메서드
 }
