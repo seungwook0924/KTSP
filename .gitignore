@@ -42,6 +42,7 @@ SpringBoot/src/main/resources/application-local.properties
 SpringBoot/src/main/resources/application-prod.properties
 SpringBoot/src/main/resources/application-local.yml
 SpringBoot/src/main/resources/application-prod.yml
+!SpringBoot/gradle/wrapper/gradle-wrapper.properties
 SpringBoot/log
 SpringBoot/boards-files
 Database/ignore
