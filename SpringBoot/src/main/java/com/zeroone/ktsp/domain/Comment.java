@@ -36,6 +36,7 @@ public class Comment {
     private Comment parentComment;
 
     // 자식 댓글
+    @Builder.Default
     @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> childComments = new ArrayList<>();
 
@@ -47,18 +48,4 @@ public class Comment {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    // 생성자 빌더에 깊이 설정
-    @Builder
-    public Comment(User user, Board board, Comment parentComment, String content, LocalDateTime createdAt) {
-        this.user = user;
-        this.board = board;
-        this.parentComment = parentComment;
-        this.comment = content;
-        this.createdAt = createdAt;
-    }
-
-    // 동적으로 깊이 계산
-    public int calculateDepth() {
-        return (parentComment != null) ? parentComment.calculateDepth() + 1 : 0;
-    }
 }

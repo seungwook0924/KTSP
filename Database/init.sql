@@ -18,7 +18,7 @@ DROP TYPE IF EXISTS type CASCADE;
 -- ENUM 타입 정의
 CREATE TYPE role AS ENUM ('admin', 'user');
 CREATE TYPE level AS ENUM ('freshman', 'sophomore', 'junior', 'senior', 'etc');
-CREATE TYPE type AS ENUM ('learning1', 'learning2', 'major1', 'major2', 'major3', 'challenge');
+CREATE TYPE type AS ENUM ('mentor', 'mentee', 'major1', 'major2', 'major3', 'project_contest', 'notice', 'report');
 
 -- users 테이블
 CREATE TABLE users (
@@ -40,16 +40,19 @@ CREATE TABLE boards (
                         user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
                         type type NOT NULL,
                         created_at TIMESTAMP NOT NULL,
-                        updated_at TIMESTAMP NOT NULL,
-                        title VARCHAR(50) NOT NULL,
+                        updated_at TIMESTAMP NULL,
+                        title VARCHAR(20) NOT NULL,
                         content TEXT NOT NULL,
-                        is_closed BOOLEAN NOT NULL
+                        is_closed BOOLEAN NOT NULL,
+    hits BIGINT NOT NULL,
+    team_size SMALLINT NOT NULL
 );
 
 -- teams 테이블
 CREATE TABLE teams (
                        id BIGSERIAL PRIMARY KEY,
                        board_id BIGINT NOT NULL REFERENCES boards(id) ON DELETE CASCADE,
+                       is_valid BOOLEAN NOT NULL,
                        user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -58,6 +61,7 @@ CREATE TABLE waiting (
                          id BIGSERIAL PRIMARY KEY,
                          board_id BIGINT NOT NULL REFERENCES boards(id) ON DELETE CASCADE,
                          user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    is_valid BOOLEAN NOT NULL,
                          content VARCHAR(255) NOT NULL
 );
 
@@ -72,41 +76,14 @@ CREATE TABLE comments (
 );
 
 -- files 테이블
-CREATE TABLE files (
-                       id BIGSERIAL PRIMARY KEY,
-                       file_name VARCHAR(50) NOT NULL,
-                       uuid CHAR(36) NOT NULL,
-                       path VARCHAR(255) NOT NULL
-);
-
--- reports 테이블
-CREATE TABLE reports (
-                         id BIGSERIAL PRIMARY KEY,
-                         user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-                         title VARCHAR(50) NOT NULL,
-                         content VARCHAR(255) NOT NULL,
-                         created_at TIMESTAMP NOT NULL
-);
-
--- file_mapping 테이블
 CREATE TABLE file_mapping (
                               id BIGSERIAL PRIMARY KEY,
                               board_id BIGINT REFERENCES boards(id) ON DELETE CASCADE,
-                              report_id BIGINT REFERENCES reports(id) ON DELETE CASCADE
+                              file_name VARCHAR(50) NOT NULL,
+                              uuid CHAR(36) NOT NULL,
+                              path VARCHAR(255) NOT NULL,
+                              extension VARCHAR(20) NOT NULL
 );
 
--- report_comments 테이블
-CREATE TABLE report_comments (
-                                 id BIGSERIAL PRIMARY KEY,
-                                 report_id BIGINT NOT NULL REFERENCES reports(id) ON DELETE CASCADE,
-                                 comment VARCHAR(255) NOT NULL,
-                                 created_at TIMESTAMP NOT NULL
-);
-
--- notice 테이블
-CREATE TABLE notice (
-                        id BIGSERIAL PRIMARY KEY,
-                        user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-                        title VARCHAR(50) NOT NULL,
-                        content TEXT NOT NULL
-);
+INSERT INTO users VALUES
+    (1, 'admin', 201921321, '$2a$10$kBQhpciRe.xAY1MpT6OKveoF5d5SVoc2/HzSG9peXoY9uYJo.pqYK', 'senior', '이승욱', '010-5325-2904', 'AI소프트웨어', 4.2, 'lso_0924@kangwon.ac.kr');

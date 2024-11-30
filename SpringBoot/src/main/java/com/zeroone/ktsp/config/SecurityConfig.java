@@ -66,7 +66,7 @@ public class SecurityConfig {
                                 "/login/**",             // 로그인 관련 경로
                                 "/logout",             // 로그아웃
                                 "/register/**",          // 회원가입 관련 경로
-                                "/static/**", "/css/**", "/js/**", "/images/**", "/icons/**", // 정적 리소스
+                                "/static/**", "/css/**", "/js/**", "/images/**", "/icons/**", "/files/**", // 정적 리소스
                                 "/learning_core", "/major_learner", "/project_contest", "/introduction", //네비게이션바
                                 "/error",                // 에러 페이지
                                 "/health"                // 헬스 체크
