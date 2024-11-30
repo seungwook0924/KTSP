@@ -1,6 +1,5 @@
 name: CI/CD for ktsp
 
-
 on:
   push:
     branches:
@@ -23,11 +22,15 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Create application-prod.yml from secrets
-      run: echo "${{ secrets.KTSP_APPLICATION_PROPERTIES }}" > ./SpringBoot/src/main/resources/application-prod.properties
+    - name: Initialize Gradle
+      run: gradle init
+      working-directory: ./SpringBoot
 
     - name: Build with Gradle
-      run: ./gradlew clean build
+      uses: gradle/gradle-build-action@v2
+      with:
+        gradle-version: 7.5.1
+        arguments: build
       working-directory: ./SpringBoot
 
     - name: Set up Docker Buildx
