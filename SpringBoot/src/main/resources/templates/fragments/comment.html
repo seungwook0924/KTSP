@@ -24,13 +24,16 @@
         <li th:each="comment : ${comments}">
             <div class="comment">
                 <!-- 댓글 정보 -->
+                <input type="hidden" name="commentId" th:value="${comment.id}">
+                <input type="hidden" name="boardId" th:value="${boardId}">
                 <p>
                     <strong><span th:text="${comment.userName}"></span></strong>
                     <span th:text="' / ' + ${comment.major}"></span>
                     <span th:text="' / ' + ${comment.levelName}"></span>
                     <span th:text="' / ' + ${#temporals.format(comment.createdAt, 'yy-MM-dd HH:mm')}"></span>
+                    <a href="javascript:void(0);" class="delete-comment-button" style="color: red;">[삭제]</a>
                     <!-- 대댓글 작성 텍스트 -->
-                    <a href="javascript:void(0)" class="toggle-reply-form-link" style="margin-left: 10px; text-decoration: underline; color: black;">대댓글 작성</a>
+                    <a href="javascript:void(0)" class="toggle-reply-form-link" style="margin-left: 10px; text-decoration: underline; color: black;">[대댓글 작성]</a>
                 </p>
                 <p th:text="${comment.comment}"></p>
 
@@ -43,6 +46,7 @@
                                 <span th:text="' / ' + ${child.major}"></span>
                                 <span th:text="' / ' + ${child.levelName}"></span>
                                 <span th:text="' / ' + ${#temporals.format(child.createdAt, 'yy-MM-dd HH:mm')}"></span>
+                                <a href="javascript:void(0);" class="delete-comment-button" style="color: red;">[삭제]</a>
                             </p>
                             <p th:text="${child.comment}"></p>
                         </div>

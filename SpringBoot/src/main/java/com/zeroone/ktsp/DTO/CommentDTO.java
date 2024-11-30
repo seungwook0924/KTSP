@@ -19,6 +19,7 @@ public class CommentDTO
     private String major;
     private String levelName;
     private Long parentCommentId;
+    private boolean isAdmin;
     private List<CommentDTO> childCommentDTOs = new ArrayList<>();
 
     // levelName 설정 메서드

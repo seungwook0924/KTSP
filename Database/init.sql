@@ -67,7 +67,7 @@ CREATE TABLE comments (
                           id BIGSERIAL PRIMARY KEY,
                           user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
                           board_id BIGINT NOT NULL REFERENCES boards(id) ON DELETE CASCADE,
-                          parent_comment_id BIGINT REFERENCES comments(id) ON DELETE CASCADE,
+                          parent_comment_id BIGINT REFERENCES comments(id),
                           comment VARCHAR(100) NOT NULL,
                           created_at TIMESTAMP NOT NULL
 );

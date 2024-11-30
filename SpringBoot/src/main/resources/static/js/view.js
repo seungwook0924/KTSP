@@ -74,6 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 });
 
+// 모집 마감 로직
 function closeBoard() {
     // 히든 필드에서 boardId 값 가져오기
     const boardId = document.getElementById("boardId").value;

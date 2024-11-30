@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,5 +57,10 @@ public class CommentService
                 .createdAt(LocalDateTime.now())
                 .build();
         commentRepository.save(replyComment);
+    }
+
+    public void deleteComment(Comment comment)
+    {
+        commentRepository.delete(comment);
     }
 }

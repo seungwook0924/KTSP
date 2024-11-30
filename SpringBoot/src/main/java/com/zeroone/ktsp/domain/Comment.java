@@ -37,7 +37,7 @@ public class Comment {
 
     // 자식 댓글
     @Builder.Default
-    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "parentComment", orphanRemoval = true, cascade = CascadeType.PERSIST)
     private List<Comment> childComments = new ArrayList<>();
 
     // 댓글 내용

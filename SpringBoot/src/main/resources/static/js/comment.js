@@ -87,6 +87,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+// 대댓글 버튼 누를시
 document.addEventListener("DOMContentLoaded", function () {
     const replyLinks = document.querySelectorAll(".toggle-reply-form-link");
 
@@ -103,4 +104,58 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     });
+});
+
+// 댓글 삭제
+document.addEventListener("DOMContentLoaded", function () {
+    const commentsList = document.querySelector(".comments-list");
+
+    // 댓글 삭제 이벤트 리스너
+    if (commentsList) {
+        commentsList.addEventListener("click", function (event) {
+            const deleteButton = event.target.closest(".delete-comment-button"); // 삭제 버튼 탐색
+            if (!deleteButton) return;
+
+            // 데이터 가져오기
+            const commentDiv = deleteButton.closest(".comment");
+            const commentIdInput = commentDiv.querySelector("input[name='commentId']");
+            const boardIdInput = commentDiv.querySelector("input[name='boardId']");
+
+            if (!commentIdInput || !boardIdInput) {
+                alert("필요한 데이터를 찾을 수 없습니다.");
+                return;
+            }
+
+            const commentId = commentIdInput.value;
+            const boardId = boardIdInput.value;
+
+            // 삭제 확인
+            if (!confirm("정말 댓글을 삭제하시겠습니까?")) return;
+
+            // 서버 요청
+            fetch("/comment/delete", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: new URLSearchParams({
+                    commentId: commentId,
+                    boardId: boardId,
+                }),
+            })
+                .then((response) => {
+                    if (response.ok) {
+                        window.location.reload(); // 페이지 새로고침
+                    } else {
+                        return response.text().then((text) => {
+                            throw new Error(text);
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error:", error.message);
+                    alert("댓글 삭제에 실패했습니다. 다시 시도해주세요.");
+                });
+        });
+    }
 });

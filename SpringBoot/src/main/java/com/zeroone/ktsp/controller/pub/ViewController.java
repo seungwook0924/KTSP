@@ -53,7 +53,7 @@ public class ViewController {
         User user = methodUtil.getSessionUser(session);
         BoardViewDTO boardViewDTO = populateBoardViewDTO(board, user, session);
 
-        List<CommentDTO> comments = populateCommentDTOs(commentService.findCommentsByBoard(board)); // 댓글 데이터 변환
+        List<CommentDTO> comments = populateCommentDTOs(commentService.findCommentsByBoard(board), session); // 댓글 데이터 변환
 
         if (methodUtil.getSessionUser(session).getRole().equals(UserRole.admin)) model.addAttribute("isAdmin", true); // 관리자 확인
 
@@ -146,20 +146,22 @@ public class ViewController {
     }
 
     // 댓글 목록을 DTO 목록으로 변환
-    private List<CommentDTO> populateCommentDTOs(List<Comment> comments)
+    private List<CommentDTO> populateCommentDTOs(List<Comment> comments, HttpSession session)
     {
         List<CommentDTO> commentDTOList = new ArrayList<>();
         if (!comments.isEmpty())
         {
-            for (Comment comment : comments) commentDTOList.add(toCommentDTO(comment)); // 댓글 엔티티를 DTO로 변환하여 추가
+            for (Comment comment : comments) commentDTOList.add(toCommentDTO(comment, session)); // 댓글 엔티티를 DTO로 변환하여 추가
         }
         return commentDTOList;
     }
 
     // Comment 엔티티를 DTO로 변환
-    private CommentDTO toCommentDTO(Comment comment)
+    private CommentDTO toCommentDTO(Comment comment, HttpSession session)
     {
         CommentDTO commentDTO = new CommentDTO();
+
+        User user = methodUtil.getSessionUser(session);
 
         // 기본 댓글 정보 설정
         commentDTO.setId(comment.getId());
@@ -168,12 +170,12 @@ public class ViewController {
         commentDTO.setCreatedAt(comment.getCreatedAt());
         commentDTO.setMajor(comment.getUser().getMajor());
         commentDTO.setLevelName(comment.getUser().getLevel()); // 유저 레벨 설정
+        commentDTO.setAdmin(user.getRole() == UserRole.admin);
         commentDTO.setParentCommentId(comment.getParentComment() != null ? comment.getParentComment().getId() : null);
-
         // 자식 댓글 처리
         if (comment.getChildComments() != null && !comment.getChildComments().isEmpty())
         {
-            for (Comment child : comment.getChildComments()) commentDTO.getChildCommentDTOs().add(toCommentDTO(child)); // 자식 댓글 변환 후 추가
+            for (Comment child : comment.getChildComments()) commentDTO.getChildCommentDTOs().add(toCommentDTO(child, session)); // 자식 댓글 변환 후 추가
         }
 
         return commentDTO;
