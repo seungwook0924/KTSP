@@ -15,7 +15,7 @@ DROP TYPE IF EXISTS type CASCADE;
 -- ENUM 타입 정의
 CREATE TYPE role AS ENUM ('admin', 'user');
 CREATE TYPE level AS ENUM ('freshman', 'sophomore', 'junior', 'senior', 'etc');
-CREATE TYPE type AS ENUM ('mentor', 'mentee', 'major1', 'major2', 'major3', 'project_contest', 'notice', 'report');
+CREATE TYPE type AS ENUM ('mentor', 'mentee', 'major1', 'major2', 'major3', 'project_contest', 'notice', 'report', 'free');
 
 -- users 테이블
 CREATE TABLE users (

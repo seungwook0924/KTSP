@@ -72,11 +72,17 @@ public class AddBoardController
             addBoardDTO.setTeamSize((byte) 1);
             model.addAttribute("addTitle", "공지사항 작성");
         }
-        else
+        else if(boardType.equals("report"))
         {
             addBoardDTO.setType(BoardType.report);
             addBoardDTO.setTeamSize((byte) 1);
             model.addAttribute("addTitle", "불편 접수 게시글 작성");
+        }
+        else
+        {
+            addBoardDTO.setType(BoardType.free);
+            addBoardDTO.setTeamSize((byte) 1);
+            model.addAttribute("addTitle", "자유 게시판 게시글 작성");
         }
 
         model.addAttribute("sidebarType", sidebarType);

@@ -30,18 +30,13 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException
     {
-        log.info("로그인 성공 - studentNumber : {}", authentication.getName());
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal(); // Authentication에서 UserDetails 추출
 
-        // Authentication에서 UserDetails 추출
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByStudentNumber(userDetails.getUsername()).orElseThrow(() -> new IllegalStateException("사용자 정보를 찾을 수 없습니다.")); // 사용자 정보를 DB에서 조회
 
-        // 사용자 정보를 DB에서 조회
-        User user = userRepository.findByStudentNumber(userDetails.getUsername()).orElseThrow(() -> new IllegalStateException("사용자 정보를 찾을 수 없습니다."));
+        session.setAttribute("user", user); // 세션에 사용자 정보 저장
+        log.info("로그인 성공 - 이름 : {}, 학번 : {}", user.getName(), authentication.getName());
 
-        // 세션에 사용자 정보 저장
-        session.setAttribute("user", user);
-
-        // 인증 성공 후 리다이렉트
-        response.sendRedirect("/");
+        response.sendRedirect("/"); // 인증 성공 후 리다이렉트
     }
 }

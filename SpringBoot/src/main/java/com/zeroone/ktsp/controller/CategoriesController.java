@@ -84,6 +84,12 @@ public class CategoriesController
         return handleBoardRequest(model, BoardType.report, "불편 접수", "community", "report", page);
     }
 
+    @GetMapping("/free")
+    public String showFreeBoards(Model model, @RequestParam(defaultValue = "0") int page)
+    {
+        return handleBoardRequest(model, BoardType.free, "자유 게시판", "community", "free", page);
+    }
+
     @GetMapping("/search")
     public String showSearchResult(Model model, @RequestParam String category, @RequestParam String q, @RequestParam(defaultValue = "0") int page)
     {

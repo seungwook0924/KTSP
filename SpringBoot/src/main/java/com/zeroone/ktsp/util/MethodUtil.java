@@ -21,7 +21,7 @@ public class MethodUtil
     public boolean isValidSidebarTypeAndMenu(String sidebarType, String currentMenu)
     {
         Set<String> validSidebarTypes = Set.of("learningCore", "majorLearner", "projectContest", "community");
-        Set<String> validMenus = Set.of("mentor", "mentee", "major1", "major2", "major3", "projectContest", "notice", "report");
+        Set<String> validMenus = Set.of("mentor", "mentee", "major1", "major2", "major3", "projectContest", "notice", "report", "free");
 
         return validSidebarTypes.contains(sidebarType) && validMenus.contains(currentMenu);
     }
@@ -49,21 +49,6 @@ public class MethodUtil
             case major3: return "전과·편입학생 공동체";
             case project_contest: return "프로젝트·공모전";
             default: return "불편신고";
-        }
-    }
-
-    public String convertBoardTypeToCode(BoardType boardType)
-    {
-        switch (boardType)
-        {
-            case mentor: return "mentor";
-            case mentee: return "mentee";
-            case major1: return "major1";
-            case major2: return "major2";
-            case major3: return "major3";
-            case project_contest: return "projectContest";
-            case report: return "report";
-            default: return "notice";
         }
     }
 }

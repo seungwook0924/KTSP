@@ -15,10 +15,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HomeController
 {
     private final MethodUtil methodUtil;
+
     @GetMapping("/")
     public String home()
     {
         return "home";
+    }
+
+    @GetMapping("/secret")
+    public String showSecret(HttpSession session)
+    {
+        User user = methodUtil.getSessionUser(session);
+        if(user == null) return "redirect:/";
+        return "secret";
     }
 
     @GetMapping("/learning_core")

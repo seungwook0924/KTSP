@@ -5,6 +5,7 @@
   <aside class="sidebar">
     <ul>
       <li><a href="/introduction" th:classappend="${currentMenu == 'introduction'} ? 'active' : ''">사이트 소개</a></li>
+      <li><a href="/free" th:classappend="${currentMenu == 'free'} ? 'active' : ''">자유게시판</a></li>
       <li><a href="/notice" th:classappend="${currentMenu == 'notice'} ? 'active' : ''">공지사항</a></li>
       <li><a href="/report" th:classappend="${currentMenu == 'report'} ? 'active' : ''">불편접수</a></li>
     </ul>

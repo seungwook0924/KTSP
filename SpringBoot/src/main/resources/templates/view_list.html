@@ -39,9 +39,9 @@
         <th>번호</th>
         <th>작성자</th>
         <th>제목</th>
-        <th th:if="${(currentMenu != 'notice') and (currentMenu != 'report')}">팀원 수</th>
+        <th th:if="${sidebarType != 'community'}">팀원 수</th>
         <th>작성일</th>
-        <th th:if="${(currentMenu != 'notice') and (currentMenu != 'report')}">모집 여부</th>
+        <th th:if="${sidebarType != 'community'}">모집 여부</th>
         <th>조회수</th>
       </tr>
       </thead>
@@ -51,9 +51,9 @@
         <td th:text="${totalItems - (currentPage * pageSize) - stat.index}"></td> <!-- 전체 글 번호 -->
         <td th:text="${board.userName}"></td> <!-- 작성자 -->
         <td class="title-column"><a class="board-select" th:text="${board.title}" th:href="@{/boards/{id}(id=${board.id}, sidebarType=${sidebarType}, boardType=${currentMenu})}">제목</a></td> <!-- 제목 -->
-        <td th:text="${board.currentSize} + '/' + ${board.teamSize}" th:if="${(currentMenu != 'notice') and (currentMenu != 'report')}"></td> <!-- 현재/최대 팀원 수 -->
+        <td th:text="${board.currentSize} + '/' + ${board.teamSize}" th:if="${sidebarType != 'community'}"></td> <!-- 현재/최대 팀원 수 -->
         <td th:text="${board.date}"></td> <!-- 작성일 -->
-        <td th:text="${board.isClosed ? '모집 마감' : '모집중'}" th:if="${(currentMenu != 'notice') and (currentMenu != 'report')}"></td> <!-- 모집 여부 -->
+        <td th:text="${board.isClosed ? '모집 마감' : '모집중'}" th:if="${sidebarType != 'community'}"></td> <!-- 모집 여부 -->
         <td th:text="${board.hits}"></td> <!-- 조회수 -->
       </tr>
       </tbody>

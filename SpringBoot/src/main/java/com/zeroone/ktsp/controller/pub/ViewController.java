@@ -92,7 +92,7 @@ public class ViewController {
         boardViewDTO.setLevel(methodUtil.convertUserLevelToString(board.getUser().getLevel()));
         boardViewDTO.setType(board.getType());
         boardViewDTO.setJoin(!board.getIsClosed() && board.getUser().getId() != user.getId()); // 지원 가능 여부
-        boardViewDTO.setMine(board.getUser().getId() == user.getId()); // 사용자가 작성자인지 여부
+        boardViewDTO.setMine((board.getUser().getId() == user.getId()) || user.getRole() == UserRole.admin); // 사용자가 작성자인지 여부(관리자는 모든것을 제어할 수 있음)
 
         // 파일 정보 설정
         populateFileDetails(board, boardViewDTO);
