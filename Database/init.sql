@@ -1,9 +1,6 @@
 -- 기존 테이블 삭제 (존재 시)
-DROP TABLE IF EXISTS report_comments CASCADE;
 DROP TABLE IF EXISTS reports CASCADE;
 DROP TABLE IF EXISTS file_mapping CASCADE;
-DROP TABLE IF EXISTS files CASCADE;
-DROP TABLE IF EXISTS notice CASCADE;
 DROP TABLE IF EXISTS comments CASCADE;
 DROP TABLE IF EXISTS boards CASCADE;
 DROP TABLE IF EXISTS waiting CASCADE;
@@ -78,7 +75,7 @@ CREATE TABLE comments (
 -- files 테이블
 CREATE TABLE file_mapping (
                               id BIGSERIAL PRIMARY KEY,
-                              board_id BIGINT REFERENCES boards(id) ON DELETE CASCADE,
+                              board_id BIGINT REFERENCES boards(id) ON DELETE CASCADE NOT NULL,
                               file_name VARCHAR(150) NOT NULL,
                               uuid CHAR(36) NOT NULL,
                               path VARCHAR(255) NOT NULL,

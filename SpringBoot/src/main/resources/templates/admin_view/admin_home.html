@@ -19,6 +19,24 @@
     <h1>관리자 페이지</h1>
 
     <hr>
+    <h2 class="section-title">백엔드 로그파일</h2>
+    <table>
+      <thead>
+      <tr>
+        <th>번호</th>
+        <th>로그 파일 이름</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="logFile, iterStat : ${logFiles}"
+          th:data-href="@{/admin/log/view(fileName=${logFile})}"
+          onclick="window.location.href = this.getAttribute('data-href');"
+          style="cursor: pointer;">
+        <td style="text-align: center" th:text="${iterStat.index + 1}"></td>
+        <td style="text-align: center" th:text="${logFile}"></td>
+      </tr>
+      </tbody>
+    </table>
     <a id="back" class="button-link" style="float: right; cursor: pointer;" onclick="history.back()">뒤로</a>
   </div>
 </div>
