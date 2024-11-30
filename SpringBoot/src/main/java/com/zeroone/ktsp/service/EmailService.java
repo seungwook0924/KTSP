@@ -124,7 +124,8 @@ public class EmailService {
         log.info("Generated auth code: {}", authCode);
 
         MimeMessage message = javaMailSender.createMimeMessage();
-        try {
+        try
+        {
             message.addRecipients(MimeMessage.RecipientType.TO, email);
             message.setSubject("KNU 재능공유 플랫폼 인증번호");
             message.setFrom(senderEmail);
@@ -137,7 +138,9 @@ public class EmailService {
 
             // Redis 에 인증 코드 저장
             redisUtil.setDataExpire(email, authCode, 60 * 30L);
-        } catch (MessagingException e) {
+        }
+        catch (MessagingException e)
+        {
             log.error("Error while creating email form: {}", e.getMessage(), e);
             throw e;
         }
@@ -149,7 +152,8 @@ public class EmailService {
         log.info("Generated temporary password: {}", tempPassword);
 
         MimeMessage message = javaMailSender.createMimeMessage();
-        try {
+        try
+        {
             message.addRecipients(MimeMessage.RecipientType.TO, email);
             message.setSubject("KNU 재능공유 플랫폼 임시 비밀번호");
             message.setFrom(senderEmail);
@@ -159,7 +163,9 @@ public class EmailService {
             variables.put("tempPassword", tempPassword);
 
             message.setText(setContext("temp_password", variables), "utf-8", "html");
-        } catch (MessagingException e) {
+        }
+        catch (MessagingException e)
+        {
             log.error("Error while creating email form: {}", e.getMessage(), e);
             throw e;
         }

@@ -20,7 +20,7 @@ public class FileMapping {
     @JoinColumn(name = "board_id")
     private Board board;
 
-    @Column(name = "file_name", nullable = false, length = 50)
+    @Column(name = "file_name", nullable = false)
     private String fileName;
 
     @Column(nullable = false, length = 36)

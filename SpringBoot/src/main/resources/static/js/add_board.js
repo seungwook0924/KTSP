@@ -66,9 +66,9 @@ document.getElementById("title").addEventListener("input", function () {
     const titleInput = this.value;
     const warningElement = document.getElementById("titleWarning");
 
-    if (titleInput.length > 20) {
+    if (titleInput.length > 50) {
         warningElement.style.display = "block"; // 경고 메시지 표시
-        this.value = titleInput.slice(0, 20); // 글자수를 20자로 자름
+        this.value = titleInput.slice(0, 50); // 글자수를 20자로 자름
     } else {
         warningElement.style.display = "none"; // 경고 메시지 숨김
     }

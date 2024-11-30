@@ -239,9 +239,10 @@ td {
 .board-table .title-column {
     width: 40%; /* 제목 열의 너비를 40%로 설정 */
     text-align: center; /* 텍스트를 가운데 정렬 */
-    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
     overflow: hidden; /* 텍스트가 넘칠 경우 숨김 */
-    text-overflow: ellipsis; /* 넘친 텍스트에 '...' 표시 */
+    word-wrap: break-word; /* 단어를 다음 줄로 넘길 수 있도록 설정 */
+    word-break: break-word; /* 단어를 강제로 줄바꿈할 수 있도록 설정 */
+    white-space: normal; /* 줄바꿈을 허용 */
 }
 
 .no-data {

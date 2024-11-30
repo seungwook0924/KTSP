@@ -41,11 +41,11 @@ CREATE TABLE boards (
                         type type NOT NULL,
                         created_at TIMESTAMP NOT NULL,
                         updated_at TIMESTAMP NULL,
-                        title VARCHAR(20) NOT NULL,
+                        title VARCHAR(50) NOT NULL,
                         content TEXT NOT NULL,
                         is_closed BOOLEAN NOT NULL,
-    hits BIGINT NOT NULL,
-    team_size SMALLINT NOT NULL
+                        hits BIGINT NOT NULL,
+                        team_size SMALLINT NOT NULL
 );
 
 -- teams 테이블
@@ -61,7 +61,7 @@ CREATE TABLE waiting (
                          id BIGSERIAL PRIMARY KEY,
                          board_id BIGINT NOT NULL REFERENCES boards(id) ON DELETE CASCADE,
                          user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    is_valid BOOLEAN NOT NULL,
+                         is_valid BOOLEAN NOT NULL,
                          content VARCHAR(255) NOT NULL
 );
 
@@ -79,11 +79,11 @@ CREATE TABLE comments (
 CREATE TABLE file_mapping (
                               id BIGSERIAL PRIMARY KEY,
                               board_id BIGINT REFERENCES boards(id) ON DELETE CASCADE,
-                              file_name VARCHAR(50) NOT NULL,
+                              file_name VARCHAR(150) NOT NULL,
                               uuid CHAR(36) NOT NULL,
                               path VARCHAR(255) NOT NULL,
                               extension VARCHAR(20) NOT NULL
 );
 
 INSERT INTO users VALUES
-    (1, 'admin', 201921321, '$2a$10$kBQhpciRe.xAY1MpT6OKveoF5d5SVoc2/HzSG9peXoY9uYJo.pqYK', 'senior', '이승욱', '010-5325-2904', 'AI소프트웨어', 4.2, 'lso_0924@kangwon.ac.kr');
+    (1, 'admin', 201921321, '$2a$10$kBQhpciRe.xAY1MpT6OKveoF5d5SVoc2/HzSG9peXoY9uYJo.pqYK', 'senior', '이승욱', '010-5325-2904', 'AI', 4.2, 'lso_0924@kangwon.ac.kr');

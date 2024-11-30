@@ -16,15 +16,43 @@
 
 ## Design
 
-### 홈 화면
+### **홈 화면**
 
 ![SCR-20241130-ojqs](images/README/SCR-20241130-ojqs.png)
 
 
 
-### 사이트 소개 화면
+### **사이트 소개 화면**
 
 ![SCR-20241130-okke](images/README/SCR-20241130-okke.png)
 
 
 
+**게시글 상세 화면**
+
+![SCR-20241130-orkn](images/README/SCR-20241130-orkn.png)
+
+![SCR-20241130-pjdi](images/README/SCR-20241130-pjdi.png)
+
+
+
+## 기술 스택
+
+![SCR-20241130-qcbr](images/README/SCR-20241130-qcbr.png)
+
+
+
+## 소프트웨어 아키텍쳐
+
+![Architecture](images/README/Architecture.png)
+
+> [!TIP]
+>
+> - Redis는 캐시 뿐만 아니라 강원대학교 학생 인증을 위한 메일 서비스(STMP)를 위해 쓰임(보안코드 유효성 검증)
+> - Nginx는 클라이언트의 요청을 스프링부트로 전달하기 위한 프록시 서버로 사용함
+
+
+
+## ERD
+
+![SCR-20241130-qdrx](images/README/SCR-20241130-qdrx.png)
