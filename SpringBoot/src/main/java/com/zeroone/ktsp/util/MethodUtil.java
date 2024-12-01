@@ -48,7 +48,7 @@ public class MethodUtil
             case major2: return "신입·재입학생 공동체";
             case major3: return "전과·편입학생 공동체";
             case project_contest: return "프로젝트·공모전";
-            default: return "불편신고";
+            default: return "자유 게시판";
         }
     }
 }

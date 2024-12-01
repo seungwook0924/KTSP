@@ -49,7 +49,7 @@ public class DownLoadController
                 FileMapping targetFile = findFile.get();
 
                 File file = new File(findFile.get().getPath() + targetFile.getUuid() + "." + targetFile.getExtension());
-                log.info("파일 다운로드 - 유저 PK  : {}, 이름 : {}, 게시판 PK : {}, 파일 이름 : {}, 피일 경로 경로 : {}", user.getId(), user.getName(), id, fileName, file.getAbsoluteFile());
+                log.info("파일 다운로드 - 유저 PK  : {}, 이름 : {}, 게시판 PK : {}, 파일 이름 : {}, 피일 경로 : {}", user.getId(), user.getName(), id, fileName, file.getAbsoluteFile());
 
                 if (!file.exists())
                 {

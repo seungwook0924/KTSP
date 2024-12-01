@@ -120,7 +120,7 @@ public class MyPageController {
         {
             for(Team team : teams)
             {
-                if((team.getBoard().getType().equals(BoardType.report)) || team.getBoard().getType().equals(BoardType.notice)) continue; // 불편 신고 및 공지사항은 전달하지 않음
+                if((team.getBoard().getType().equals(BoardType.report)) || team.getBoard().getType().equals(BoardType.notice) || team.getBoard().getType().equals(BoardType.free)) continue; // 불편 신고, 공지사항, 자유 게시판은 전달하지 않음
                 MyTeamDTO newDto = new MyTeamDTO();
                 newDto.setId(team.getId());
                 newDto.setWriter(team.getBoard().getUser().getName());
