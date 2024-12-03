@@ -5,6 +5,7 @@ import com.zeroone.ktsp.DTO.UpdateSaveBoardDTO;
 import com.zeroone.ktsp.DTO.UpdateViewBoardDTO;
 import com.zeroone.ktsp.domain.Board;
 import com.zeroone.ktsp.domain.User;
+import com.zeroone.ktsp.enumeration.UserRole;
 import com.zeroone.ktsp.service.BoardService;
 import com.zeroone.ktsp.service.FileService;
 import com.zeroone.ktsp.util.MethodUtil;
@@ -39,7 +40,11 @@ public class UpdateController
         if(findBoard.isEmpty()) return "redirect:/learning_core/mentor";
         Board board = findBoard.get();
 
-        if(user.getId() != board.getUser().getId()) return "redirect:/"; //본인이 아닌 다른 사람이 접근했을 때 리다이렉트
+        if(!user.getRole().equals(UserRole.admin))
+        {
+            if(user.getId() != board.getUser().getId()) return "redirect:/"; //본인이 아닌 다른 사람이 접근했을 때 리다이렉트
+        }
+
 
         updateViewBoardDTO.setId(id);
         updateViewBoardDTO.setTitle(board.getTitle());
@@ -58,7 +63,7 @@ public class UpdateController
         if(!methodUtil.isValidSidebarTypeAndMenu(sidebarType,boardType)) return "redirect:/";
 
         Optional<Board> findBoard = boardService.findById(id);
-        if(findBoard.isEmpty()) return "redirect:/learning_core/mentor";
+        if(findBoard.isEmpty()) return "redirect:/";
 
         Board board = findBoard.get();
 
