@@ -81,6 +81,3 @@ CREATE TABLE file_mapping (
                               path VARCHAR(255) NOT NULL,
                               extension VARCHAR(20) NOT NULL
 );
-
-INSERT INTO users VALUES
-    (1, 'admin', 201921321, '$2a$10$kBQhpciRe.xAY1MpT6OKveoF5d5SVoc2/HzSG9peXoY9uYJo.pqYK', 'senior', '이승욱', '010-5325-2904', 'AI', 4.2, 'lso_0924@kangwon.ac.kr');
