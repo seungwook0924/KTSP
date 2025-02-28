@@ -1,5 +1,5 @@
 # KTSP:KNU Talent Sharing Platform
-## linc 3.0 강원대학교 캡스톤디자인 경진대회 공모작(2024 - 2)
+## linc 3.0 강원대학교 캡스톤디자인 경진대회 금상 수상작(2024 - 2)
 
 ## Introduction
 
