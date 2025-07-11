@@ -1,6 +1,6 @@
-package com.seungwook.ktsp.domain.user.repository;
+package com.seungwook.ktsp.domain.service.user.repository;
 
-import com.seungwook.ktsp.domain.user.entity.User;
+import com.seungwook.ktsp.domain.service.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -28,7 +28,10 @@ public class IpBanFilter extends OncePerRequestFilter {
 
         String clientIP = ipService.getClientIP(request);
 
-        if(apiService.isSafeIp(clientIP)) filterChain.doFilter(request, response);
+        if (apiService.isSafeIp(clientIP)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         bannedIpHandler.handle(response);
     }

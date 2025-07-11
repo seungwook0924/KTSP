@@ -1,7 +1,7 @@
-package com.seungwook.ktsp.domain.user.entity;
+package com.seungwook.ktsp.domain.service.user.entity;
 
-import com.seungwook.ktsp.domain.user.entity.enums.AcademicYear;
-import com.seungwook.ktsp.domain.user.entity.enums.UserRole;
+import com.seungwook.ktsp.domain.service.user.entity.enums.AcademicYear;
+import com.seungwook.ktsp.domain.service.user.entity.enums.UserRole;
 import com.seungwook.ktsp.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

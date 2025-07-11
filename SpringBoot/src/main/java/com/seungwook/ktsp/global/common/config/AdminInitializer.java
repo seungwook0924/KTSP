@@ -1,7 +1,7 @@
 package com.seungwook.ktsp.global.common.config;
 
-import com.seungwook.ktsp.domain.user.entity.User;
-import com.seungwook.ktsp.domain.user.repository.UserRepository;
+import com.seungwook.ktsp.domain.service.user.entity.User;
+import com.seungwook.ktsp.domain.service.user.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

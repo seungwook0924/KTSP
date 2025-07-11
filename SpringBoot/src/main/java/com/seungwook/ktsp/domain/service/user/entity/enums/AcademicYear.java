@@ -1,4 +1,4 @@
-package com.seungwook.ktsp.domain.user.entity.enums;
+package com.seungwook.ktsp.domain.service.user.entity.enums;
 
 import lombok.Getter;
 
