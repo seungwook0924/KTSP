@@ -1,4 +1,4 @@
-package com.seungwook.ktsp.domain.service.user.entity.enums;
+package com.seungwook.ktsp.domain.user.entity.enums;
 
 import lombok.Getter;
 
@@ -8,8 +8,7 @@ public enum AcademicYear {
     SECOND_YEAR("2학년"),
     THIRD_YEAR("3학년"),
     FOURTH_YEAR("4학년"),
-    PROFESSOR("교수"),
-    DEVELOPER("개발자");
+    GRADUATE("졸업생");
 
     private final String label;
 

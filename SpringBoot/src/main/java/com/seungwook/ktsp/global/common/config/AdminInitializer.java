@@ -1,7 +1,7 @@
 package com.seungwook.ktsp.global.common.config;
 
-import com.seungwook.ktsp.domain.service.user.entity.User;
-import com.seungwook.ktsp.domain.service.user.repository.UserRepository;
+import com.seungwook.ktsp.domain.user.entity.User;
+import com.seungwook.ktsp.domain.user.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,7 +33,7 @@ public class AdminInitializer {
 
     @PostConstruct
     public void initAdmin() {
-        if (!userRepository.existsByEmail(email)) {
+        if ((!userRepository.existsByEmail(email)) && (!userRepository.existsByStudentNumber(studentNumber))) {
             User admin = User.createAdmin(email, password, studentNumber, name, tel, major);
             userRepository.save(admin);
         }

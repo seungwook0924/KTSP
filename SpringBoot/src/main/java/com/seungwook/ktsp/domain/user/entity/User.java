@@ -1,7 +1,7 @@
-package com.seungwook.ktsp.domain.service.user.entity;
+package com.seungwook.ktsp.domain.user.entity;
 
-import com.seungwook.ktsp.domain.service.user.entity.enums.AcademicYear;
-import com.seungwook.ktsp.domain.service.user.entity.enums.UserRole;
+import com.seungwook.ktsp.domain.user.entity.enums.AcademicYear;
+import com.seungwook.ktsp.domain.user.entity.enums.UserRole;
 import com.seungwook.ktsp.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -89,7 +89,7 @@ public class User extends BaseEntity {
                 .password(encodedPassword)
                 .studentNumber(studentNumber)
                 .name(name)
-                .academicYear(AcademicYear.DEVELOPER)
+                .academicYear(AcademicYear.GRADUATE)
                 .telNumber(telNumber)
                 .major(major)
                 .previousGpa(new BigDecimal("4.0"))

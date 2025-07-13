@@ -1,4 +1,4 @@
-package com.seungwook.ktsp.domain.pub.controller;
+package com.seungwook.ktsp.global.common.controller;
 
 import com.seungwook.ktsp.global.response.Response;
 import org.springframework.http.ResponseEntity;
