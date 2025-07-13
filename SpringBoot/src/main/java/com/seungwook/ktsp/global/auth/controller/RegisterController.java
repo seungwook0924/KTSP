@@ -4,7 +4,6 @@ import com.seungwook.ktsp.global.auth.dto.request.LoginRequest;
 import com.seungwook.ktsp.global.auth.dto.request.RegisterRequest;
 import com.seungwook.ktsp.global.auth.service.AuthService;
 import com.seungwook.ktsp.global.response.Response;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +17,7 @@ public class RegisterController {
 
     private final AuthService authService;
 
-    @PostMapping("/public/register")
+    @PostMapping("/auth/register")
     public ResponseEntity<Response<Void>> login(@Valid @RequestBody RegisterRequest request) {
 
         authService.register(request);

@@ -2,6 +2,7 @@ package com.seungwook.ktsp.global.auth.service;
 
 import com.seungwook.ktsp.domain.user.entity.User;
 import com.seungwook.ktsp.domain.user.repository.UserRepository;
+import com.seungwook.ktsp.global.auth.dto.UserSession;
 import com.seungwook.ktsp.global.auth.dto.request.LoginRequest;
 import com.seungwook.ktsp.global.auth.dto.request.RegisterRequest;
 import com.seungwook.ktsp.global.auth.exception.DuplicatedException;
@@ -13,18 +14,19 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
 import java.time.Year;
-import java.util.Random;
+import java.util.List;
 import java.util.regex.Pattern;
 
 @Slf4j
@@ -33,21 +35,35 @@ import java.util.regex.Pattern;
 public class AuthService {
 
     private final EmailService emailService;
-    private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RedisUtil redisUtil;
 
-    //학번 형식
+    // 학번 형식
     private static final String STUDENT_NUMBER_PATTERN = "^[0-9]{9}$";
 
+    // 인증코드 허용 문자 집합
+    private static final char[] ALPHA_NUMERIC = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+
+    // SecureRandom
+    private static final SecureRandom RANDOM = new SecureRandom();
+
+    // 요청 사용자 식별 메서드
+    @Transactional(readOnly = true)
+    public User getUser() {
+        UserSession session = (UserSession) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userRepository.findByStudentNumber(session.getStudentNumber()).orElseThrow(LoginFailedException::new);
+    }
+
+    // 회원가입
+    @Transactional
     public void register(RegisterRequest request) {
 
         // 학번 유효성 검사
         validStudentNumber(request.getStudentNumber());
 
         // 이메일, 학번 중복 검사
-        validateDuplicateEmailAndStudent(request.getEmail(), request.getStudentNumber());
+        validateDuplicate(request.getEmail(), request.getStudentNumber(), request.getTelNumber());
 
         User newUser = User.createUser(request.getEmail() + "@kangwon.ac.kr",
                 passwordEncoder.encode(request.getPassword()),
@@ -62,60 +78,86 @@ public class AuthService {
     }
 
 
+    // 로그인
+    @Transactional(readOnly = true)
     public void login(LoginRequest request, HttpServletRequest httpRequest) {
-        try {
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(request.getStudentNumber(), request.getPassword());
+        // 1. 사용자 조회
+        User user = userRepository.findByStudentNumber(request.getStudentNumber()).orElseThrow(LoginFailedException::new);
 
-            Authentication authentication = authenticationManager.authenticate(authToken);
-
-            // 인증 정보 저장
-            SecurityContext context = SecurityContextHolder.createEmptyContext();
-            context.setAuthentication(authentication);
-            SecurityContextHolder.setContext(context);
-
-            // 세션에 SecurityContext 저장
-            HttpSession session = httpRequest.getSession(true); // 세션이 없으면 새로 생성
-            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
-        } catch (AuthenticationException ex) {
+        // 2. 비밀번호 검사
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new LoginFailedException();
         }
+
+        // 3. 인증 토큰 구성
+        UserSession sessionUser = new UserSession(
+                user.getStudentNumber(),
+                user.getName(),
+                user.getRole()
+        );
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                sessionUser,
+                null,
+                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
+        );
+
+        // 4. SecurityContext 세팅
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authentication);
+        SecurityContextHolder.setContext(context);
+
+        // 5. 세션에 저장
+        HttpSession session = httpRequest.getSession(true);
+        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
     }
 
+    // 회원가입 인증 코드 발송
     public void sendRegisterEmail(String toEmail) {
         emailService.sendRegisterEmail(toEmail, generateVerifyCode());
     }
 
     // 인증코드 검증
     public void verifyEmailCode(String email, String code) {
-        String codeFoundByEmail = redisUtil.getData(email);
+        String authCode = redisUtil.getAuthCode(email);
 
-        if (codeFoundByEmail == null) {
-            throw new VerifyCodeException("인증번호 발송을 먼저 요청하세요");
+        if (authCode == null) {
+            throw new VerifyCodeException("인증번호 발송을 먼저 요청하세요.");
         }
 
-        if (!codeFoundByEmail.equals(code)) {
-            log.warn("인증코드 검증 실패 - email: {}, 예상 값: {}, 입력값: {}", email, codeFoundByEmail, code);
-            throw new VerifyCodeException("잘못된 인증번호입니다.");
+        if (!authCode.equals(code)) {
+            log.warn("인증코드 검증 실패 - email: {}, 예상 값: {}, 입력값: {}", email, authCode, code);
+            redisUtil.incrementFailCount(email); // 실패 횟수 증가
+
+            if(redisUtil.getFailCount(email) >= 5) {
+                redisUtil.deleteAuthCode(email);
+                throw new VerifyCodeException("이메일 인증 5회 실패하였습니다. 인증번호 발송을 다시 해주세요.");
+            }
+
+            throw new VerifyCodeException("잘못된 인증번호를 입력하였습니다.");
         }
+
+        // 인증 성공시 레디스에서 키 삭제
+        redisUtil.deleteAuthCode(email);
     }
 
     // 인증코드 생성
-    public String generateVerifyCode() {
-        int leftLimit = 48; // number '0'
-        int rightLimit = 122; // alphabet 'z'
-        int targetStringLength = 6;
-        Random random = new Random();
+    private String generateVerifyCode() {
+        int length = 6;
 
-        return random.ints(leftLimit, rightLimit + 1)
-                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 | i >= 97))
-                .limit(targetStringLength)
-                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                .toString();
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            char c = ALPHA_NUMERIC[RANDOM.nextInt(ALPHA_NUMERIC.length)];
+            sb.append(c);
+        }
+
+        return sb.toString();
     }
 
-    private void validateDuplicateEmailAndStudent(String email, String studentNumber) {
+    private void validateDuplicate(String email, String studentNumber, String telNumber) {
         if (userRepository.existsByEmail(email)) throw new DuplicatedException("이미 등록된 이메일입니다.");
         if(userRepository.existsByStudentNumber(studentNumber)) throw new DuplicatedException("이미 등록된 학번입니다.");
+        if(userRepository.existsByTelNumber(telNumber)) throw new DuplicatedException("이미 등록된 전화번호입니다.");
     }
 
     // 학번 유효성 검사

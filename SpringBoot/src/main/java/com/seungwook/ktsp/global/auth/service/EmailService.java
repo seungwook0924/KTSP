@@ -29,13 +29,13 @@ public class EmailService {
     // 회원가입 인증코드 이메일 발송
     public void sendRegisterEmail(String toEmail, String authCode) {
         try {
-            if (redisUtil.existData(toEmail)) redisUtil.deleteData(toEmail);
+            if (redisUtil.existAuthCode(toEmail)) redisUtil.deleteAuthCode(toEmail);
 
             // 이메일 폼 생성
             MimeMessage emailForm = createEmailForm(toEmail, authCode);
 
-            // Redis 에 인증 코드 저장
-            redisUtil.setDataExpire(toEmail, authCode, 60 * 5L);
+            // Redis 에 인증 코드 저장(TTL: 5분)
+            redisUtil.setAuthCode(toEmail, authCode, 60 * 5L);
 
             // 이메일 발송
             javaMailSender.send(emailForm);

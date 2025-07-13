@@ -17,7 +17,7 @@ public class LoginController {
 
     private final AuthService authService;
 
-    @PostMapping("/public/login")
+    @PostMapping("/auth/login")
     public ResponseEntity<Response<Void>> login(@Valid @RequestBody LoginRequest request, HttpServletRequest httpRequest) {
 
         authService.login(request, httpRequest);

@@ -46,6 +46,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 
     // Mail
+    implementation "ognl:ognl:3.4.7"
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
     // Test

@@ -11,6 +11,9 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorResponse {
 
+    @Builder.Default
+    private Boolean success = false;
+
     private String message;
 
     private String errorId;

@@ -24,7 +24,6 @@ public class SecurityConfig {
     private final IpBanFilter ipBanFilter;
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final AccessDeniedHandler accessDeniedHandler;
-    private final AuthenticationConfiguration authenticationConfiguration;
 
     @Bean
     public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception
@@ -34,9 +33,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/public/**").permitAll()
+                        .requestMatchers("/public/**", "/auth/**").permitAll()
                         .requestMatchers("/service/**").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("/admin/**", "/auth/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception
@@ -48,8 +47,12 @@ public class SecurityConfig {
                 .build();
     }
 
+    /**
+     * AuthenticationManager Bean 제공
+     * UserDetailsService 없이도 경고 메시지 해결
+     */
     @Bean
-    public AuthenticationManager authenticationManager() throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 }
