@@ -6,7 +6,9 @@ import com.seungwook.ktsp.global.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +26,9 @@ public class EmailVerifyController {
     @PostMapping("/{email}/send")
     public ResponseEntity<Response<Void>> mailSend(
             @Parameter(description = "이메일 앞자리(@kangwon.ac.kr가 자동으로 붙음)", example = "user123")
-            @PathVariable String email) {
+            @Pattern(regexp = "^[a-zA-Z0-9._%+-]+$", message = "이메일 형식이 올바르지 않습니다.")
+            @PathVariable String email) throws MessagingException {
+
         String userEmail = email + "@kangwon.ac.kr";
 
         authService.sendAuthCode(userEmail);

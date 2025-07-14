@@ -60,7 +60,6 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-
     // bcrypt 인코더
     @Bean
     public PasswordEncoder passwordEncoder() {

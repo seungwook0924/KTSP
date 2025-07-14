@@ -9,6 +9,7 @@ import com.seungwook.ktsp.global.auth.exception.DuplicatedException;
 import com.seungwook.ktsp.global.auth.exception.LoginFailedException;
 import com.seungwook.ktsp.global.auth.exception.StudentNumberException;
 import com.seungwook.ktsp.global.auth.exception.VerifyCodeException;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -145,9 +146,9 @@ public class AuthService {
         }
     }
 
-    // 회원가입 인증 코드 발송
-    public void sendAuthCode(String toEmail) {
-        emailService.sendRegisterEmail(toEmail, generateVerifyCode());
+    // 인증 코드 발송
+    public void sendAuthCode(String toEmail) throws MessagingException {
+        emailService.sendVerificationEmail(toEmail, generateVerifyCode());
     }
 
     // 인증코드 검증

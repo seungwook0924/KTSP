@@ -1,19 +1,28 @@
 package com.seungwook.ktsp.global.exception;
 
 import com.seungwook.ktsp.global.response.ErrorResponse;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSourceResolvable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
+
+import java.util.Objects;
 
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -54,6 +63,23 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(BAD_REQUEST)
                 .body(buildErrorResponse(responseMessage, errorId));
+    }
+
+    // @PathVariable, @RequestParam 등 메서드 파라미터 유효성 실패 시 처리
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<ErrorResponse> handleHandlerMethodValidationException(HandlerMethodValidationException ex) {
+        String errorId = generateErrorId();
+
+        String message = ex.getAllErrors().stream()
+                .map(MessageSourceResolvable::getDefaultMessage)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse("요청 파라미터 값이 올바르지 않습니다.");
+
+        log.warn("{} - @PathVariable, @RequestParam 검증 실패: {}", errorId, message);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(buildErrorResponse(message, errorId));
     }
 
     // ContentType(JSON 구조)에 대한 예외 처리
@@ -110,6 +136,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(BAD_REQUEST)
                 .body(buildErrorResponse("요청 파라미터 값이 올바르지 않습니다.", errorId));
     }
+
+    // 메일 발송 예외 처리
+    @ExceptionHandler(MessagingException.class)
+    public ResponseEntity<ErrorResponse> handleMailException(MessagingException ex) {
+        String errorId = generateErrorId();
+        log.error("{} - 이메일 발송 실패: {}", errorId, ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(buildErrorResponse("이메일 발송에 실패했습니다.", errorId));
+    }
+
 
     // 위에서 처리되지 않은 예외를 최종적으로 처리
     @ExceptionHandler(Exception.class)

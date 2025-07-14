@@ -26,7 +26,7 @@ public class AuthController {
     // 회원가입
     @Operation(summary = "회원가입", description = "이메일 인증을 완료한 사용자 회원가입")
     @PostMapping("/register")
-    public ResponseEntity<Response<Void>> login(@Valid @RequestBody RegisterRequest request) {
+    public ResponseEntity<Response<Void>> register(@Valid @RequestBody RegisterRequest request) {
 
         authService.register(request);
 

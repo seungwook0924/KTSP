@@ -16,6 +16,9 @@ public class RedisService {
     private static final String VERIFY_CODE_PREFIX = "verify-code:";
     private static final String VERIFIED_EMAIL_PREFIX = "verified-email:";
 
+    private static final String COOLDOWN_KEY_PREFIX = "verify-cooldown:";
+    private static final long COOLDOWN_SECONDS = 60;
+
     // 보안코드 조회
     public String getAuthCode(String email) {
         return (String) template.opsForHash().get(getVerifyCodeKey(email), "code");
@@ -79,5 +82,15 @@ public class RedisService {
     // 이메일 인증 성공관련 편의 메서드
     private String getVerifiedEmailKey(String email) {
         return VERIFIED_EMAIL_PREFIX + email;
+    }
+
+    // 쿨다운이 지났는지 확인
+    public boolean isInCooldown(String email) {
+        return template.hasKey(COOLDOWN_KEY_PREFIX + email);
+    }
+
+    // 이메일 지속 요청 방지
+    public void setCooldown(String email, long ttlSeconds) {
+        template.opsForValue().set(COOLDOWN_KEY_PREFIX + email, "1", Duration.ofSeconds(ttlSeconds));
     }
 }

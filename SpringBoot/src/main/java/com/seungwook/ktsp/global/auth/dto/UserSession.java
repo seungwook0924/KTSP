@@ -5,7 +5,7 @@ import lombok.Getter;
 
 import java.io.Serializable;
 
-/**
+/*
     Spring Security 세션에 저장되는 인증 사용자 정보 객체.
     HttpSession의 SPRING_SECURITY_CONTEXT 키에 저장되는 SecurityContext 내 Authentication의 principal로 사용됨.
     - 직렬화를 위해 Serializable 구현
