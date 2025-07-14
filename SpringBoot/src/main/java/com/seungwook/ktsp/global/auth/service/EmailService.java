@@ -1,6 +1,5 @@
 package com.seungwook.ktsp.global.auth.service;
 
-import com.seungwook.ktsp.global.auth.utils.RedisUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class EmailService {
     private final JavaMailSender javaMailSender;
-    private final RedisUtil redisUtil;
+    private final RedisService redisService;
 
     @Value("${spring.mail.username}")
     private String senderEmail;
@@ -29,13 +28,13 @@ public class EmailService {
     // 회원가입 인증코드 이메일 발송
     public void sendRegisterEmail(String toEmail, String authCode) {
         try {
-            if (redisUtil.existAuthCode(toEmail)) redisUtil.deleteAuthCode(toEmail);
+            if (redisService.existAuthCode(toEmail)) redisService.deleteAuthCode(toEmail);
 
             // 이메일 폼 생성
             MimeMessage emailForm = createEmailForm(toEmail, authCode);
 
             // Redis 에 인증 코드 저장(TTL: 5분)
-            redisUtil.setAuthCode(toEmail, authCode, 60 * 5L);
+            redisService.setAuthCode(toEmail, authCode, 60 * 5L);
 
             // 이메일 발송
             javaMailSender.send(emailForm);

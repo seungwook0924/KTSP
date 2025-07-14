@@ -7,4 +7,8 @@ public class VerifyCodeException extends BaseCustomException {
     public VerifyCodeException(String message) {
         super(HttpStatus.BAD_REQUEST, message);
     }
+
+    public VerifyCodeException(HttpStatus httpStatus, String message) {
+        super(httpStatus, message);
+    }
 }

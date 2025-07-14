@@ -9,11 +9,11 @@ import com.seungwook.ktsp.global.auth.exception.DuplicatedException;
 import com.seungwook.ktsp.global.auth.exception.LoginFailedException;
 import com.seungwook.ktsp.global.auth.exception.StudentNumberException;
 import com.seungwook.ktsp.global.auth.exception.VerifyCodeException;
-import com.seungwook.ktsp.global.auth.utils.RedisUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -37,7 +37,7 @@ public class AuthService {
     private final EmailService emailService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final RedisUtil redisUtil;
+    private final RedisService redisService;
 
     // 학번 형식
     private static final String STUDENT_NUMBER_PATTERN = "^[0-9]{9}$";
@@ -59,13 +59,20 @@ public class AuthService {
     @Transactional
     public void register(RegisterRequest request) {
 
+        String userEmail = request.getEmail() + "@kangwon.ac.kr";
+
+        // 이메일 인증 완료여부 검사
+        if (!redisService.existVerifiedEmail(userEmail))
+            throw new VerifyCodeException(HttpStatus.CONFLICT, "이메일 인증이 완료되지 않았습니다.");
+
         // 학번 유효성 검사
         validStudentNumber(request.getStudentNumber());
 
         // 이메일, 학번 중복 검사
         validateDuplicate(request.getEmail(), request.getStudentNumber(), request.getTelNumber());
 
-        User newUser = User.createUser(request.getEmail() + "@kangwon.ac.kr",
+        // 유저 생성 및 저장
+        User newUser = User.createUser(userEmail,
                 passwordEncoder.encode(request.getPassword()),
                 request.getStudentNumber(),
                 request.getName(),
@@ -75,21 +82,35 @@ public class AuthService {
                 request.getPreviousGpa());
 
         userRepository.save(newUser);
+
+        // 인증 완료 이메일 제거
+        redisService.deleteVerifiedEmail(userEmail);
+
+        log.info("회원가입 성공 - {}({})", newUser.getName(), newUser.getStudentNumber());
     }
 
 
     // 로그인
     @Transactional(readOnly = true)
     public void login(LoginRequest request, HttpServletRequest httpRequest) {
-        // 1. 사용자 조회
+        // 사용자 조회
         User user = userRepository.findByStudentNumber(request.getStudentNumber()).orElseThrow(LoginFailedException::new);
 
-        // 2. 비밀번호 검사
+        // 비밀번호 검사
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new LoginFailedException();
         }
 
-        // 3. 인증 토큰 구성
+        // 기존 세션이 있다면 제거
+        HttpSession oldSession = httpRequest.getSession(false);
+        if (oldSession != null) {
+            oldSession.invalidate(); // 세션 무효화
+        }
+
+        // 새로운 세션 생성
+        HttpSession newSession = httpRequest.getSession(true);
+
+        // 인증 토큰 구성
         UserSession sessionUser = new UserSession(
                 user.getStudentNumber(),
                 user.getName(),
@@ -102,43 +123,60 @@ public class AuthService {
                 List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
         );
 
-        // 4. SecurityContext 세팅
+        // SecurityContext 세팅
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authentication);
         SecurityContextHolder.setContext(context);
 
-        // 5. 세션에 저장
-        HttpSession session = httpRequest.getSession(true);
-        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
+        // SecurityContext를 새로운 세션에 저장
+        newSession.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
+        log.info("로그인 성공 - {}({})", user.getName(), user.getStudentNumber());
+    }
+
+    // 로그아웃
+    public void logout(HttpServletRequest request) {
+        // 현재 SecurityContext 초기화
+        SecurityContextHolder.clearContext();
+
+        // 세션 무효화
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
     }
 
     // 회원가입 인증 코드 발송
-    public void sendRegisterEmail(String toEmail) {
+    public void sendAuthCode(String toEmail) {
         emailService.sendRegisterEmail(toEmail, generateVerifyCode());
     }
 
     // 인증코드 검증
-    public void verifyEmailCode(String email, String code) {
-        String authCode = redisUtil.getAuthCode(email);
+    public void verifyAuthCode(String email, String code) {
+        String authCode = redisService.getAuthCode(email);
 
         if (authCode == null) {
             throw new VerifyCodeException("인증번호 발송을 먼저 요청하세요.");
         }
 
         if (!authCode.equals(code)) {
-            log.warn("인증코드 검증 실패 - email: {}, 예상 값: {}, 입력값: {}", email, authCode, code);
-            redisUtil.incrementFailCount(email); // 실패 횟수 증가
+            log.warn("인증코드 검증 실패 - email: {}, 예상 값: {}, 입력 값: {}", email, authCode, code);
+            redisService.incrementFailCount(email); // 실패 횟수 증가
 
-            if(redisUtil.getFailCount(email) >= 5) {
-                redisUtil.deleteAuthCode(email);
-                throw new VerifyCodeException("이메일 인증 5회 실패하였습니다. 인증번호 발송을 다시 해주세요.");
+            int failCount = redisService.getFailCount(email);
+            if(failCount >= 5) {
+                redisService.deleteAuthCode(email);
+                throw new VerifyCodeException("이메일 인증을 5회 실패하였습니다. 인증번호 발송을 다시 해주세요.");
             }
 
-            throw new VerifyCodeException("잘못된 인증번호를 입력하였습니다.");
+            throw new VerifyCodeException("현재 " + failCount + "회 잘못된 인증번호를 입력하였습니다.");
         }
 
         // 인증 성공시 레디스에서 키 삭제
-        redisUtil.deleteAuthCode(email);
+        redisService.deleteAuthCode(email);
+
+        // 이메일 인증 성공여부 저장(TTL: 60분)
+        redisService.setEmailAsVerified(email, 60 * 60L);
+        log.info("인증코드 검증 성공 - email: {}", email);
     }
 
     // 인증코드 생성

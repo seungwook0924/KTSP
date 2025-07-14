@@ -15,28 +15,26 @@ public class EmailVerifyController {
 
     private final AuthService authService;
 
-    // 인증코드 메일 발송
+    // 인증코드 발송
     @PostMapping("/{email}/send")
-    public ResponseEntity<Response<Void>> mailSend(@PathVariable String email)
-    {
+    public ResponseEntity<Response<Void>> mailSend(@PathVariable String email) {
         String userEmail = email + "@kangwon.ac.kr";
 
-        authService.sendRegisterEmail(userEmail);
+        authService.sendAuthCode(userEmail);
 
         return ResponseEntity.ok(Response.<Void>builder()
-                .success(true)
                 .message("인증코드 메일 발송 성공")
                 .build());
     }
 
     // 인증코드 검증
     @PostMapping("/verify")
-    public ResponseEntity<Response<Void>> verify(@Valid @RequestBody VerifyRequest request)
-    {
-        authService.verifyEmailCode(request.getEmail(), request.getVerifyCode().toUpperCase());
+    public ResponseEntity<Response<Void>> verify(@Valid @RequestBody VerifyRequest request) {
+        String userEmail = request.getEmail() + "@kangwon.ac.kr";
+
+        authService.verifyAuthCode(userEmail, request.getVerifyCode().toUpperCase());
 
         return ResponseEntity.ok(Response.<Void>builder()
-                .success(true)
                 .message("인증 성공")
                 .build());
     }

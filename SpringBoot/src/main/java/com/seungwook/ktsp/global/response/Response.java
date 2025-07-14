@@ -10,7 +10,9 @@ import java.time.LocalDateTime;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)  // null 값은 JSON에 포함하지 않음
 public class Response<T> {
-    private final boolean success;
+
+    @Builder.Default
+    private final boolean success = true;
 
     private final String message;
 
