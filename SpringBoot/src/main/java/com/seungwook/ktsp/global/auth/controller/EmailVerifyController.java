@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,13 +25,11 @@ public class EmailVerifyController {
     @Operation(summary = "이메일 인증코드 발송", description = "해당 이메일로 인증코드가 발송됨")
     @PostMapping("/{email}/send")
     public ResponseEntity<Response<Void>> mailSend(
-            @Parameter(description = "이메일 앞자리(@kangwon.ac.kr가 자동으로 붙음)", example = "user123")
-            @Pattern(regexp = "^[a-zA-Z0-9._%+-]+$", message = "이메일 형식이 올바르지 않습니다.")
+            @Parameter(description = "이메일", example = "user123@kangwon.ac.kr")
+            @Email(message = "이메일 형식이 올바르지 않습니다.")
             @PathVariable String email) throws MessagingException {
 
-        String userEmail = email + "@kangwon.ac.kr";
-
-        verificationService.sendAuthCode(userEmail);
+        verificationService.sendAuthCode(email);
 
         return ResponseEntity.ok(Response.<Void>builder()
                 .message("인증코드 메일 발송 성공")
@@ -42,9 +40,8 @@ public class EmailVerifyController {
     @Operation(summary = "이메일 인증코드 검증", description = "인증코드가 유효한지 검증")
     @PostMapping
     public ResponseEntity<Response<Void>> verify(@Valid @RequestBody VerifyRequest request) {
-        String userEmail = request.getEmail() + "@kangwon.ac.kr";
 
-        verificationService.verifyAuthCode(userEmail, request.getVerifyCode().toUpperCase());
+        verificationService.verifyAuthCode(request.getEmail(), request.getVerifyCode().toUpperCase());
 
         return ResponseEntity.ok(Response.<Void>builder()
                 .message("인증 성공")

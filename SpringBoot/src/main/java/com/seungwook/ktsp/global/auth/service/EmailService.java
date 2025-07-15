@@ -1,6 +1,6 @@
 package com.seungwook.ktsp.global.auth.service;
 
-import com.seungwook.ktsp.global.auth.exception.VerifyCodeException;
+import com.seungwook.ktsp.global.auth.exception.EmailVerifyException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class EmailService {
     public void sendVerificationEmail(String toEmail, String authCode) throws MessagingException {
         // 쿨다운이 적용되었는지 확인
         if (authCodeRedisService.isInCooldown(toEmail)) {
-            throw new VerifyCodeException(HttpStatus.TOO_MANY_REQUESTS, "인증코드 발송은 1분에 1회만 가능합니다.");
+            throw new EmailVerifyException(HttpStatus.TOO_MANY_REQUESTS, "인증코드 발송은 1분에 1회만 가능합니다.");
         }
 
         // 쿨다운 - 60초간 재요청 거부(TTL: 60초)

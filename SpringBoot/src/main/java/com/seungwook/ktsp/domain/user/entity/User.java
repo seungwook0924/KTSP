@@ -22,14 +22,14 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "email", nullable = false, unique = true)
+    @Column(name = "email", nullable = false, unique = true, length = 40)
     private String email;
-
-    @Column(name = "password", nullable = false, length = 60)
-    private String password;
 
     @Column(name = "student_number", unique = true, length = 9)
     private String studentNumber;
+
+    @Column(name = "password", nullable = false, length = 60)
+    private String password;
 
     @Column(name = "name", nullable = false, length = 15)
     private String name;

@@ -3,9 +3,9 @@ package com.seungwook.ktsp.global.auth.service;
 import com.seungwook.ktsp.domain.user.entity.User;
 import com.seungwook.ktsp.domain.user.repository.UserRepository;
 import com.seungwook.ktsp.global.auth.dto.request.RegisterRequest;
-import com.seungwook.ktsp.global.auth.exception.DuplicatedException;
+import com.seungwook.ktsp.global.auth.exception.RegisterFailedException;
 import com.seungwook.ktsp.global.auth.exception.StudentNumberException;
-import com.seungwook.ktsp.global.auth.exception.VerifyCodeException;
+import com.seungwook.ktsp.global.auth.exception.EmailVerifyException;
 import com.seungwook.ktsp.global.auth.utils.IpUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -34,9 +34,12 @@ public class RegisterService {
     @Transactional
     public void register(RegisterRequest request, HttpServletRequest httpRequest) {
 
+        if (!request.getEmail().endsWith("@kangwon.ac.kr"))
+            throw new RegisterFailedException(HttpStatus.BAD_REQUEST, "강원대학교 이메일이 아닙니다.");
+
         // 이메일 인증 완료여부 검사
         if (!authCodeRedisService.existVerifiedEmail(request.getEmail()))
-            throw new VerifyCodeException(HttpStatus.CONFLICT, "이메일 인증이 완료되지 않았습니다.");
+            throw new EmailVerifyException(HttpStatus.CONFLICT, "이메일 인증이 완료되지 않았습니다.");
 
         // 학번 유효성 검사
         validStudentNumber(request.getStudentNumber());
@@ -68,11 +71,12 @@ public class RegisterService {
 
     // 이메일, 학번, 전화번호 중복 검사
     private void validateDuplicate(String email, String studentNumber, String telNumber) {
-        if (userRepository.existsByEmail(email)) throw new DuplicatedException("이미 등록된 이메일입니다.");
-        if(userRepository.existsByStudentNumber(studentNumber)) throw new DuplicatedException("이미 등록된 학번입니다.");
-        if(userRepository.existsByPhoneNumber(telNumber)) throw new DuplicatedException("이미 등록된 전화번호입니다.");
+        if (userRepository.existsByEmail(email)) throw new RegisterFailedException("이미 등록된 이메일입니다.");
+        if(userRepository.existsByStudentNumber(studentNumber)) throw new RegisterFailedException("이미 등록된 학번입니다.");
+        if(userRepository.existsByPhoneNumber(telNumber)) throw new RegisterFailedException("이미 등록된 전화번호입니다.");
     }
 
+    // User 객체 생성
     private User createUser(RegisterRequest request) {
         return User.createUser(request.getEmail(),
                 passwordEncoder.encode(request.getPassword()),

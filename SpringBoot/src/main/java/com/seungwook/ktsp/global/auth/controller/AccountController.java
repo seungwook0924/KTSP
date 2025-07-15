@@ -31,9 +31,6 @@ public class AccountController {
     @PostMapping("/register")
     public ResponseEntity<Response<Void>> register(@Valid @RequestBody RegisterRequest request, HttpServletRequest httpRequest) {
 
-        String fullEmail = request.getEmail() + "@kangwon.ac.kr";
-        request.setEmail(fullEmail);
-
         registerService.register(request, httpRequest);
 
         return ResponseEntity.ok(Response.<Void>builder()
