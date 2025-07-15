@@ -1,6 +1,5 @@
 package com.seungwook.ktsp.global.auth.config;
 
-import com.seungwook.ktsp.global.auth.filter.IpBanFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +22,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final IpBanFilter ipBanFilter;
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final AccessDeniedHandler accessDeniedHandler;
 
@@ -35,7 +33,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)) // 필요할 때만 세션 생성
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/public/**", "/auth/**",
+                        .requestMatchers("/public/**", "/account/**", "/verify/**",
                                 "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**").permitAll()
                         .requestMatchers("/service/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
@@ -47,7 +45,6 @@ public class SecurityConfig {
                 )
                 .httpBasic(AbstractHttpConfigurer::disable) // httpBasic 제거 또는 비활성화
                 .formLogin(AbstractHttpConfigurer::disable) // form 로그인 비활성화
-                .addFilterBefore(ipBanFilter, UsernamePasswordAuthenticationFilter.class) // IP 필터
                 .build();
     }
 

@@ -3,211 +3,38 @@ package com.seungwook.ktsp.global.auth.service;
 import com.seungwook.ktsp.domain.user.entity.User;
 import com.seungwook.ktsp.domain.user.repository.UserRepository;
 import com.seungwook.ktsp.global.auth.dto.UserSession;
-import com.seungwook.ktsp.global.auth.dto.request.LoginRequest;
-import com.seungwook.ktsp.global.auth.dto.request.RegisterRequest;
-import com.seungwook.ktsp.global.auth.exception.DuplicatedException;
-import com.seungwook.ktsp.global.auth.exception.LoginFailedException;
-import com.seungwook.ktsp.global.auth.exception.StudentNumberException;
-import com.seungwook.ktsp.global.auth.exception.VerifyCodeException;
-import jakarta.mail.MessagingException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
+import com.seungwook.ktsp.global.auth.exception.UserContextException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.SecureRandom;
-import java.time.Year;
-import java.util.List;
-import java.util.regex.Pattern;
-
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final EmailService emailService;
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final RedisService redisService;
-
-    // 학번 형식
-    private static final String STUDENT_NUMBER_PATTERN = "^[0-9]{9}$";
-
-    // 인증코드 허용 문자 집합
-    private static final char[] ALPHA_NUMERIC = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
-
-    // SecureRandom
-    private static final SecureRandom RANDOM = new SecureRandom();
 
     // 요청 사용자 식별 메서드
     @Transactional(readOnly = true)
     public User getUser() {
-        UserSession session = (UserSession) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userRepository.findByStudentNumber(session.getStudentNumber()).orElseThrow(LoginFailedException::new);
-    }
+        // 현재 요청의 SecurityContext에서 인증 객체 추출
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-    // 회원가입
-    @Transactional
-    public void register(RegisterRequest request) {
-
-        String userEmail = request.getEmail() + "@kangwon.ac.kr";
-
-        // 이메일 인증 완료여부 검사
-        if (!redisService.existVerifiedEmail(userEmail))
-            throw new VerifyCodeException(HttpStatus.CONFLICT, "이메일 인증이 완료되지 않았습니다.");
-
-        // 학번 유효성 검사
-        validStudentNumber(request.getStudentNumber());
-
-        // 이메일, 학번 중복 검사
-        validateDuplicate(request.getEmail(), request.getStudentNumber(), request.getTelNumber());
-
-        // 유저 생성 및 저장
-        User newUser = User.createUser(userEmail,
-                passwordEncoder.encode(request.getPassword()),
-                request.getStudentNumber(),
-                request.getName(),
-                request.getAcademicYear(),
-                request.getTelNumber(),
-                request.getMajor(),
-                request.getPreviousGpa());
-
-        userRepository.save(newUser);
-
-        // 인증 완료 이메일 제거
-        redisService.deleteVerifiedEmail(userEmail);
-
-        log.info("회원가입 성공 - {}({})", newUser.getName(), newUser.getStudentNumber());
-    }
-
-
-    // 로그인
-    @Transactional(readOnly = true)
-    public void login(LoginRequest request, HttpServletRequest httpRequest) {
-        // 사용자 조회
-        User user = userRepository.findByStudentNumber(request.getStudentNumber()).orElseThrow(LoginFailedException::new);
-
-        // 비밀번호 검사
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new LoginFailedException();
+        // 인증 객체가 없거나 인증되지 않은 경우 예외 발생
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new UserContextException("로그인이 필요합니다.");
         }
 
-        // 기존 세션이 있다면 제거
-        HttpSession oldSession = httpRequest.getSession(false);
-        if (oldSession != null) {
-            oldSession.invalidate(); // 세션 무효화
+        // 인증 객체의 principal이 UserSession이 아닐 경우 예외 발생 (타입 불일치 방어)
+        Object principal = authentication.getPrincipal();
+        if (!(principal instanceof UserSession session)) {
+            throw new UserContextException("잘못된 인증 세션입니다.");
         }
 
-        // 새로운 세션 생성
-        HttpSession newSession = httpRequest.getSession(true);
-
-        // 인증 토큰 구성
-        UserSession sessionUser = new UserSession(
-                user.getStudentNumber(),
-                user.getName(),
-                user.getRole()
-        );
-
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                sessionUser,
-                null,
-                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
-        );
-
-        // SecurityContext 세팅
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
-        context.setAuthentication(authentication);
-        SecurityContextHolder.setContext(context);
-
-        // SecurityContext를 새로운 세션에 저장
-        newSession.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
-        log.info("로그인 성공 - {}({})", user.getName(), user.getStudentNumber());
-    }
-
-    // 로그아웃
-    public void logout(HttpServletRequest request) {
-        // 현재 SecurityContext 초기화
-        SecurityContextHolder.clearContext();
-
-        // 세션 무효화
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.invalidate();
-        }
-    }
-
-    // 인증 코드 발송
-    public void sendAuthCode(String toEmail) throws MessagingException {
-        emailService.sendVerificationEmail(toEmail, generateVerifyCode());
-    }
-
-    // 인증코드 검증
-    public void verifyAuthCode(String email, String code) {
-        String authCode = redisService.getAuthCode(email);
-
-        if (authCode == null) {
-            throw new VerifyCodeException("인증번호 발송을 먼저 요청하세요.");
-        }
-
-        if (!authCode.equals(code)) {
-            log.warn("인증코드 검증 실패 - email: {}, 예상 값: {}, 입력 값: {}", email, authCode, code);
-            redisService.incrementFailCount(email); // 실패 횟수 증가
-
-            int failCount = redisService.getFailCount(email);
-            if(failCount >= 5) {
-                redisService.deleteAuthCode(email);
-                throw new VerifyCodeException("이메일 인증을 5회 실패하였습니다. 인증번호 발송을 다시 해주세요.");
-            }
-
-            throw new VerifyCodeException("현재 " + failCount + "회 잘못된 인증번호를 입력하였습니다.");
-        }
-
-        // 인증 성공시 레디스에서 키 삭제
-        redisService.deleteAuthCode(email);
-
-        // 이메일 인증 성공여부 저장(TTL: 60분)
-        redisService.setEmailAsVerified(email, 60 * 60L);
-        log.info("인증코드 검증 성공 - email: {}", email);
-    }
-
-    // 인증코드 생성
-    private String generateVerifyCode() {
-        int length = 6;
-
-        StringBuilder sb = new StringBuilder(length);
-        for (int i = 0; i < length; i++) {
-            char c = ALPHA_NUMERIC[RANDOM.nextInt(ALPHA_NUMERIC.length)];
-            sb.append(c);
-        }
-
-        return sb.toString();
-    }
-
-    private void validateDuplicate(String email, String studentNumber, String telNumber) {
-        if (userRepository.existsByEmail(email)) throw new DuplicatedException("이미 등록된 이메일입니다.");
-        if(userRepository.existsByStudentNumber(studentNumber)) throw new DuplicatedException("이미 등록된 학번입니다.");
-        if(userRepository.existsByTelNumber(telNumber)) throw new DuplicatedException("이미 등록된 전화번호입니다.");
-    }
-
-    // 학번 유효성 검사
-    private void validStudentNumber(String studentNumber) {
-        if (!Pattern.matches(STUDENT_NUMBER_PATTERN, studentNumber)) throw new StudentNumberException();
-
-        int admissionYear = Integer.parseInt(studentNumber.substring(0, 4)); // 학번의 첫 4자리 (입학년도)
-        int currentYear = Year.now().getValue(); // 현재 년도
-
-        // 입학년도가 현재 년도보다 크면 안 됨
-        if (admissionYear > currentYear) throw new StudentNumberException();
-
+        // 세션에 저장된 학번으로 사용자 조회, 존재하지 않으면 예외 발생
+        return userRepository.findByStudentNumber(session.getStudentNumber())
+                .orElseThrow(() -> new UserContextException("사용자를 찾을 수 없습니다."));
     }
 }

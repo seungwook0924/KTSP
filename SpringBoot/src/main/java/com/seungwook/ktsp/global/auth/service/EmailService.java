@@ -20,7 +20,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class EmailService {
     private final JavaMailSender javaMailSender;
-    private final RedisService redisService;
+    private final AuthCodeRedisService authCodeRedisService;
     private final TemplateEngine mailTemplateEngine;
 
     @Value("${spring.mail.username}")
@@ -29,24 +29,24 @@ public class EmailService {
     // 인증코드 이메일 발송
     public void sendVerificationEmail(String toEmail, String authCode) throws MessagingException {
         // 쿨다운이 적용되었는지 확인
-        if (redisService.isInCooldown(toEmail)) {
+        if (authCodeRedisService.isInCooldown(toEmail)) {
             throw new VerifyCodeException(HttpStatus.TOO_MANY_REQUESTS, "인증코드 발송은 1분에 1회만 가능합니다.");
         }
 
         // 쿨다운 - 60초간 재요청 거부(TTL: 60초)
-        redisService.setCooldown(toEmail, 60);
+        authCodeRedisService.setCooldown(toEmail, 60);
 
-        if (redisService.existAuthCode(toEmail)) redisService.deleteAuthCode(toEmail);
+        if (authCodeRedisService.existAuthCode(toEmail)) authCodeRedisService.deleteAuthCode(toEmail);
 
         // 이메일 폼 생성
         MimeMessage emailForm = createEmailForm(toEmail, authCode);
 
         // Redis 에 인증 코드 저장(TTL: 5분)
-        redisService.setAuthCode(toEmail, authCode, 60 * 5L);
+        authCodeRedisService.setAuthCode(toEmail, authCode, 60 * 5L);
 
         // 이메일 발송
         javaMailSender.send(emailForm);
-        log.info("인증코드 이메일 발송 성공 -  email: {}, authCode: {}", toEmail, authCode);
+        log.info("인증코드 이메일 발송 성공 -  email: {}", toEmail);
     }
 
     // 이메일 내용 초기화

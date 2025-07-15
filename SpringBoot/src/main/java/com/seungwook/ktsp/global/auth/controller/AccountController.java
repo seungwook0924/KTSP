@@ -2,7 +2,7 @@ package com.seungwook.ktsp.global.auth.controller;
 
 import com.seungwook.ktsp.global.auth.dto.request.LoginRequest;
 import com.seungwook.ktsp.global.auth.dto.request.RegisterRequest;
-import com.seungwook.ktsp.global.auth.service.AuthService;
+import com.seungwook.ktsp.global.auth.service.AccountService;
 import com.seungwook.ktsp.global.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,20 +15,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Auth", description = "인증/인가 관련 API")
+@Tag(name = "Account", description = "회원가입, 로그인, 로그아웃 API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/auth")
-public class AuthController {
+@RequestMapping("/account")
+public class AccountController {
 
-    private final AuthService authService;
+    private final AccountService accountService;
 
     // 회원가입
     @Operation(summary = "회원가입", description = "이메일 인증을 완료한 사용자 회원가입")
     @PostMapping("/register")
     public ResponseEntity<Response<Void>> register(@Valid @RequestBody RegisterRequest request) {
 
-        authService.register(request);
+        accountService.register(request);
 
         return ResponseEntity.ok(Response.<Void>builder()
                 .message("회원가입 성공")
@@ -40,7 +40,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<Response<Void>> login(@Valid @RequestBody LoginRequest request, HttpServletRequest httpRequest) {
 
-        authService.login(request, httpRequest);
+        accountService.login(request, httpRequest);
 
         return ResponseEntity.ok(Response.<Void>builder()
                 .message("로그인 성공")
@@ -52,7 +52,7 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletRequest request) {
 
-        authService.logout(request);
+        accountService.logout(request);
 
         return ResponseEntity.noContent()
                 .build(); // 204 No Content

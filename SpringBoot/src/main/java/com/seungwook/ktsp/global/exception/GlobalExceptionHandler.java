@@ -3,20 +3,18 @@ package com.seungwook.ktsp.global.exception;
 import com.seungwook.ktsp.global.response.ErrorResponse;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
@@ -135,6 +133,17 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(BAD_REQUEST)
                 .body(buildErrorResponse("요청 파라미터 값이 올바르지 않습니다.", errorId));
+    }
+
+    // 외부 리소스 접근 실패 (RestTemplate, WebClient 등)
+    @ExceptionHandler(ResourceAccessException.class)
+    public ResponseEntity<ErrorResponse> handleResourceAccessException(ResourceAccessException ex, HttpServletRequest request) {
+        String errorId = generateErrorId();
+
+        log.error("{} - 외부 리소스 접근 실패: {} {} | Message: {}", errorId, request.getMethod(), request.getRequestURI(), ex.getMessage(), ex);
+
+        return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT)
+                .body(buildErrorResponse("서버에 문제가 발생했습니다.", errorId));
     }
 
     // 메일 발송 예외 처리

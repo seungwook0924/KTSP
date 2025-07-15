@@ -10,14 +10,12 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class RedisService {
+public class AuthCodeRedisService {
 
     private final StringRedisTemplate template;
     private static final String VERIFY_CODE_PREFIX = "verify-code:";
     private static final String VERIFIED_EMAIL_PREFIX = "verified-email:";
-
     private static final String COOLDOWN_KEY_PREFIX = "verify-cooldown:";
-    private static final long COOLDOWN_SECONDS = 60;
 
     // 보안코드 조회
     public String getAuthCode(String email) {
@@ -49,7 +47,7 @@ public class RedisService {
     // 인증 실패횟수 조회
     public int getFailCount(String email) {
         Object count = template.opsForHash().get(getVerifyCodeKey(email), "failCount");
-        return Integer.parseInt(count.toString());
+        return count != null ? Integer.parseInt(count.toString()) : 5;
     }
 
     // 보안코드 제거
@@ -83,6 +81,7 @@ public class RedisService {
     private String getVerifiedEmailKey(String email) {
         return VERIFIED_EMAIL_PREFIX + email;
     }
+
 
     // 쿨다운이 지났는지 확인
     public boolean isInCooldown(String email) {
