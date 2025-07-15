@@ -70,10 +70,10 @@ public class RegisterService {
     }
 
     // 이메일, 학번, 전화번호 중복 검사
-    private void validateDuplicate(String email, String studentNumber, String telNumber) {
+    private void validateDuplicate(String email, String studentNumber, String phoneNumber) {
         if (userRepository.existsByEmail(email)) throw new RegisterFailedException("이미 등록된 이메일입니다.");
         if(userRepository.existsByStudentNumber(studentNumber)) throw new RegisterFailedException("이미 등록된 학번입니다.");
-        if(userRepository.existsByPhoneNumber(telNumber)) throw new RegisterFailedException("이미 등록된 전화번호입니다.");
+        if(userRepository.existsByPhoneNumber(phoneNumber)) throw new RegisterFailedException("이미 등록된 전화번호입니다.");
     }
 
     // User 객체 생성

@@ -23,19 +23,15 @@ public class VerificationService {
     private static final SecureRandom RANDOM = new SecureRandom();
 
     // 인증 코드 발송
-    public void sendAuthCode(String toEmail) throws MessagingException {
-
-        if (!toEmail.endsWith("@kangwon.ac.kr"))
-            throw new EmailVerifyException(HttpStatus.BAD_REQUEST, "강원대학교 이메일이 아닙니다.");
-
-        emailService.sendVerificationEmail(toEmail, generateVerifyCode());
+    public void sendAuthCode(String email) throws MessagingException {
+        checkEmailDomain(email);
+        emailService.sendVerificationEmail(email, generateVerifyCode());
     }
 
     // 인증코드 검증
     public void verifyAuthCode(String email, String code) {
 
-        if (!email.endsWith("@kangwon.ac.kr"))
-            throw new EmailVerifyException(HttpStatus.BAD_REQUEST, "강원대학교 이메일이 아닙니다.");
+        checkEmailDomain(email);
 
         String authCode = authCodeRedisService.getAuthCode(email);
 
@@ -75,5 +71,11 @@ public class VerificationService {
         }
 
         return sb.toString();
+    }
+
+    //
+    private void checkEmailDomain(String email) {
+        if (!email.endsWith("@kangwon.ac.kr"))
+            throw new EmailVerifyException(HttpStatus.BAD_REQUEST, "강원대학교 이메일이 아닙니다.");
     }
 }
