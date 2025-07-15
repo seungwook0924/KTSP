@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AccountService {
+public class RegisterService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;

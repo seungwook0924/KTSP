@@ -3,7 +3,7 @@ package com.seungwook.ktsp.global.auth.controller;
 import com.seungwook.ktsp.global.auth.dto.request.LoginRequest;
 import com.seungwook.ktsp.global.auth.dto.request.RegisterRequest;
 import com.seungwook.ktsp.global.auth.dto.response.LoginResponse;
-import com.seungwook.ktsp.global.auth.service.AccountService;
+import com.seungwook.ktsp.global.auth.service.RegisterService;
 import com.seungwook.ktsp.global.auth.service.AuthService;
 import com.seungwook.ktsp.global.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/account")
 public class AccountController {
 
-    private final AccountService accountService;
+    private final RegisterService registerService;
     private final AuthService authService;
 
     // 회원가입
@@ -34,7 +34,7 @@ public class AccountController {
         String fullEmail = request.getEmail() + "@kangwon.ac.kr";
         request.setEmail(fullEmail);
 
-        accountService.register(request, httpRequest);
+        registerService.register(request, httpRequest);
 
         return ResponseEntity.ok(Response.<Void>builder()
                 .message("회원가입 성공")

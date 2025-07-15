@@ -73,7 +73,6 @@ public class AuthService {
         // UserSession으로 Spring Security 인증 객체 생성
         Authentication authentication = buildAuthentication(sessionUser);
 
-
         // SecurityContextHolder에 인증 정보 설정
         SecurityContext context = setSecurityContext(authentication);
 
