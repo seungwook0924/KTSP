@@ -1,6 +1,7 @@
 package com.seungwook.ktsp.domain.user.entity;
 
 import com.seungwook.ktsp.domain.user.entity.enums.AcademicYear;
+import com.seungwook.ktsp.domain.user.entity.enums.Campus;
 import com.seungwook.ktsp.domain.user.entity.enums.UserRole;
 import com.seungwook.ktsp.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -37,8 +38,12 @@ public class User extends BaseEntity {
     @Column(name = "academic_year", nullable = false)
     private AcademicYear academicYear;
 
-    @Column(name = "tel_number", nullable = false, unique = true, length = 13)
-    private String telNumber;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "campus", nullable = false)
+    private Campus campus;
+
+    @Column(name = "phone_number", nullable = false, unique = true, length = 13)
+    private String phoneNumber;
 
     @Column(name = "major", nullable = false, length = 20)
     private String major;
@@ -54,13 +59,14 @@ public class User extends BaseEntity {
     private Boolean activated;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private User(String email, String password, String studentNumber, String name, AcademicYear academicYear, String telNumber, String major, BigDecimal previousGpa, UserRole role) {
+    private User(String email, String password, String studentNumber, String name, AcademicYear academicYear, Campus campus, String phoneNumber, String major, BigDecimal previousGpa, UserRole role) {
         this.email = email;
         this.password = password;
         this.studentNumber = studentNumber;
         this.name = name;
         this.academicYear = academicYear;
-        this.telNumber = telNumber;
+        this.campus = campus;
+        this.phoneNumber = phoneNumber;
         this.major = major;
         this.role = role;
         this.previousGpa = previousGpa;
@@ -68,14 +74,15 @@ public class User extends BaseEntity {
     }
 
     // 일반 유저 생성
-    public static User createUser(String email, String encodedPassword, String studentNumber, String name, AcademicYear academicYear, String telNumber, String major, BigDecimal previousGpa) {
+    public static User createUser(String email, String encodedPassword, String studentNumber, String name, AcademicYear academicYear, Campus campus, String phoneNumber, String major, BigDecimal previousGpa) {
         return User.builder()
                 .email(email)
                 .password(encodedPassword)
                 .studentNumber(studentNumber)
                 .name(name)
                 .academicYear(academicYear)
-                .telNumber(telNumber)
+                .campus(campus)
+                .phoneNumber(phoneNumber)
                 .major(major)
                 .previousGpa(previousGpa)
                 .role(UserRole.USER)
@@ -90,7 +97,8 @@ public class User extends BaseEntity {
                 .studentNumber(studentNumber)
                 .name(name)
                 .academicYear(AcademicYear.GRADUATE)
-                .telNumber(telNumber)
+                .campus(Campus.CHUNCHEON)
+                .phoneNumber(telNumber)
                 .major(major)
                 .previousGpa(new BigDecimal("4.0"))
                 .role(UserRole.ADMIN)
@@ -108,8 +116,8 @@ public class User extends BaseEntity {
     }
 
     // 전화번호 변경
-    public void changeTel(String newTel) {
-        this.telNumber = newTel;
+    public void changePhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     // 전공 변경

@@ -1,6 +1,7 @@
 package com.seungwook.ktsp.global.auth.dto;
 
 import com.seungwook.ktsp.domain.user.entity.enums.UserRole;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.io.Serial;
@@ -14,12 +15,15 @@ import java.io.Serializable;
     - UserSession 구조 변경시 serialVersionUID 값을 올릴 것
 */
 @Getter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true) // 중복 로그인 방지
 public class UserSession implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
+    @EqualsAndHashCode.Include
     private final String studentNumber;
+
     private final String name;
     private final UserRole role;
 
