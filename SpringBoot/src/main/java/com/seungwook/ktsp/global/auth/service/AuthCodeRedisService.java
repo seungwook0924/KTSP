@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -47,7 +48,7 @@ public class AuthCodeRedisService {
     // 인증 실패횟수 조회
     public int getFailCount(String email) {
         Object count = template.opsForHash().get(getVerifyCodeKey(email), "failCount");
-        return count != null ? Integer.parseInt(count.toString()) : 5;
+        return Integer.parseInt(Objects.requireNonNull(count).toString());
     }
 
     // 보안코드 제거

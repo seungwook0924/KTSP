@@ -104,6 +104,7 @@ public class AccountService {
         // 인증 토큰 구성
         UserSession sessionUser = new UserSession(
                 user.getStudentNumber(),
+                user.getName(),
                 user.getRole()
         );
 

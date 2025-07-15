@@ -20,10 +20,12 @@ public class UserSession implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final String studentNumber;
+    private final String name;
     private final UserRole role;
 
-    public UserSession(String studentNumber, UserRole role) {
+    public UserSession(String studentNumber, String name, UserRole role) {
         this.studentNumber = studentNumber;
+        this.name = name;
         this.role = role;
     }
 }
