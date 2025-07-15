@@ -1,9 +1,10 @@
 package com.seungwook.ktsp.global.auth.service;
 
-import com.seungwook.ktsp.global.auth.exception.VerifyCodeException;
+import com.seungwook.ktsp.global.auth.exception.EmailVerifyException;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -22,16 +23,20 @@ public class VerificationService {
     private static final SecureRandom RANDOM = new SecureRandom();
 
     // 인증 코드 발송
-    public void sendAuthCode(String toEmail) throws MessagingException {
-        emailService.sendVerificationEmail(toEmail, generateVerifyCode());
+    public void sendAuthCode(String email) throws MessagingException {
+        checkEmailDomain(email);
+        emailService.sendVerificationEmail(email, generateVerifyCode());
     }
 
     // 인증코드 검증
     public void verifyAuthCode(String email, String code) {
+
+        checkEmailDomain(email);
+
         String authCode = authCodeRedisService.getAuthCode(email);
 
         if (authCode == null) {
-            throw new VerifyCodeException("인증번호 발송을 먼저 요청하세요.");
+            throw new EmailVerifyException("인증번호 발송을 먼저 요청하세요.");
         }
 
         if (!authCode.equals(code)) {
@@ -41,10 +46,10 @@ public class VerificationService {
             int failCount = authCodeRedisService.getFailCount(email);
             if(failCount >= 5) {
                 authCodeRedisService.deleteAuthCode(email);
-                throw new VerifyCodeException("이메일 인증을 5회 실패하였습니다. 인증번호 발송을 다시 해주세요.");
+                throw new EmailVerifyException("이메일 인증을 5회 실패하였습니다. 인증번호 발송을 다시 해주세요.");
             }
 
-            throw new VerifyCodeException("현재 " + failCount + "회 잘못된 인증번호를 입력하였습니다.");
+            throw new EmailVerifyException("현재 " + failCount + "회 잘못된 인증번호를 입력하였습니다.");
         }
 
         // 인증 성공시 레디스에서 키 삭제
@@ -66,5 +71,11 @@ public class VerificationService {
         }
 
         return sb.toString();
+    }
+
+    //
+    private void checkEmailDomain(String email) {
+        if (!email.endsWith("@kangwon.ac.kr"))
+            throw new EmailVerifyException(HttpStatus.BAD_REQUEST, "강원대학교 이메일이 아닙니다.");
     }
 }

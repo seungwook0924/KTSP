@@ -21,7 +21,7 @@ public class DevWebConfig implements WebMvcConfigurer {
         registry.addMapping("/**") // 모든 요청 URL 허용
                 .allowedOrigins("http://localhost:3000", "http://localhost:5173") // 요청 출처가 3000, 5173 포트 허용
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS") // HTTP 허용 메서드
-                .allowedHeaders("Content-Type") // 허용 헤더
+                .allowedHeaders("Content-Type", "X-Forwarded-For") // 허용 헤더
                 .allowCredentials(true); // 인증 정보(쿠키 또는 헤더)를 포함하는 요청을 허용
     }
 

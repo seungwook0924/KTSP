@@ -24,14 +24,6 @@ public class SwaggerConfig {
                                 .email("leesw_0924@icloud.com")
                                 .url("https://github.com/seungwook0924")
                         )
-                )
-                .servers(List.of(
-                        new Server()
-                                .url("https://test.seungwook.com")
-                                .description("개발 서버"),
-                        new Server()
-                                .url("https://ktsp.seungwook.com")
-                                .description("운영 서버")
-                ));
+                );
     }
 }

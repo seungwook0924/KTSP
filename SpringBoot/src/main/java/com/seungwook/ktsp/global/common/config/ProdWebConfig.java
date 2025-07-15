@@ -20,9 +20,9 @@ public class ProdWebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**") // 모든 요청 URL 허용
-                .allowedOrigins("http://localhost:3000") // 요청 출처 5173 포트 허용
+                .allowedOrigins("https://ktsp.seungwook.com") // 요청 출처
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS") // HTTP 허용 메서드
-                .allowedHeaders("Content-Type") // 허용 헤더
+                .allowedHeaders("Content-Type", "X-Forwarded-For") // 허용 헤더
                 .allowCredentials(true); // 인증 정보(쿠키 또는 헤더)를 포함하는 요청을 허용
     }
 

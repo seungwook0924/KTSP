@@ -25,8 +25,8 @@ public class AdminInitializer {
     @Value("${admin.name}")
     private String name;
 
-    @Value("${admin.tel}")
-    private String tel;
+    @Value("${admin.phoneNumber}")
+    private String phoneNumber;
 
     @Value("${admin.major}")
     private String major;
@@ -34,7 +34,7 @@ public class AdminInitializer {
     @PostConstruct
     public void initAdmin() {
         if ((!userRepository.existsByEmail(email)) && (!userRepository.existsByStudentNumber(studentNumber))) {
-            User admin = User.createAdmin(email, password, studentNumber, name, tel, major);
+            User admin = User.createAdmin(email, password, studentNumber, name, phoneNumber, major);
             userRepository.save(admin);
         }
     }
