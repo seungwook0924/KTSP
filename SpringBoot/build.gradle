@@ -30,6 +30,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.session:spring-session-core'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
 
     // Database
@@ -43,6 +44,13 @@ dependencies {
     // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+
+    // Mail
+    implementation "ognl:ognl:3.4.7"
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    //Swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9'
 
     // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
