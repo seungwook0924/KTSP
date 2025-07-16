@@ -37,7 +37,7 @@ public class AuthService {
 
     // 요청 사용자 식별 메서드
     @Transactional(readOnly = true)
-    public User getUser() {
+    public long getUser() {
         // 현재 요청의 SecurityContext에서 인증 객체 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -52,9 +52,7 @@ public class AuthService {
             throw new UserContextException("잘못된 인증 세션입니다.");
         }
 
-        // 세션에 저장된 학번으로 사용자 조회, 존재하지 않으면 예외 발생
-        return userRepository.findByStudentNumber(session.getStudentNumber())
-                .orElseThrow(() -> new UserContextException("사용자를 찾을 수 없습니다."));
+        return session.getId();
     }
 
     // 로그인
@@ -118,7 +116,7 @@ public class AuthService {
 
     // 인증 세션 객체(UserSession) 생성
     private UserSession createUserSession(User user) {
-        return new UserSession(user.getStudentNumber(), user.getName(), user.getRole());
+        return new UserSession(user.getId(), user.getEmail(), user.getRole());
     }
 
     // UserSession으로 Spring Security 인증 객체 생성
