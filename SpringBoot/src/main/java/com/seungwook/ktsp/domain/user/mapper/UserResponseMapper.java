@@ -1,19 +1,20 @@
 package com.seungwook.ktsp.domain.user.mapper;
 
-import com.seungwook.ktsp.domain.user.dto.response.MyInfoResponse;
+import com.seungwook.ktsp.domain.user.dto.response.UserInfoResponse;
 import com.seungwook.ktsp.domain.user.entity.User;
 
 public class UserResponseMapper {
 
     // MyInfoResponse로 변환
-    public static MyInfoResponse toMyinfoResponse(User user) {
-        return new MyInfoResponse(user.getEmail(),
+    public static UserInfoResponse toUserInfoResponse(User user) {
+        return new UserInfoResponse(user.getEmail(),
                 user.getName(),
                 user.getAcademicYear(),
                 user.getStudentNumber(),
                 user.getPhoneNumber(),
-                user.getMajor(),
+                user.getPhoneNumber(),
                 user.getPreviousGpa(),
-                user.getCampus());
+                user.getCampus(),
+                user.getIntroduction());
     }
 }

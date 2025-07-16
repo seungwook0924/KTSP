@@ -25,7 +25,7 @@ public class User extends BaseEntity {
     @Column(name = "email", nullable = false, unique = true, length = 40)
     private String email;
 
-    @Column(name = "phone_number", nullable = false, unique = true, length = 13)
+    @Column(name = "phone_number", nullable = false, unique = true, columnDefinition = "CHAR(13)")
     private String phoneNumber;
 
     @Column(name = "password", nullable = false, length = 60)
@@ -34,7 +34,7 @@ public class User extends BaseEntity {
     @Column(name = "name", nullable = false, length = 15)
     private String name;
 
-    @Column(name = "student_number", unique = true, length = 9)
+    @Column(name = "student_number", unique = true, columnDefinition = "CHAR(9)")
     private String studentNumber;
 
     @Enumerated(EnumType.STRING)
@@ -50,6 +50,9 @@ public class User extends BaseEntity {
 
     @Column(name = "previous_gpa", precision = 3, scale = 2, nullable = false)
     private BigDecimal previousGpa;
+
+    @Column(name = "introduction", nullable = true, length = 255)
+    private String introduction;
 
     @Column(name = "activated", nullable = false)
     private Boolean activated;
@@ -69,6 +72,7 @@ public class User extends BaseEntity {
         this.campus = campus;
         this.major = major;
         this.previousGpa = previousGpa;
+        this.introduction = null;
         this.activated = true;
         this.role = role;
     }
@@ -110,13 +114,14 @@ public class User extends BaseEntity {
         this.password = encodedPassword;
     }
 
-    // 학년 변경
-    public void changeUserInformation(AcademicYear newYear, String newPhoneNumber, String newMajor, BigDecimal newGpa, Campus newCampus) {
+    // 회원 정보 변경
+    public void changeUserInformation(AcademicYear newYear, String newPhoneNumber, String newMajor, BigDecimal newGpa, Campus newCampus, String introduction) {
         this.academicYear = newYear;
         this.phoneNumber = newPhoneNumber;
         this.major = newMajor;
         this.previousGpa = newGpa;
         this.campus = newCampus;
+        this.introduction = introduction;
     }
 
     // 계정 비활성화
