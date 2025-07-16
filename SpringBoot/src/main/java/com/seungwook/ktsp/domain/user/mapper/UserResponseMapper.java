@@ -5,6 +5,7 @@ import com.seungwook.ktsp.domain.user.entity.User;
 
 public class UserResponseMapper {
 
+    // MyInfoResponse로 변환
     public static MyInfoResponse toMyinfoResponse(User user) {
         return new MyInfoResponse(user.getEmail(),
                 user.getName(),

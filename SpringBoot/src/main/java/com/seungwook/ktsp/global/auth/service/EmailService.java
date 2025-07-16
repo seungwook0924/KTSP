@@ -1,8 +1,11 @@
 package com.seungwook.ktsp.global.auth.service;
 
 import com.seungwook.ktsp.global.auth.exception.EmailVerifyException;
+import com.seungwook.ktsp.global.auth.utils.IpUtil;
+import com.seungwook.ktsp.global.auth.utils.MaskingUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,15 +30,19 @@ public class EmailService {
     private String senderEmail;
 
     // 인증코드 이메일 발송
-    public void sendVerificationEmail(String email, String authCode) throws MessagingException {
+    public void sendVerificationEmail(String email, String authCode, HttpServletRequest httpServletRequest) throws MessagingException {
+
+        String clientIP = IpUtil.getClientIP(httpServletRequest);
+
         // 쿨다운이 적용되었는지 확인
-        if (authCodeRedisService.isInCooldown(email)) {
-            throw new EmailVerifyException(HttpStatus.TOO_MANY_REQUESTS, "인증코드 발송은 1분에 1회만 가능합니다.");
+        if (authCodeRedisService.isInCooldown(email, clientIP)) {
+            throw new EmailVerifyException(HttpStatus.TOO_MANY_REQUESTS, "인증코드 발송은 3분에 1회만 가능합니다.");
         }
 
-        // 쿨다운 - 60초간 재요청 거부(TTL: 60초)
-        authCodeRedisService.setCooldown(email, 60);
+        // 쿨다운 - 180초간 재요청 거부
+        authCodeRedisService.setCooldown(email, clientIP, 180);
 
+        // 기존 보안코드가 있다면 삭제하고 재생성
         if (authCodeRedisService.existAuthCode(email)) authCodeRedisService.deleteAuthCode(email);
 
         // 이메일 폼 생성
@@ -46,7 +53,7 @@ public class EmailService {
 
         // 이메일 발송
         javaMailSender.send(emailForm);
-        log.info("인증코드 이메일 발송 성공 -  email: {}", email);
+        log.info("인증코드 이메일 발송 성공 - email: {}", MaskingUtil.maskEmail(email));
     }
 
     // 이메일 내용 초기화
