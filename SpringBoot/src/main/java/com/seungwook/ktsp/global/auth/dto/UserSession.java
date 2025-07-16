@@ -22,14 +22,13 @@ public class UserSession implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @EqualsAndHashCode.Include
-    private final String studentNumber;
-
-    private final String name;
+    private final long id;
+    private final String email;
     private final UserRole role;
 
-    public UserSession(String studentNumber, String name, UserRole role) {
-        this.studentNumber = studentNumber;
-        this.name = name;
+    public UserSession(long id, String email, UserRole role) {
+        this.id = id;
+        this.email = email;
         this.role = role;
     }
 }
