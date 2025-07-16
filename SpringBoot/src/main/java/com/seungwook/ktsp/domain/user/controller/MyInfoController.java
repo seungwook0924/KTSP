@@ -27,7 +27,7 @@ public class MyInfoController {
     @GetMapping("/service/user")
     public ResponseEntity<Response<MyInfoResponse>> getMyInfo() {
 
-        User user = userService.getUserInformation(authService.getUser());
+        User user = userService.getUserInformation(authService.getUserId());
         MyInfoResponse response = UserResponseMapper.toMyinfoResponse(user);
 
         return ResponseEntity.ok(Response.<MyInfoResponse>builder()
@@ -40,7 +40,7 @@ public class MyInfoController {
     @PatchMapping("/service/user")
     public ResponseEntity<Response<MyInfoResponse>> updateMyInfo(@Valid @RequestBody MyInfoUpdateRequest request) {
 
-        User user = userService.updateUserInformation(authService.getUser(), request);
+        User user = userService.updateUserInformation(authService.getUserId(), request);
         MyInfoResponse response = UserResponseMapper.toMyinfoResponse(user);
 
         return ResponseEntity.ok(Response.<MyInfoResponse>builder()
@@ -53,7 +53,7 @@ public class MyInfoController {
     @PatchMapping("/service/password")
     public ResponseEntity<Response<Void>> updatePassword(@Valid @RequestBody PasswordUpdateRequest request) {
 
-        userService.updatePassword(authService.getUser(), request.getPassword());
+        userService.updatePassword(authService.getUserId(), request.getPassword());
 
         return ResponseEntity.ok(Response.<Void>builder()
                 .message("비밀번호가 변경되었습니다.")

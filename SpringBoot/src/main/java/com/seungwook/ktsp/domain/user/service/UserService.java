@@ -26,8 +26,8 @@ public class UserService {
 
     // 내 정보 수정
     @Transactional
-    public User updateUserInformation(long userID, MyInfoUpdateRequest request) {
-        User user = findById(userID);
+    public User updateUserInformation(long userId, MyInfoUpdateRequest request) {
+        User user = findById(userId);
 
         String newPhoneNumber = request.getPhoneNumber();
         String oldPhoneNumber = user.getPhoneNumber();

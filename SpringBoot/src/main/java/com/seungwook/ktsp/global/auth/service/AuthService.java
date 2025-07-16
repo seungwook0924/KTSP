@@ -37,7 +37,7 @@ public class AuthService {
 
     // 요청 사용자 식별 메서드
     @Transactional(readOnly = true)
-    public long getUser() {
+    public long getUserId() {
         // 현재 요청의 SecurityContext에서 인증 객체 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
