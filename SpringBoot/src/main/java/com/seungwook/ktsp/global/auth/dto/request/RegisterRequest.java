@@ -20,7 +20,7 @@ public class RegisterRequest {
     @Schema(description = "사용자 학번", example = "202312345")
     @NotBlank(message = "학번은 필수 항목입니다.")
     @Size(min = 9, max = 9, message = "학번은 9자 입니다.")
-    @Pattern(regexp = "^\\d{9}$", message = "학번은 숫자 9자 입니다.")
+    @Pattern(regexp = "^[0-9]{9}$", message = "학번은 숫자 9자 입니다.")
     private final String studentNumber;
 
     @Schema(description = "사용자 비밀번호", example = "SecurePass123!")
