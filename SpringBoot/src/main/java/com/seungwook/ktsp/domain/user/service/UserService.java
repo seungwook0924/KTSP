@@ -44,7 +44,7 @@ public class UserService {
                 request.getPreviousGpa(),
                 request.getCampus());
 
-        log.info("회원정보 변경 성공 - {}({})", user.getName(), user.getStudentNumber());
+        log.info("회원정보 변경 성공 - userId: {}", user.getId());
 
         return user;
     }
@@ -57,7 +57,7 @@ public class UserService {
         // 암호화 저장
         user.changePassword(passwordEncoder.encode(password));
 
-        log.info("비밀번호 변경 성공 - {}({})", user.getName(), user.getStudentNumber());
+        log.info("비밀번호 변경 성공 - userId: {}", user.getId());
     }
 
     private User findById(long userId) {

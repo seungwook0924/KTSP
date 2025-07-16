@@ -51,7 +51,7 @@ public class AccountService {
         // 인증 완료 이메일 제거
         deleteVerifiedEmailFromRedis(request.getEmail());
 
-        log.info("회원가입 성공 - {}({} / {})", newUser.getName(), newUser.getStudentNumber(), IpUtil.getClientIP(httpRequest));
+        log.info("회원가입 성공 - userId: {}({})", newUser.getId(), IpUtil.getClientIP(httpRequest));
     }
 
     // 비밀번호 찾기
@@ -73,7 +73,7 @@ public class AccountService {
         // 인증 완료 이메일 제거
         deleteVerifiedEmailFromRedis(request.getEmail());
 
-        log.info("비밀번호 초기화 성공 - {}({} / {})", user.getName(), user.getStudentNumber(), IpUtil.getClientIP(httpRequest));
+        log.info("비밀번호 초기화 성공 - userId: {}({})", user.getId(), IpUtil.getClientIP(httpRequest));
     }
 
     // 학번 유효성 검사

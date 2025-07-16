@@ -80,7 +80,7 @@ public class AuthService {
         // 기존 세션이 남아있다면 강제 만료 처리
         registerNewSession(httpRequest, sessionUser, context);
 
-        log.info("로그인 성공 - {}({} / {})", user.getName(), user.getStudentNumber(), IpUtil.getClientIP(httpRequest));
+        log.info("로그인 성공 - userId: {}({})", user.getId(), IpUtil.getClientIP(httpRequest));
         return new LoginResponse(isDuplicatedLogin);
     }
 
@@ -103,7 +103,10 @@ public class AuthService {
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) throw new LoginFailedException();
 
-        if (!user.getActivated()) throw new LoginFailedException("정지된 계정입니다. 관리자에게 문의바랍니다.");
+        if (!user.getActivated()) {
+            log.warn("비활성 회원 로그인 시도 차단 - userId: {}", user.getId());
+            throw new LoginFailedException("정지된 계정입니다. 관리자에게 문의바랍니다.");
+        }
 
         return user;
     }
@@ -141,7 +144,7 @@ public class AuthService {
         List<SessionInformation> sessions = sessionRegistry.getAllSessions(sessionUser, false);
         if (!sessions.isEmpty()) {
             sessions.forEach(SessionInformation::expireNow);
-            log.info("중복 로그인 감지 - 기존 세션 만료 처리: {}({})", user.getName(), user.getStudentNumber());
+            log.warn("중복 로그인 감지(기존 세션 만료 처리) - userId: {}", user.getId());
             return true;
         }
         return false;

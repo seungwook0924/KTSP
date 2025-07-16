@@ -1,7 +1,9 @@
 package com.seungwook.ktsp.global.auth.service;
 
 import com.seungwook.ktsp.global.auth.exception.EmailVerifyException;
+import com.seungwook.ktsp.global.auth.utils.MaskingUtil;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,9 +26,9 @@ public class VerificationService {
     private static final SecureRandom RANDOM = new SecureRandom();
 
     // 인증 코드 발송
-    public void sendAuthCode(String email) throws MessagingException {
+    public void sendAuthCode(String email, HttpServletRequest httpServletRequest) throws MessagingException {
         checkEmailDomain(email);
-        emailService.sendVerificationEmail(email, generateVerifyCode());
+        emailService.sendVerificationEmail(email, generateVerifyCode(), httpServletRequest);
     }
 
     // 인증코드 검증
@@ -41,7 +43,7 @@ public class VerificationService {
         }
 
         if (!authCode.equals(code)) {
-            log.warn("인증코드 검증 실패 - email: {}", email);
+            log.warn("인증코드 검증 실패 - email: {}", MaskingUtil.maskEmail(email));
 
             // 실패 횟수 증가
             authCodeRedisService.incrementFailCount(email);
@@ -61,7 +63,7 @@ public class VerificationService {
 
         // 이메일 인증 성공여부 저장(TTL: 60분)
         authCodeRedisService.setEmailAsVerified(email, 60 * 60L);
-        log.info("인증코드 검증 성공 - email: {}", email);
+        log.info("인증코드 검증 성공 - email: {}", MaskingUtil.maskEmail(email));
     }
 
     // 인증코드 생성
@@ -82,4 +84,6 @@ public class VerificationService {
         if (!email.endsWith("@kangwon.ac.kr"))
             throw new EmailVerifyException(HttpStatus.BAD_REQUEST, "강원대학교 이메일이 아닙니다.");
     }
+
+
 }

@@ -7,8 +7,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,10 +28,11 @@ public class EmailVerifyController {
     @PostMapping("/{email}/send")
     public ResponseEntity<Response<Void>> mailSend(
             @Parameter(description = "이메일", example = "user123@kangwon.ac.kr")
+            @Size(min = 16, max = 40, message = "이메일은 최소 16자 ~ 최대 40자 입니다.")
             @Email(message = "이메일 형식이 올바르지 않습니다.")
-            @PathVariable String email) throws MessagingException {
+            @PathVariable String email, HttpServletRequest httpServletRequest) throws MessagingException {
 
-        verificationService.sendAuthCode(email);
+        verificationService.sendAuthCode(email, httpServletRequest);
 
         return ResponseEntity.ok(Response.<Void>builder()
                 .message("인증코드 메일 발송 성공")
