@@ -11,20 +11,18 @@ import com.seungwook.ktsp.global.response.Response;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/service/user")
 public class MyInfoController {
 
     private final AuthService authService;
     private final UserService userService;
 
     // 내 정보 조회
-    @GetMapping("/service/user")
+    @GetMapping
     public ResponseEntity<Response<MyInfoResponse>> getMyInfo() {
 
         User user = userService.getUserInformation(authService.getUserId());
@@ -37,7 +35,7 @@ public class MyInfoController {
     }
 
     // 내 정보 수정
-    @PatchMapping("/service/user")
+    @PatchMapping
     public ResponseEntity<Response<MyInfoResponse>> updateMyInfo(@Valid @RequestBody MyInfoUpdateRequest request) {
 
         User user = userService.updateUserInformation(authService.getUserId(), request);
@@ -50,7 +48,7 @@ public class MyInfoController {
     }
 
     // 비밀번호 변경
-    @PatchMapping("/service/password")
+    @PatchMapping("/password")
     public ResponseEntity<Response<Void>> updatePassword(@Valid @RequestBody PasswordUpdateRequest request) {
 
         userService.updatePassword(authService.getUserId(), request.getPassword());

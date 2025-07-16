@@ -6,11 +6,13 @@ import com.seungwook.ktsp.domain.user.exception.UserUpdateFailedException;
 import com.seungwook.ktsp.domain.user.exception.UserNotFoundException;
 import com.seungwook.ktsp.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -42,6 +44,8 @@ public class UserService {
                 request.getPreviousGpa(),
                 request.getCampus());
 
+        log.info("회원정보 변경 성공 - {}({})", user.getName(), user.getStudentNumber());
+
         return user;
     }
 
@@ -52,6 +56,8 @@ public class UserService {
 
         // 암호화 저장
         user.changePassword(passwordEncoder.encode(password));
+
+        log.info("비밀번호 변경 성공 - {}({})", user.getName(), user.getStudentNumber());
     }
 
     private User findById(long userId) {
