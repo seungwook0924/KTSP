@@ -1,9 +1,10 @@
 package com.seungwook.ktsp.global.auth.controller;
 
 import com.seungwook.ktsp.global.auth.dto.request.LoginRequest;
+import com.seungwook.ktsp.global.auth.dto.request.PasswordResetRequest;
 import com.seungwook.ktsp.global.auth.dto.request.RegisterRequest;
 import com.seungwook.ktsp.global.auth.dto.response.LoginResponse;
-import com.seungwook.ktsp.global.auth.service.RegisterService;
+import com.seungwook.ktsp.global.auth.service.AccountService;
 import com.seungwook.ktsp.global.auth.service.AuthService;
 import com.seungwook.ktsp.global.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/account")
 public class AccountController {
 
-    private final RegisterService registerService;
+    private final AccountService accountService;
     private final AuthService authService;
 
     // 회원가입
@@ -31,7 +32,7 @@ public class AccountController {
     @PostMapping("/register")
     public ResponseEntity<Response<Void>> register(@Valid @RequestBody RegisterRequest request, HttpServletRequest httpRequest) {
 
-        registerService.register(request, httpRequest);
+        accountService.register(request, httpRequest);
 
         return ResponseEntity.ok(Response.<Void>builder()
                 .message("회원가입 성공")
@@ -48,6 +49,18 @@ public class AccountController {
         return ResponseEntity.ok(Response.<LoginResponse>builder()
                 .message("로그인 성공")
                 .data(response)
+                .build());
+    }
+
+    // 비밀번호 찾기
+    @Operation(summary = "비밀번호 찾기", description = "이메일 인증을 완료한 사용자 비밀번호 변경 가능")
+    @PostMapping("/find-password")
+    public ResponseEntity<Response<Void>> findPassword(@Valid @RequestBody PasswordResetRequest request, HttpServletRequest httpServletRequest) {
+
+        accountService.resetPassword(request, httpServletRequest);
+
+        return ResponseEntity.ok(Response.<Void>builder()
+                .message("비밀번호 변경 성공")
                 .build());
     }
 

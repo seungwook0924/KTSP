@@ -25,14 +25,17 @@ public class User extends BaseEntity {
     @Column(name = "email", nullable = false, unique = true, length = 40)
     private String email;
 
-    @Column(name = "student_number", unique = true, length = 9)
-    private String studentNumber;
+    @Column(name = "phone_number", nullable = false, unique = true, length = 13)
+    private String phoneNumber;
 
     @Column(name = "password", nullable = false, length = 60)
     private String password;
 
     @Column(name = "name", nullable = false, length = 15)
     private String name;
+
+    @Column(name = "student_number", unique = true, length = 9)
+    private String studentNumber;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "academic_year", nullable = false)
@@ -42,15 +45,8 @@ public class User extends BaseEntity {
     @Column(name = "campus", nullable = false)
     private Campus campus;
 
-    @Column(name = "phone_number", nullable = false, unique = true, length = 13)
-    private String phoneNumber;
-
     @Column(name = "major", nullable = false, length = 20)
     private String major;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
-    private UserRole role;
 
     @Column(name = "previous_gpa", precision = 3, scale = 2, nullable = false)
     private BigDecimal previousGpa;
@@ -58,31 +54,35 @@ public class User extends BaseEntity {
     @Column(name = "activated", nullable = false)
     private Boolean activated;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private UserRole role;
+
     @Builder(access = AccessLevel.PRIVATE)
     private User(String email, String password, String studentNumber, String name, AcademicYear academicYear, Campus campus, String phoneNumber, String major, BigDecimal previousGpa, UserRole role) {
         this.email = email;
+        this.phoneNumber = phoneNumber;
         this.password = password;
-        this.studentNumber = studentNumber;
         this.name = name;
         this.academicYear = academicYear;
+        this.studentNumber = studentNumber;
         this.campus = campus;
-        this.phoneNumber = phoneNumber;
         this.major = major;
-        this.role = role;
         this.previousGpa = previousGpa;
         this.activated = true;
+        this.role = role;
     }
 
     // 일반 유저 생성
     public static User createUser(String email, String encodedPassword, String studentNumber, String name, AcademicYear academicYear, Campus campus, String phoneNumber, String major, BigDecimal previousGpa) {
         return User.builder()
                 .email(email)
-                .password(encodedPassword)
+                .phoneNumber(phoneNumber)
                 .studentNumber(studentNumber)
+                .password(encodedPassword)
                 .name(name)
                 .academicYear(academicYear)
                 .campus(campus)
-                .phoneNumber(phoneNumber)
                 .major(major)
                 .previousGpa(previousGpa)
                 .role(UserRole.USER)
@@ -94,11 +94,11 @@ public class User extends BaseEntity {
         return User.builder()
                 .email(email)
                 .password(encodedPassword)
-                .studentNumber(studentNumber)
+                .phoneNumber(telNumber)
                 .name(name)
+                .studentNumber(studentNumber)
                 .academicYear(AcademicYear.GRADUATE)
                 .campus(Campus.CHUNCHEON)
-                .phoneNumber(telNumber)
                 .major(major)
                 .previousGpa(new BigDecimal("4.0"))
                 .role(UserRole.ADMIN)
@@ -111,23 +111,12 @@ public class User extends BaseEntity {
     }
 
     // 학년 변경
-    public void changeAcademicYear(AcademicYear newYear) {
+    public void changeUserInformation(AcademicYear newYear, String newPhoneNumber, String newMajor, BigDecimal newGpa, Campus newCampus) {
         this.academicYear = newYear;
-    }
-
-    // 전화번호 변경
-    public void changePhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    // 전공 변경
-    public void changeMajor(String newMajor) {
+        this.phoneNumber = newPhoneNumber;
         this.major = newMajor;
-    }
-
-    // 이전학기 학점 변경
-    public void changePreviousGpa(BigDecimal newGpa) {
         this.previousGpa = newGpa;
+        this.campus = newCampus;
     }
 
     // 계정 비활성화

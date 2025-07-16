@@ -17,6 +17,7 @@ public class AuthCodeRedisService {
     private static final String VERIFY_CODE_PREFIX = "verify-code:";
     private static final String VERIFIED_EMAIL_PREFIX = "verified-email:";
     private static final String COOLDOWN_KEY_PREFIX = "verify-cooldown:";
+    private static final String IP_COOLDOWN_KEY_PREFIX = "verify-ip-cooldown:";
 
     // 보안코드 조회
     public String getAuthCode(String email) {
@@ -84,13 +85,24 @@ public class AuthCodeRedisService {
     }
 
 
-    // 쿨다운이 지났는지 확인
-    public boolean isInCooldown(String email) {
-        return template.hasKey(COOLDOWN_KEY_PREFIX + email);
+    // (이메일 + IP)쿨다운 기간인지 확인
+    public boolean isInCooldown(String email, String ip) {
+        return template.hasKey(getEmailCooldownKey(email)) || template.hasKey(getIpCooldownKey(ip));
     }
 
-    // 이메일 지속 요청 방지
-    public void setCooldown(String email, long ttlSeconds) {
-        template.opsForValue().set(COOLDOWN_KEY_PREFIX + email, "1", Duration.ofSeconds(ttlSeconds));
+    // (이메일 + IP)쿨다운 설정
+    public void setCooldown(String email, String ip, long ttlSeconds) {
+        template.opsForValue().set(getEmailCooldownKey(email), "1", Duration.ofSeconds(ttlSeconds));
+        template.opsForValue().set(getIpCooldownKey(ip), "1", Duration.ofSeconds(ttlSeconds));
+    }
+
+    // 이메일 쿨다운 여부
+    private String getEmailCooldownKey(String email) {
+        return COOLDOWN_KEY_PREFIX + email;
+    }
+
+    // IP 쿨다운 여부
+    private String getIpCooldownKey(String ip) {
+        return IP_COOLDOWN_KEY_PREFIX + ip;
     }
 }

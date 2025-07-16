@@ -1,7 +1,9 @@
 package com.seungwook.ktsp.global.auth.service;
 
 import com.seungwook.ktsp.domain.user.entity.User;
+import com.seungwook.ktsp.domain.user.exception.UserNotFoundException;
 import com.seungwook.ktsp.domain.user.repository.UserRepository;
+import com.seungwook.ktsp.global.auth.dto.request.PasswordResetRequest;
 import com.seungwook.ktsp.global.auth.dto.request.RegisterRequest;
 import com.seungwook.ktsp.global.auth.exception.RegisterFailedException;
 import com.seungwook.ktsp.global.auth.exception.StudentNumberException;
@@ -16,30 +18,25 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Year;
-import java.util.regex.Pattern;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class RegisterService {
+public class AccountService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthCodeRedisService authCodeRedisService;
 
-    // 학번 형식
-    private static final String STUDENT_NUMBER_PATTERN = "^[0-9]{9}$";
-
     // 회원가입
     @Transactional
     public void register(RegisterRequest request, HttpServletRequest httpRequest) {
 
-        if (!request.getEmail().endsWith("@kangwon.ac.kr"))
-            throw new RegisterFailedException(HttpStatus.BAD_REQUEST, "강원대학교 이메일이 아닙니다.");
+        // 강원대학교 이메일인지 검사
+        checkEmailDomain(request.getEmail());
 
         // 이메일 인증 완료여부 검사
-        if (!authCodeRedisService.existVerifiedEmail(request.getEmail()))
-            throw new EmailVerifyException(HttpStatus.CONFLICT, "이메일 인증이 완료되지 않았습니다.");
+        isVerifyEmail(request.getEmail());
 
         // 학번 유효성 검사
         validStudentNumber(request.getStudentNumber());
@@ -52,21 +49,38 @@ public class RegisterService {
         userRepository.save(newUser);
 
         // 인증 완료 이메일 제거
-        authCodeRedisService.deleteVerifiedEmail(request.getEmail());
+        deleteVerifiedEmailFromRedis(request.getEmail());
 
-        log.info("회원가입 성공 - {}({} / {})", newUser.getName(), newUser.getStudentNumber(), IpUtil.getClientIP(httpRequest));
+        log.info("회원가입 성공 - userId: {}({})", newUser.getId(), IpUtil.getClientIP(httpRequest));
+    }
+
+    // 비밀번호 찾기
+    @Transactional
+    public void resetPassword(PasswordResetRequest request, HttpServletRequest httpRequest) {
+
+        // 강원대학교 이메일인지 검사
+        checkEmailDomain(request.getEmail());
+
+        // 이메일 인증 완료여부 검사
+        isVerifyEmail(request.getEmail());
+
+        // 회원 조회
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(UserNotFoundException::new);
+
+        // 비밀번호 변경
+        user.changePassword(passwordEncoder.encode(request.getPassword()));
+
+        // 인증 완료 이메일 제거
+        deleteVerifiedEmailFromRedis(request.getEmail());
+
+        log.info("비밀번호 초기화 성공 - userId: {}({})", user.getId(), IpUtil.getClientIP(httpRequest));
     }
 
     // 학번 유효성 검사
     private void validStudentNumber(String studentNumber) {
-        if (!Pattern.matches(STUDENT_NUMBER_PATTERN, studentNumber)) throw new StudentNumberException();
-
         int admissionYear = Integer.parseInt(studentNumber.substring(0, 4)); // 학번의 첫 4자리 (입학년도)
         int currentYear = Year.now().getValue(); // 현재 년도
-
-        // 입학년도가 현재 년도보다 크면 안 됨
-        if (admissionYear > currentYear) throw new StudentNumberException();
-
+        if (admissionYear > currentYear) throw new StudentNumberException(); // 입학년도가 현재 년도보다 크면 안 됨
     }
 
     // 이메일, 학번, 전화번호 중복 검사
@@ -87,5 +101,22 @@ public class RegisterService {
                 request.getPhoneNumber(),
                 request.getMajor(),
                 request.getPreviousGpa());
+    }
+
+    // 강원대학교 이메일인지 검증
+    private void checkEmailDomain(String email) {
+        if (!email.endsWith("@kangwon.ac.kr"))
+            throw new EmailVerifyException(HttpStatus.BAD_REQUEST, "강원대학교 이메일이 아닙니다.");
+    }
+
+    // 인증된 이메일인지 확인
+    private void isVerifyEmail(String email) {
+        if (!authCodeRedisService.existVerifiedEmail(email))
+            throw new EmailVerifyException(HttpStatus.CONFLICT, "이메일 인증이 완료되지 않았습니다.");
+    }
+
+    // 인증 완료 이메일 레디스에서 제거
+    private void deleteVerifiedEmailFromRedis(String email) {
+        authCodeRedisService.deleteVerifiedEmail(email);
     }
 }

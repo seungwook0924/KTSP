@@ -37,7 +37,7 @@ public class AuthService {
 
     // 요청 사용자 식별 메서드
     @Transactional(readOnly = true)
-    public User getUser() {
+    public long getUserId() {
         // 현재 요청의 SecurityContext에서 인증 객체 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -52,9 +52,7 @@ public class AuthService {
             throw new UserContextException("잘못된 인증 세션입니다.");
         }
 
-        // 세션에 저장된 학번으로 사용자 조회, 존재하지 않으면 예외 발생
-        return userRepository.findByStudentNumber(session.getStudentNumber())
-                .orElseThrow(() -> new UserContextException("사용자를 찾을 수 없습니다."));
+        return session.getId();
     }
 
     // 로그인
@@ -82,7 +80,7 @@ public class AuthService {
         // 기존 세션이 남아있다면 강제 만료 처리
         registerNewSession(httpRequest, sessionUser, context);
 
-        log.info("로그인 성공 - {}({} / {})", user.getName(), user.getStudentNumber(), IpUtil.getClientIP(httpRequest));
+        log.info("로그인 성공 - userId: {}({})", user.getId(), IpUtil.getClientIP(httpRequest));
         return new LoginResponse(isDuplicatedLogin);
     }
 
@@ -105,7 +103,10 @@ public class AuthService {
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) throw new LoginFailedException();
 
-        if (!user.getActivated()) throw new LoginFailedException("정지된 계정입니다. 관리자에게 문의바랍니다.");
+        if (!user.getActivated()) {
+            log.warn("비활성 회원 로그인 시도 차단 - userId: {}", user.getId());
+            throw new LoginFailedException("정지된 계정입니다. 관리자에게 문의바랍니다.");
+        }
 
         return user;
     }
@@ -118,7 +119,7 @@ public class AuthService {
 
     // 인증 세션 객체(UserSession) 생성
     private UserSession createUserSession(User user) {
-        return new UserSession(user.getStudentNumber(), user.getName(), user.getRole());
+        return new UserSession(user.getId(), user.getEmail(), user.getRole());
     }
 
     // UserSession으로 Spring Security 인증 객체 생성
@@ -143,7 +144,7 @@ public class AuthService {
         List<SessionInformation> sessions = sessionRegistry.getAllSessions(sessionUser, false);
         if (!sessions.isEmpty()) {
             sessions.forEach(SessionInformation::expireNow);
-            log.info("중복 로그인 감지 - 기존 세션 만료 처리: {}({})", user.getName(), user.getStudentNumber());
+            log.warn("중복 로그인 감지(기존 세션 만료 처리) - userId: {}", user.getId());
             return true;
         }
         return false;
