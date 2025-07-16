@@ -1,7 +1,7 @@
 package com.seungwook.ktsp.domain.user.controller;
 
-import com.seungwook.ktsp.domain.user.dto.request.UserInfoUpdateRequest;
 import com.seungwook.ktsp.domain.user.dto.request.PasswordUpdateRequest;
+import com.seungwook.ktsp.domain.user.dto.request.UserInfoUpdateRequest;
 import com.seungwook.ktsp.domain.user.dto.response.UserInfoResponse;
 import com.seungwook.ktsp.domain.user.entity.User;
 import com.seungwook.ktsp.domain.user.mapper.UserResponseMapper;
@@ -13,33 +13,22 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "User Information", description = "회원 정보 조회/수정 API")
+@Tag(name = "User Command", description = "회원 정보 수정 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/service/user")
-public class UserInfoController {
+public class UserCommandController {
 
     private final AuthService authService;
     private final UserService userService;
 
-    // 내 정보 조회
-    @Operation(summary = "회원 정보 조회", description = "이메일, 이름, 학년, 학번, 전화번호, 전공, 직전학기 성적, 캠퍼스 조회")
-    @GetMapping
-    public ResponseEntity<Response<UserInfoResponse>> getMyInfo() {
-
-        User user = userService.getUserInformation(authService.getUserId());
-        UserInfoResponse response = UserResponseMapper.toUserInfoResponse(user);
-
-        return ResponseEntity.ok(Response.<UserInfoResponse>builder()
-                .message("내 정보를 불러왔습니다.")
-                .data(response)
-                .build());
-    }
-
     // 내 정보 수정
-    @Operation(summary = "회원 정보 수정", description = "학년, 전화번호, 전공, 직전학기 성적, 캠퍼스 등 수정")
+    @Operation(summary = "회원 정보 수정", description = "학년, 전화번호, 전공, 직전학기 성적, 캠퍼스, 자기소개 등 수정")
     @PatchMapping
     public ResponseEntity<Response<UserInfoResponse>> updateMyInfo(@Valid @RequestBody UserInfoUpdateRequest request) {
 
