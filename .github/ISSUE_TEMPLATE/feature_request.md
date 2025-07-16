@@ -1,8 +1,8 @@
 ---
 name: Feature request
-about: Suggest an idea for this project
-title: ''
-labels: ''
+about: 기능 제안
+title: "[Feature] "
+labels: feature
 assignees: seungwook0924
 
 ---

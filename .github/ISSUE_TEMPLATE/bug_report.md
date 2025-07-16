@@ -1,8 +1,8 @@
 ---
 name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: ''
+about: 버그 발견
+title: "[Bug] "
+labels: bug
 assignees: seungwook0924
 
 ---
