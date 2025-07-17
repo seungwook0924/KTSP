@@ -14,7 +14,7 @@ public class UserResponseMapper {
                 user.getAcademicYear(),
                 user.getStudentNumber(),
                 user.getPhoneNumber(),
-                user.getPhoneNumber(),
+                user.getMajor(),
                 user.getPreviousGpa(),
                 user.getCampus(),
                 user.getIntroduction()
