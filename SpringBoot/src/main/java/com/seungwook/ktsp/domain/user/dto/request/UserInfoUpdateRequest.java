@@ -38,7 +38,7 @@ public class UserInfoUpdateRequest {
     @NotNull(message = "캠퍼스는 필수 항목입니다.")
     private final Campus campus;
 
-    @Schema(description = "자기소개 (최대 255자)", example = "안녕하세요. 백엔드 개발자 홍길동입니다.")
+    @Schema(description = "자기소개", example = "안녕하세요. 백엔드 개발자 홍길동입니다.")
     @Size(max = 255)
     private final String introduction;
 

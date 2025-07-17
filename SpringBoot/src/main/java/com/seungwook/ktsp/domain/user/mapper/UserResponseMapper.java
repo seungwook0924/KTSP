@@ -8,7 +8,8 @@ public class UserResponseMapper {
 
     // UserInfoResponse로 변환
     public static UserInfoResponse toUserInfoResponse(User user) {
-        return new UserInfoResponse(user.getEmail(),
+        return new UserInfoResponse(
+                user.getEmail(),
                 user.getName(),
                 user.getAcademicYear(),
                 user.getStudentNumber(),
@@ -22,9 +23,11 @@ public class UserResponseMapper {
 
     // UserProfileResponse로 변환
     public static UserProfileResponse toUserProfileResponse(User user) {
-        return new UserProfileResponse(user.getName(),
+        return new UserProfileResponse(
+                user.getName(),
                 user.getMajor(),
-                user.getStudentNumber().substring(2, 4) + "학번"
+                user.getStudentNumber().substring(2, 4) + "학번",
+                user.getIntroduction()
         );
     }
 }

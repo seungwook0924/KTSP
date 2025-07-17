@@ -8,6 +8,7 @@ import com.seungwook.ktsp.domain.user.service.UserService;
 import com.seungwook.ktsp.global.auth.service.AuthService;
 import com.seungwook.ktsp.global.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +40,9 @@ public class UserQueryController {
     // 특정 회원 프로필 조회
     @Operation(summary = "특정 회원 프로필 조회", description = "특정 회원의 이름, 전공, 학번 조회")
     @GetMapping("/{userId}")
-    public ResponseEntity<Response<UserProfileResponse>> getUserProfile(@PathVariable Long userId) {
+    public ResponseEntity<Response<UserProfileResponse>> getUserProfile(
+            @Parameter(description = "UserId(PK)", example = "1")
+            @PathVariable Long userId) {
 
         User user = userService.getUserInformation(userId);
         UserProfileResponse response = UserResponseMapper.toUserProfileResponse(user);
