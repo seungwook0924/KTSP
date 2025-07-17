@@ -8,6 +8,7 @@ import com.seungwook.ktsp.global.auth.dto.request.RegisterRequest;
 import com.seungwook.ktsp.global.auth.exception.RegisterFailedException;
 import com.seungwook.ktsp.global.auth.exception.StudentNumberException;
 import com.seungwook.ktsp.global.auth.exception.EmailVerifyException;
+import com.seungwook.ktsp.global.auth.service.email.AuthCodeRedisService;
 import com.seungwook.ktsp.global.auth.utils.IpUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

@@ -10,6 +10,7 @@ import com.seungwook.ktsp.global.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -42,9 +43,9 @@ public class AccountController {
     // 로그인
     @Operation(summary = "로그인", description = "학번과 비밀번호를 통해 로그인, 세션 기반 인증 수행")
     @PostMapping("/login")
-    public ResponseEntity<Response<LoginResponse>> login(@Valid @RequestBody LoginRequest request, HttpServletRequest httpRequest) {
+    public ResponseEntity<Response<LoginResponse>> login(@Valid @RequestBody LoginRequest request, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
 
-        LoginResponse response = authService.login(request, httpRequest);
+        LoginResponse response = authService.login(request, httpRequest, httpResponse);
 
         return ResponseEntity.ok(Response.<LoginResponse>builder()
                 .message("로그인 성공")
@@ -67,9 +68,9 @@ public class AccountController {
     // 로그아웃
     @Operation(summary = "로그아웃", description = "현재 사용자 세션을 무효화하여 로그아웃")
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(HttpServletRequest request) {
+    public ResponseEntity<Void> logout(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
 
-        authService.logout(request);
+        authService.logout(httpRequest, httpResponse);
 
         return ResponseEntity.noContent()
                 .build(); // 204 No Content

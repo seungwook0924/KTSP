@@ -8,10 +8,14 @@ import com.seungwook.ktsp.global.auth.dto.response.LoginResponse;
 import com.seungwook.ktsp.global.auth.exception.LoginFailedException;
 import com.seungwook.ktsp.global.auth.exception.UserContextException;
 import com.seungwook.ktsp.global.auth.utils.IpUtil;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,6 +28,7 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.List;
 
 @Slf4j
@@ -34,6 +39,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final SessionRegistry sessionRegistry;
     private final PasswordEncoder passwordEncoder;
+    private final RememberMeTokenService rememberMeTokenService;
 
     // 요청 사용자 식별 메서드
     @Transactional(readOnly = true)
@@ -57,13 +63,16 @@ public class AuthService {
 
     // 로그인
     @Transactional(readOnly = true)
-    public LoginResponse login(LoginRequest request, HttpServletRequest httpRequest) {
+    public LoginResponse login(LoginRequest request, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
 
         // 사용자 인증 및 계정 활성화 여부 검증
         User user = authenticate(request);
 
         // 기존 세션이 존재하면 무효화
         invalidateExistingSession(httpRequest);
+
+        // 자동 로그인 여부 확인
+        if (request.isRememberMe()) rememberMe(user.getId(), httpRequest, httpResponse);
 
         // 인증 세션 객체(UserSession) 생성
         UserSession sessionUser = createUserSession(user);
@@ -85,15 +94,19 @@ public class AuthService {
     }
 
     // 로그아웃
-    public void logout(HttpServletRequest request) {
+    public void logout(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
         // 현재 SecurityContext 초기화
         SecurityContextHolder.clearContext();
 
         // 세션 무효화
-        HttpSession session = request.getSession(false);
+        HttpSession session = httpRequest.getSession(false);
         if (session != null) {
+            sessionRegistry.removeSessionInformation(session.getId());
             session.invalidate();
         }
+
+        // Remember Me 토큰 처리
+        handleRememberMeLogout(httpRequest, httpResponse);
     }
 
     // 사용자 인증 및 계정 활성화 여부 검증
@@ -119,7 +132,7 @@ public class AuthService {
 
     // 인증 세션 객체(UserSession) 생성
     private UserSession createUserSession(User user) {
-        return new UserSession(user.getId(), user.getEmail(), user.getRole());
+        return new UserSession(user.getId(), user.getStudentNumber(), user.getRole(), false);
     }
 
     // UserSession으로 Spring Security 인증 객체 생성
@@ -155,5 +168,43 @@ public class AuthService {
         HttpSession newSession = request.getSession(true);
         sessionRegistry.registerNewSession(newSession.getId(), sessionUser);
         newSession.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
+    }
+
+    private void rememberMe(long userId, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
+
+        String token = rememberMeTokenService.createToken(userId, IpUtil.getClientIP(httpRequest));
+
+        ResponseCookie cookie = ResponseCookie.from("REMEMBER_ME", token)
+                .httpOnly(true) // JS에서 조작 불가
+                .secure(true) // HTTPS에서만 적용
+                .path("/") // 도메인의 모든 하위 경로 요청에 쿠키 포함
+                .maxAge(Duration.ofDays(7)) // 쿠키 만료시간(7일)
+                .sameSite("None") // 크로스 도메인 전송 허용
+                .build();
+
+        httpResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+    }
+
+    private void handleRememberMeLogout(HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("REMEMBER_ME".equals(cookie.getName())) {
+                    rememberMeTokenService.invalidateToken(cookie.getValue());
+
+                    // 쿠키 삭제
+                    ResponseCookie deleteCookie = ResponseCookie.from("REMEMBER_ME", "")
+                            .httpOnly(true) // JS에서 조작 불가
+                            .secure(true) // HTTPS에서만 적용
+                            .path("/") // 도메인의 모든 하위 경로 요청에 쿠키 포함
+                            .maxAge(Duration.ofDays(7)) // 쿠키 만료시간(7일)
+                            .sameSite("None") // 크로스 도메인 전송 허용
+                            .build();
+
+                    response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
+                    break;
+                }
+            }
+        }
     }
 }

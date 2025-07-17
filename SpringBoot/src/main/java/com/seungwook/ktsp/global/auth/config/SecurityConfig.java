@@ -1,10 +1,14 @@
 package com.seungwook.ktsp.global.auth.config;
 
+import com.seungwook.ktsp.domain.user.repository.UserRepository;
+import com.seungwook.ktsp.global.auth.filter.RememberMeAuthenticationFilter;
+import com.seungwook.ktsp.global.auth.service.RememberMeTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -16,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -24,12 +29,15 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity // 스프링 시큐리티 필터가 스프링 필터체인에 등록
+@EnableMethodSecurity // @PreAuthorize 사용을 위해
 @RequiredArgsConstructor
 public class SecurityConfig {
 
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final AccessDeniedHandler accessDeniedHandler;
+    private final RememberMeTokenService rememberMeTokenService;
+    private final UserRepository userRepository;
 
     @Bean
     public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http, SessionRegistry registry) throws Exception
@@ -53,6 +61,7 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
+                .addFilterBefore(new RememberMeAuthenticationFilter(rememberMeTokenService, userRepository, registry), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(authenticationEntryPoint) // 인증 실패
                         .accessDeniedHandler(accessDeniedHandler) // 권한 부족
@@ -69,9 +78,9 @@ public class SecurityConfig {
         config.setAllowCredentials(true);
 
         if ("prod".equals(active)) {
-            config.setAllowedOrigins(List.of("https://ktsp.seungwook.com", "http://localhost:3000"));
+            config.setAllowedOriginPatterns(List.of("https://ktsp.seungwook.com", "http://localhost:3000"));
         } else {
-            config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5173"));
+            config.setAllowedOriginPatterns(List.of("http://localhost:3000", "http://localhost:5173"));
         }
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));

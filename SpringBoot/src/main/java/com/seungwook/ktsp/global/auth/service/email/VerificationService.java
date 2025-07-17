@@ -1,4 +1,4 @@
-package com.seungwook.ktsp.global.auth.service;
+package com.seungwook.ktsp.global.auth.service.email;
 
 import com.seungwook.ktsp.global.auth.exception.EmailVerifyException;
 import com.seungwook.ktsp.global.auth.utils.MaskingUtil;
@@ -84,6 +84,4 @@ public class VerificationService {
         if (!email.endsWith("@kangwon.ac.kr"))
             throw new EmailVerifyException(HttpStatus.BAD_REQUEST, "강원대학교 이메일이 아닙니다.");
     }
-
-
 }
