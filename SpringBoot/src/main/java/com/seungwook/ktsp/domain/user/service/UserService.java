@@ -1,6 +1,7 @@
 package com.seungwook.ktsp.domain.user.service;
 
-import com.seungwook.ktsp.domain.user.dto.request.MyInfoUpdateRequest;
+import com.seungwook.ktsp.domain.user.dto.request.UserInfoUpdateRequest;
+import com.seungwook.ktsp.domain.user.dto.request.PasswordUpdateRequest;
 import com.seungwook.ktsp.domain.user.entity.User;
 import com.seungwook.ktsp.domain.user.exception.UserUpdateFailedException;
 import com.seungwook.ktsp.domain.user.exception.UserNotFoundException;
@@ -28,7 +29,7 @@ public class UserService {
 
     // 내 정보 수정
     @Transactional
-    public User updateUserInformation(long userId, MyInfoUpdateRequest request) {
+    public User updateUserInformation(long userId, UserInfoUpdateRequest request) {
         User user = findById(userId);
 
         String newPhoneNumber = request.getPhoneNumber();
@@ -42,7 +43,8 @@ public class UserService {
                 request.getPhoneNumber(),
                 request.getMajor(),
                 request.getPreviousGpa(),
-                request.getCampus());
+                request.getCampus(),
+                request.getIntroduction());
 
         log.info("회원정보 변경 성공 - userId: {}", user.getId());
 
@@ -51,11 +53,15 @@ public class UserService {
 
     // 비밀번호 변경
     @Transactional
-    public void updatePassword(long userId, String password){
+    public void updatePassword(long userId, PasswordUpdateRequest request){
         User user = findById(userId);
 
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new UserUpdateFailedException(HttpStatus.UNAUTHORIZED, "기존 비밀번호가 일치하지 않습니다.");
+        }
+
         // 암호화 저장
-        user.changePassword(passwordEncoder.encode(password));
+        user.changePassword(passwordEncoder.encode(request.getNewPassword()));
 
         log.info("비밀번호 변경 성공 - userId: {}", user.getId());
     }

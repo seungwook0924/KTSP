@@ -7,7 +7,7 @@ import lombok.Getter;
 import java.math.BigDecimal;
 
 @Getter
-public class MyInfoResponse {
+public class UserInfoResponse {
 
     private final String email;
     private final String name;
@@ -17,8 +17,9 @@ public class MyInfoResponse {
     private final String major;
     private final BigDecimal previousGpa;
     private final Campus campus;
+    private final String introduction;
 
-    public MyInfoResponse(String email, String name, AcademicYear academicYear, String studentNumber, String phoneNumber, String major, BigDecimal previousGpa, Campus campus) {
+    public UserInfoResponse(String email, String name, AcademicYear academicYear, String studentNumber, String phoneNumber, String major, BigDecimal previousGpa, Campus campus, String introduction) {
         this.email = email;
         this.name = name;
         this.academicYear = academicYear;
@@ -27,5 +28,6 @@ public class MyInfoResponse {
         this.major = major;
         this.previousGpa = previousGpa;
         this.campus = campus;
+        this.introduction = introduction;
     }
 }

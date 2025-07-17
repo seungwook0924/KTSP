@@ -63,7 +63,7 @@ public class EmailService {
         return mailTemplateEngine.process("auth_code", context);
     }
 
-    // 회원가입용 이메일 폼 생성
+    // 보안코드 발송 이메일 폼 생성
     private MimeMessage createEmailForm(String email, String authCode) throws MessagingException {
         MimeMessage message = javaMailSender.createMimeMessage();
 

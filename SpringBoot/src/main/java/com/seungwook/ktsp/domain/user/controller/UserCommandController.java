@@ -1,57 +1,52 @@
 package com.seungwook.ktsp.domain.user.controller;
 
-import com.seungwook.ktsp.domain.user.dto.request.MyInfoUpdateRequest;
 import com.seungwook.ktsp.domain.user.dto.request.PasswordUpdateRequest;
-import com.seungwook.ktsp.domain.user.dto.response.MyInfoResponse;
+import com.seungwook.ktsp.domain.user.dto.request.UserInfoUpdateRequest;
+import com.seungwook.ktsp.domain.user.dto.response.UserInfoResponse;
 import com.seungwook.ktsp.domain.user.entity.User;
 import com.seungwook.ktsp.domain.user.mapper.UserResponseMapper;
 import com.seungwook.ktsp.domain.user.service.UserService;
 import com.seungwook.ktsp.global.auth.service.AuthService;
 import com.seungwook.ktsp.global.response.Response;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "User Command", description = "회원 정보 수정 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/service/user")
-public class MyInfoController {
+public class UserCommandController {
 
     private final AuthService authService;
     private final UserService userService;
 
-    // 내 정보 조회
-    @GetMapping
-    public ResponseEntity<Response<MyInfoResponse>> getMyInfo() {
-
-        User user = userService.getUserInformation(authService.getUserId());
-        MyInfoResponse response = UserResponseMapper.toMyinfoResponse(user);
-
-        return ResponseEntity.ok(Response.<MyInfoResponse>builder()
-                .message("내 정보를 불러왔습니다.")
-                .data(response)
-                .build());
-    }
-
     // 내 정보 수정
+    @Operation(summary = "회원 정보 수정", description = "학년, 전화번호, 전공, 직전학기 성적, 캠퍼스, 자기소개 등 수정")
     @PatchMapping
-    public ResponseEntity<Response<MyInfoResponse>> updateMyInfo(@Valid @RequestBody MyInfoUpdateRequest request) {
+    public ResponseEntity<Response<UserInfoResponse>> updateMyInfo(@Valid @RequestBody UserInfoUpdateRequest request) {
 
         User user = userService.updateUserInformation(authService.getUserId(), request);
-        MyInfoResponse response = UserResponseMapper.toMyinfoResponse(user);
+        UserInfoResponse response = UserResponseMapper.toUserInfoResponse(user);
 
-        return ResponseEntity.ok(Response.<MyInfoResponse>builder()
+        return ResponseEntity.ok(Response.<UserInfoResponse>builder()
                 .message("내 정보를 수정했습니다.")
                 .data(response)
                 .build());
     }
 
     // 비밀번호 변경
+    @Operation(summary = "회원 비밀번호 변경", description = "기존 비밀번호와 신규 비밀번호를 제출하면 신규 비밀번호로 변경")
     @PatchMapping("/password")
     public ResponseEntity<Response<Void>> updatePassword(@Valid @RequestBody PasswordUpdateRequest request) {
 
-        userService.updatePassword(authService.getUserId(), request.getPassword());
+        userService.updatePassword(authService.getUserId(), request);
 
         return ResponseEntity.ok(Response.<Void>builder()
                 .message("비밀번호가 변경되었습니다.")

@@ -9,7 +9,7 @@ import lombok.Getter;
 import java.math.BigDecimal;
 
 @Getter
-public class MyInfoUpdateRequest {
+public class UserInfoUpdateRequest {
 
     @Schema(description = "사용자 학년", example = "FIRST_YEAR, SECOND_YEAR, THIRD_YEAR, FOURTH_YEAR, GRADUATE")
     @NotNull(message = "학년은 필수 항목입니다.")
@@ -38,11 +38,16 @@ public class MyInfoUpdateRequest {
     @NotNull(message = "캠퍼스는 필수 항목입니다.")
     private final Campus campus;
 
-    public MyInfoUpdateRequest(AcademicYear academicYear, String phoneNumber, String major, BigDecimal previousGpa, Campus campus) {
+    @Schema(description = "자기소개", example = "안녕하세요. 백엔드 개발자 홍길동입니다.")
+    @Size(max = 255)
+    private final String introduction;
+
+    public UserInfoUpdateRequest(AcademicYear academicYear, String phoneNumber, String major, BigDecimal previousGpa, Campus campus, String introduction) {
         this.academicYear = academicYear;
         this.phoneNumber = phoneNumber;
         this.major = major;
         this.previousGpa = previousGpa;
         this.campus = campus;
+        this.introduction = introduction;
     }
 }
