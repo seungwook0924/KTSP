@@ -1,6 +1,7 @@
 package com.seungwook.ktsp.global.auth.service;
 
 import com.seungwook.ktsp.domain.user.entity.User;
+import com.seungwook.ktsp.domain.user.entity.enums.UserStatus;
 import com.seungwook.ktsp.domain.user.repository.UserRepository;
 import com.seungwook.ktsp.global.auth.dto.UserSession;
 import com.seungwook.ktsp.global.auth.dto.request.LoginRequest;
@@ -113,7 +114,7 @@ public class AuthService {
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) throw new LoginFailedException();
 
-        if (!user.getActivated()) {
+        if (!user.isActive()) {
             log.warn("비활성 회원 로그인 시도 차단 - userId: {}", user.getId());
             throw new LoginFailedException("정지된 계정입니다. 관리자에게 문의바랍니다.");
         }

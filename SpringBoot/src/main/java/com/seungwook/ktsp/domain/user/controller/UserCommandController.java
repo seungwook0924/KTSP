@@ -2,21 +2,23 @@ package com.seungwook.ktsp.domain.user.controller;
 
 import com.seungwook.ktsp.domain.user.dto.request.PasswordUpdateRequest;
 import com.seungwook.ktsp.domain.user.dto.request.UserInfoUpdateRequest;
+import com.seungwook.ktsp.domain.user.dto.request.WithdrawnRequest;
 import com.seungwook.ktsp.domain.user.dto.response.UserInfoResponse;
 import com.seungwook.ktsp.domain.user.entity.User;
 import com.seungwook.ktsp.domain.user.mapper.UserResponseMapper;
 import com.seungwook.ktsp.domain.user.service.UserService;
+import com.seungwook.ktsp.global.auth.dto.UserSession;
 import com.seungwook.ktsp.global.auth.service.AuthService;
 import com.seungwook.ktsp.global.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "User Command", description = "회원 정보 수정 API")
 @RestController
@@ -50,6 +52,21 @@ public class UserCommandController {
 
         return ResponseEntity.ok(Response.<Void>builder()
                 .message("비밀번호가 변경되었습니다.")
+                .build());
+    }
+
+    // 회원 탈퇴
+    @Operation(summary = "회원 탈퇴", description = "회원 탈퇴, 자동 로그인 상태에선 요청 거부")
+    @DeleteMapping
+    public ResponseEntity<Response<Void>> withdrawnUser(@AuthenticationPrincipal UserSession userSession,
+                                                        @Valid @RequestBody WithdrawnRequest request,
+                                                        HttpServletRequest httpRequest,
+                                                        HttpServletResponse httpResponse) {
+
+        userService.withdrawnUser(userSession, request, httpRequest, httpResponse);
+
+        return ResponseEntity.ok(Response.<Void>builder()
+                .message("탈퇴가 완료되었습니다.")
                 .build());
     }
 }
