@@ -2,10 +2,18 @@ package com.seungwook.ktsp.domain.user.service;
 
 import com.seungwook.ktsp.domain.user.dto.request.UserInfoUpdateRequest;
 import com.seungwook.ktsp.domain.user.dto.request.PasswordUpdateRequest;
+import com.seungwook.ktsp.domain.user.dto.request.WithDrawnRequest;
 import com.seungwook.ktsp.domain.user.entity.User;
+import com.seungwook.ktsp.domain.user.exception.PasswordMismatchException;
+import com.seungwook.ktsp.domain.user.exception.RememberMeAccessDeniedException;
 import com.seungwook.ktsp.domain.user.exception.UserUpdateFailedException;
 import com.seungwook.ktsp.domain.user.exception.UserNotFoundException;
 import com.seungwook.ktsp.domain.user.repository.UserRepository;
+import com.seungwook.ktsp.global.auth.dto.UserSession;
+import com.seungwook.ktsp.global.auth.service.AuthService;
+import com.seungwook.ktsp.global.auth.utils.IpUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,6 +28,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthService authService;
 
     // 내 정보 조회
     @Transactional(readOnly = true)
@@ -56,14 +65,37 @@ public class UserService {
     public void updatePassword(long userId, PasswordUpdateRequest request){
         User user = findById(userId);
 
-        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword()))
             throw new UserUpdateFailedException(HttpStatus.UNAUTHORIZED, "기존 비밀번호가 일치하지 않습니다.");
-        }
+
 
         // 암호화 저장
         user.changePassword(passwordEncoder.encode(request.getNewPassword()));
 
         log.info("비밀번호 변경 성공 - userId: {}", user.getId());
+    }
+
+    // 회원 탈퇴
+    @Transactional
+    public void withDrawnUser(UserSession userSession, WithDrawnRequest request, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
+
+        // 자동 로그인 상태에선 요청 거절
+        if(userSession.isRememberMe()) throw new RememberMeAccessDeniedException();
+
+        long userId = userSession.getId();
+        User user = findById(userId);
+
+        // 비밀번호 검사
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword()))
+            throw new PasswordMismatchException();
+
+        // 로그아웃
+        authService.logout(httpRequest, httpResponse);
+
+        // 탈퇴(soft delete)
+        userRepository.delete(user);
+
+        log.info("회원 탈퇴 완료: {}({})", userId, IpUtil.getClientIP(httpRequest));
     }
 
     private User findById(long userId) {
