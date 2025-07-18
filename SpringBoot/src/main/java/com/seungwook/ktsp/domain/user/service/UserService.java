@@ -2,7 +2,7 @@ package com.seungwook.ktsp.domain.user.service;
 
 import com.seungwook.ktsp.domain.user.dto.request.UserInfoUpdateRequest;
 import com.seungwook.ktsp.domain.user.dto.request.PasswordUpdateRequest;
-import com.seungwook.ktsp.domain.user.dto.request.WithDrawnRequest;
+import com.seungwook.ktsp.domain.user.dto.request.WithdrawnRequest;
 import com.seungwook.ktsp.domain.user.entity.User;
 import com.seungwook.ktsp.domain.user.exception.PasswordMismatchException;
 import com.seungwook.ktsp.domain.user.exception.RememberMeAccessDeniedException;
@@ -77,7 +77,7 @@ public class UserService {
 
     // 회원 탈퇴
     @Transactional
-    public void withDrawnUser(UserSession userSession, WithDrawnRequest request, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
+    public void withdrawnUser(UserSession userSession, WithdrawnRequest request, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
 
         // 자동 로그인 상태에선 요청 거절
         if(userSession.isRememberMe()) throw new RememberMeAccessDeniedException();

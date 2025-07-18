@@ -2,7 +2,7 @@ package com.seungwook.ktsp.domain.user.controller;
 
 import com.seungwook.ktsp.domain.user.dto.request.PasswordUpdateRequest;
 import com.seungwook.ktsp.domain.user.dto.request.UserInfoUpdateRequest;
-import com.seungwook.ktsp.domain.user.dto.request.WithDrawnRequest;
+import com.seungwook.ktsp.domain.user.dto.request.WithdrawnRequest;
 import com.seungwook.ktsp.domain.user.dto.response.UserInfoResponse;
 import com.seungwook.ktsp.domain.user.entity.User;
 import com.seungwook.ktsp.domain.user.mapper.UserResponseMapper;
@@ -58,12 +58,12 @@ public class UserCommandController {
     // 회원 탈퇴
     @Operation(summary = "회원 탈퇴", description = "회원 탈퇴, 자동 로그인 상태에선 요청 거부")
     @DeleteMapping
-    public ResponseEntity<Response<Void>> withDrawnUser(@AuthenticationPrincipal UserSession userSession,
-                                                        @Valid @RequestBody WithDrawnRequest request,
+    public ResponseEntity<Response<Void>> withdrawnUser(@AuthenticationPrincipal UserSession userSession,
+                                                        @Valid @RequestBody WithdrawnRequest request,
                                                         HttpServletRequest httpRequest,
                                                         HttpServletResponse httpResponse) {
 
-        userService.withDrawnUser(userSession, request, httpRequest, httpResponse);
+        userService.withdrawnUser(userSession, request, httpRequest, httpResponse);
 
         return ResponseEntity.ok(Response.<Void>builder()
                 .message("탈퇴가 완료되었습니다.")
