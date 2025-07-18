@@ -4,75 +4,75 @@ import com.seungwook.ktsp.domain.user.entity.User;
 import com.seungwook.ktsp.domain.user.repository.UserRepository;
 import com.seungwook.ktsp.global.auth.dto.UserSession;
 import com.seungwook.ktsp.global.auth.service.RememberMeTokenService;
+import com.seungwook.ktsp.global.auth.support.SessionSecuritySupport;
 import com.seungwook.ktsp.global.auth.utils.IpUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.session.SessionRegistry;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 public class RememberMeAuthenticationFilter extends OncePerRequestFilter {
 
     private final RememberMeTokenService tokenService;
     private final UserRepository userRepository;
-    private final SessionRegistry sessionRegistry;
+    private final SessionSecuritySupport sessionSecuritySupport;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest httpRequest, HttpServletResponse httpResponse, FilterChain filterChain) throws ServletException, IOException {
 
-        // 인증 정보가 있는지 검사
+        // 현재 SecurityContext에 인증 정보가 없을 경우에만 실행
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
-            String token = extractTokenFromCookie(request);
+            String token = extractTokenFromCookie(httpRequest);
 
-            // RememberMe 토큰이 있는지 검사
+            // 쿠키에서 REMEMBER_ME 토큰을 추출
             if (token != null) {
-                Long userId = tokenService.getUserIdByToken(token, IpUtil.getClientIP(request));
-                User user = userRepository.findById(userId).orElse(null);
 
-                // 사용자가 활성 상태인지 검사
-                if (user != null && user.getActivated()) {
+                // 토큰을 통해 userId 조회
+                Long userId = tokenService.getUserIdByToken(token, IpUtil.getClientIP(httpRequest));
 
-                    // UserSession 생성(isRememberMe=true)
-                    UserSession sessionUser = new UserSession(user.getId(), user.getStudentNumber(), user.getRole(), true);
+                if (userId != null) {
+                    // userId DB 조회, 계정이 활성 상태인지 확인
+                    userRepository.findById(userId)
+                            .filter(User::getActivated)
+                            .ifPresent(user -> {
 
+                                // 기존 세션이 존재하면 무효화
+                                sessionSecuritySupport.invalidateExistingSession(httpRequest);
 
-                    // 인증 객체 생성
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                            sessionUser,
-                            null,
-                            List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
-                    );
+                                // 인증 세션 객체(UserSession) 생성
+                                UserSession userSession = sessionSecuritySupport.createUserSession(user, true);
 
-                    // SecurityContextHolder에 인증 정보 설정
-                    SecurityContext context = SecurityContextHolder.createEmptyContext();
-                    context.setAuthentication(authentication);
-                    SecurityContextHolder.setContext(context);
+                                // UserSession으로 Spring Security 인증 객체 생성
+                                Authentication authObject = sessionSecuritySupport.buildAuthObject(userSession);
 
-                    // 새 세션 생성 후 인증 정보 및 SecurityContext 저장
-                    HttpSession newSession = request.getSession(true);
-                    sessionRegistry.registerNewSession(newSession.getId(), sessionUser);
-                    newSession.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
+                                // SecurityContextHolder에 인증 정보 설정
+                                SecurityContext context = sessionSecuritySupport.setSecurityContext(authObject);
+
+                                // 중복 로그인 방지
+                                sessionSecuritySupport.handleDuplicateSessions(userSession);
+
+                                // 새로운 세션 등록
+                                sessionSecuritySupport.registerNewSession(httpRequest, userSession, context);
+                            });
                 }
             }
         }
 
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(httpRequest, httpResponse);
     }
 
-    // HttpServletRequest에서 REMEMBER_ME 쿠키가 있는지 검사
+    // REMEMBER_ME 쿠키에서 토큰을 추출
     private String extractTokenFromCookie(HttpServletRequest request) {
         if (request.getCookies() == null) return null;
         for (Cookie cookie : request.getCookies()) {

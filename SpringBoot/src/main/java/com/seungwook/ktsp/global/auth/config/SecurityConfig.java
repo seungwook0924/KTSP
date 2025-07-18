@@ -3,7 +3,9 @@ package com.seungwook.ktsp.global.auth.config;
 import com.seungwook.ktsp.domain.user.repository.UserRepository;
 import com.seungwook.ktsp.global.auth.filter.RememberMeAuthenticationFilter;
 import com.seungwook.ktsp.global.auth.service.RememberMeTokenService;
+import com.seungwook.ktsp.global.auth.support.SessionSecuritySupport;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,7 +39,11 @@ public class SecurityConfig {
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final AccessDeniedHandler accessDeniedHandler;
     private final RememberMeTokenService rememberMeTokenService;
+    private final SessionSecuritySupport sessionSecuritySupport;
     private final UserRepository userRepository;
+
+    @Value("${spring.profiles.active:default}")
+    private String activeProfile;
 
     @Bean
     public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http, SessionRegistry registry) throws Exception
@@ -61,7 +67,7 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new RememberMeAuthenticationFilter(rememberMeTokenService, userRepository, registry), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new RememberMeAuthenticationFilter(rememberMeTokenService, userRepository, sessionSecuritySupport), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(authenticationEntryPoint) // 인증 실패
                         .accessDeniedHandler(accessDeniedHandler) // 권한 부족
@@ -72,12 +78,10 @@ public class SecurityConfig {
     // CORS 설정
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        String active = System.getProperty("spring.profiles.active");
-
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
 
-        if ("prod".equals(active)) {
+        if ("prod".equals(activeProfile)) {
             config.setAllowedOriginPatterns(List.of("https://ktsp.seungwook.com", "http://localhost:3000"));
         } else {
             config.setAllowedOriginPatterns(List.of("http://localhost:3000", "http://localhost:5173"));
@@ -89,12 +93,6 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
-    }
-
-    // 로그인 사용자 세션 추적을 위한 레지스트리 빈 등록
-    @Bean
-    public SessionRegistry sessionRegistry() {
-        return new SessionRegistryImpl();
     }
 
     // UserDetailsService 없이도 경고 메시지 해결

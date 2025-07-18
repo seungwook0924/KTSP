@@ -7,6 +7,7 @@ import com.seungwook.ktsp.global.auth.dto.request.LoginRequest;
 import com.seungwook.ktsp.global.auth.dto.response.LoginResponse;
 import com.seungwook.ktsp.global.auth.exception.LoginFailedException;
 import com.seungwook.ktsp.global.auth.exception.UserContextException;
+import com.seungwook.ktsp.global.auth.support.SessionSecuritySupport;
 import com.seungwook.ktsp.global.auth.utils.IpUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,20 +17,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -40,6 +36,7 @@ public class AuthService {
     private final SessionRegistry sessionRegistry;
     private final PasswordEncoder passwordEncoder;
     private final RememberMeTokenService rememberMeTokenService;
+    private final SessionSecuritySupport sessionSecuritySupport;
 
     // 요청 사용자 식별 메서드
     @Transactional(readOnly = true)
@@ -69,25 +66,25 @@ public class AuthService {
         User user = authenticate(request);
 
         // 기존 세션이 존재하면 무효화
-        invalidateExistingSession(httpRequest);
+        sessionSecuritySupport.invalidateExistingSession(httpRequest);
 
         // 자동 로그인 여부 확인
         if (request.isRememberMe()) rememberMe(user.getId(), httpRequest, httpResponse);
 
         // 인증 세션 객체(UserSession) 생성
-        UserSession sessionUser = createUserSession(user);
+        UserSession userSession = sessionSecuritySupport.createUserSession(user, false);
 
         // UserSession으로 Spring Security 인증 객체 생성
-        Authentication authentication = buildAuthentication(sessionUser);
+        Authentication authObject = sessionSecuritySupport.buildAuthObject(userSession);
 
         // SecurityContextHolder에 인증 정보 설정
-        SecurityContext context = setSecurityContext(authentication);
+        SecurityContext context = sessionSecuritySupport.setSecurityContext(authObject);
 
         // 중복 로그인 방지
-        boolean isDuplicatedLogin = handleDuplicateSessions(sessionUser, user);
+        boolean isDuplicatedLogin = sessionSecuritySupport.handleDuplicateSessions(userSession);
 
-        // 기존 세션이 남아있다면 강제 만료 처리
-        registerNewSession(httpRequest, sessionUser, context);
+        // 새로운 세션 등록
+        sessionSecuritySupport.registerNewSession(httpRequest, userSession, context);
 
         log.info("로그인 성공 - userId: {}({})", user.getId(), IpUtil.getClientIP(httpRequest));
         return new LoginResponse(isDuplicatedLogin);
@@ -124,52 +121,6 @@ public class AuthService {
         return user;
     }
 
-    // 기존 세션이 존재하면 무효화
-    private void invalidateExistingSession(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null) session.invalidate();
-    }
-
-    // 인증 세션 객체(UserSession) 생성
-    private UserSession createUserSession(User user) {
-        return new UserSession(user.getId(), user.getStudentNumber(), user.getRole(), false);
-    }
-
-    // UserSession으로 Spring Security 인증 객체 생성
-    private Authentication buildAuthentication(UserSession sessionUser) {
-        return new UsernamePasswordAuthenticationToken(
-                sessionUser,
-                null,
-                List.of(new SimpleGrantedAuthority("ROLE_" + sessionUser.getRole().name()))
-        );
-    }
-
-    // SecurityContextHolder에 인증 정보 설정
-    private SecurityContext setSecurityContext(Authentication authentication) {
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
-        context.setAuthentication(authentication);
-        SecurityContextHolder.setContext(context);
-        return context;
-    }
-
-    // 중복 로그인 방지
-    private boolean handleDuplicateSessions(UserSession sessionUser, User user) {
-        List<SessionInformation> sessions = sessionRegistry.getAllSessions(sessionUser, false);
-        if (!sessions.isEmpty()) {
-            sessions.forEach(SessionInformation::expireNow);
-            log.warn("중복 로그인 감지(기존 세션 만료 처리) - userId: {}", user.getId());
-            return true;
-        }
-        return false;
-    }
-
-    // 새 세션 생성 후 인증 정보 및 SecurityContext 저장
-    private void registerNewSession(HttpServletRequest request, UserSession sessionUser, SecurityContext context) {
-        HttpSession newSession = request.getSession(true);
-        sessionRegistry.registerNewSession(newSession.getId(), sessionUser);
-        newSession.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
-    }
-
     private void rememberMe(long userId, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
 
         String token = rememberMeTokenService.createToken(userId, IpUtil.getClientIP(httpRequest));
@@ -178,7 +129,7 @@ public class AuthService {
                 .httpOnly(true) // JS에서 조작 불가
                 .secure(true) // HTTPS에서만 적용
                 .path("/") // 도메인의 모든 하위 경로 요청에 쿠키 포함
-                .maxAge(Duration.ofDays(7)) // 쿠키 만료시간(7일)
+                .maxAge(Duration.ofDays(14)) // 쿠키 만료시간(14일)
                 .sameSite("None") // 크로스 도메인 전송 허용
                 .build();
 
@@ -197,7 +148,7 @@ public class AuthService {
                             .httpOnly(true) // JS에서 조작 불가
                             .secure(true) // HTTPS에서만 적용
                             .path("/") // 도메인의 모든 하위 경로 요청에 쿠키 포함
-                            .maxAge(Duration.ofDays(7)) // 쿠키 만료시간(7일)
+                            .maxAge(0) // 쿠키 만료 처리
                             .sameSite("None") // 크로스 도메인 전송 허용
                             .build();
 

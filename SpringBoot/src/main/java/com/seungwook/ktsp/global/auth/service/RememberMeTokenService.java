@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 public class RememberMeTokenService {
 
     private static final String REMEMBER_ME_PREFIX = "auto-login:";
-    private static final long EXPIRE_SECONDS = 7 * 24 * 60 * 60; // 7일
+    private static final long EXPIRE_SECONDS = 14 * 24 * 60 * 60; // 14일
 
     private final RedisTemplate<String, String> redisTemplate;
 
