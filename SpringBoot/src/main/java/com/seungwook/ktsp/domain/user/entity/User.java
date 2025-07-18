@@ -3,12 +3,15 @@ package com.seungwook.ktsp.domain.user.entity;
 import com.seungwook.ktsp.domain.user.entity.enums.AcademicYear;
 import com.seungwook.ktsp.domain.user.entity.enums.Campus;
 import com.seungwook.ktsp.domain.user.entity.enums.UserRole;
+import com.seungwook.ktsp.domain.user.entity.enums.UserStatus;
 import com.seungwook.ktsp.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.math.BigDecimal;
 
@@ -16,6 +19,8 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE users SET status = 'WITHDRAWN' WHERE id = ?") // 삭제시 WITHDRAWN로 변경(soft delete)
+@SQLRestriction("status != 'WITHDRAWN'") // 조회시 status = 'WITHDRAWN' 상태는 자동으로 제외되도록 제약 조건 적용(soft delete))
 public class User extends BaseEntity {
 
     @Id
@@ -25,6 +30,9 @@ public class User extends BaseEntity {
     @Column(name = "email", nullable = false, unique = true, length = 40)
     private String email;
 
+    @Column(name = "student_number", unique = true, columnDefinition = "CHAR(9)")
+    private String studentNumber;
+
     @Column(name = "phone_number", nullable = false, unique = true, columnDefinition = "CHAR(13)")
     private String phoneNumber;
 
@@ -33,9 +41,6 @@ public class User extends BaseEntity {
 
     @Column(name = "name", nullable = false, length = 15)
     private String name;
-
-    @Column(name = "student_number", unique = true, columnDefinition = "CHAR(9)")
-    private String studentNumber;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "academic_year", nullable = false)
@@ -54,8 +59,9 @@ public class User extends BaseEntity {
     @Column(name = "introduction", nullable = true, length = 255)
     private String introduction;
 
-    @Column(name = "activated", nullable = false)
-    private Boolean activated;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private UserStatus status;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
@@ -73,7 +79,7 @@ public class User extends BaseEntity {
         this.major = major;
         this.previousGpa = previousGpa;
         this.introduction = null;
-        this.activated = true;
+        this.status = UserStatus.ACTIVE;
         this.role = role;
     }
 
@@ -124,13 +130,18 @@ public class User extends BaseEntity {
         this.introduction = introduction;
     }
 
+    // 활성 상태인지 조회
+    public boolean isActive() {
+        return this.status.equals(UserStatus.ACTIVE);
+    }
+
     // 계정 비활성화
-    public void deactivate() {
-        this.activated = false;
+    public void suspendAccount() {
+        this.status = UserStatus.SUSPENDED;
     }
 
     // 계정 활성화
     public void activate() {
-        this.activated = true;
+        this.status = UserStatus.ACTIVE;
     }
 }

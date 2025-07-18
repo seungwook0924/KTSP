@@ -44,7 +44,7 @@ public class RememberMeAuthenticationFilter extends OncePerRequestFilter {
                 if (userId != null) {
                     // userId DB 조회, 계정이 활성 상태인지 확인
                     userRepository.findById(userId)
-                            .filter(User::getActivated)
+                            .filter(User::isActive)
                             .ifPresent(user -> {
 
                                 // 기존 세션이 존재하면 무효화
