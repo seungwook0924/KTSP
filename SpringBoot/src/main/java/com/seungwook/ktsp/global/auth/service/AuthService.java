@@ -32,6 +32,8 @@ import java.time.Duration;
 @RequiredArgsConstructor
 public class AuthService {
 
+    private static final String REMEMBER_ME_COOKIE = "REMEMBER_ME";
+
     private final UserRepository userRepository;
     private final SessionRegistry sessionRegistry;
     private final PasswordEncoder passwordEncoder;
@@ -45,15 +47,13 @@ public class AuthService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         // 인증 객체가 없거나 인증되지 않은 경우 예외 발생
-        if (authentication == null || !authentication.isAuthenticated()) {
+        if (authentication == null || !authentication.isAuthenticated())
             throw new UserContextException("로그인이 필요합니다.");
-        }
 
         // 인증 객체의 principal이 UserSession이 아닐 경우 예외 발생 (타입 불일치 방어)
         Object principal = authentication.getPrincipal();
-        if (!(principal instanceof UserSession session)) {
+        if (!(principal instanceof UserSession session))
             throw new UserContextException("잘못된 인증 세션입니다.");
-        }
 
         return session.getId();
     }
@@ -121,35 +121,29 @@ public class AuthService {
         return user;
     }
 
+    // 자동 로그인 설정
     private void rememberMe(long userId, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
 
         String token = rememberMeTokenService.createToken(userId, IpUtil.getClientIP(httpRequest));
 
-        ResponseCookie cookie = ResponseCookie.from("REMEMBER_ME", token)
-                .httpOnly(true) // JS에서 조작 불가
-                .secure(true) // HTTPS에서만 적용
-                .path("/") // 도메인의 모든 하위 경로 요청에 쿠키 포함
+        ResponseCookie cookie = createRememberMeCookieBuilder(token)
                 .maxAge(Duration.ofDays(14)) // 쿠키 만료시간(14일)
-                .sameSite("None") // 크로스 도메인 전송 허용
                 .build();
 
         httpResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
+    // RememberMe 쿠키 삭제
     private void handleRememberMeLogout(HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("REMEMBER_ME".equals(cookie.getName())) {
+                if (REMEMBER_ME_COOKIE.equals(cookie.getName())) {
                     rememberMeTokenService.invalidateToken(cookie.getValue());
 
                     // 쿠키 삭제
-                    ResponseCookie deleteCookie = ResponseCookie.from("REMEMBER_ME", "")
-                            .httpOnly(true) // JS에서 조작 불가
-                            .secure(true) // HTTPS에서만 적용
-                            .path("/") // 도메인의 모든 하위 경로 요청에 쿠키 포함
+                    ResponseCookie deleteCookie = createRememberMeCookieBuilder("")
                             .maxAge(0) // 쿠키 만료 처리
-                            .sameSite("None") // 크로스 도메인 전송 허용
                             .build();
 
                     response.addHeader(HttpHeaders.SET_COOKIE, deleteCookie.toString());
@@ -158,4 +152,13 @@ public class AuthService {
             }
         }
     }
+
+    // RememberMe 쿠키 기본 설정
+    private ResponseCookie.ResponseCookieBuilder createRememberMeCookieBuilder(String value) {
+        return ResponseCookie.from(REMEMBER_ME_COOKIE, value)
+                .httpOnly(true) // JS에서 조작 불가
+                .secure(true) // HTTPS에서만 적용
+                .path("/") // 도메인의 모든 하위 경로 요청에 쿠키 포함
+                .sameSite("None"); // 크로스 도메인 전송 허용
+        }
 }
