@@ -1,4 +1,4 @@
-package com.seungwook.ktsp.global.auth.service;
+package com.seungwook.ktsp.global.auth.service.email;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;

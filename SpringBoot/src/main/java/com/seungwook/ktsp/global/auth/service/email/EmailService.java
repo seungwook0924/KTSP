@@ -1,4 +1,4 @@
-package com.seungwook.ktsp.global.auth.service;
+package com.seungwook.ktsp.global.auth.service.email;
 
 import com.seungwook.ktsp.global.auth.exception.EmailVerifyException;
 import com.seungwook.ktsp.global.auth.utils.IpUtil;

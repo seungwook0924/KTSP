@@ -1,7 +1,7 @@
 package com.seungwook.ktsp.global.auth.controller;
 
 import com.seungwook.ktsp.global.auth.dto.request.VerifyRequest;
-import com.seungwook.ktsp.global.auth.service.VerificationService;
+import com.seungwook.ktsp.global.auth.service.email.VerificationService;
 import com.seungwook.ktsp.global.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

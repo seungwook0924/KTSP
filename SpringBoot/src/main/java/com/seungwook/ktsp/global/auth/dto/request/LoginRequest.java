@@ -20,8 +20,12 @@ public class LoginRequest {
     @Size(min = 8, max = 30, message = "비밀번호는 최소 8자 ~ 최대 30자 입니다.")
     private final String password;
 
-    public LoginRequest(String studentNumber, String password) {
+    @Schema(description = "자동 로그인 여부")
+    private final boolean isRememberMe;
+
+    public LoginRequest(String studentNumber, String password, boolean isRememberMe) {
         this.studentNumber = studentNumber;
         this.password = password;
+        this.isRememberMe = isRememberMe;
     }
 }
