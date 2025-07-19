@@ -40,7 +40,7 @@ public class UserQueryController {
     }
 
     // 특정 회원 프로필 조회
-    @Operation(summary = "특정 회원 프로필 조회", description = "이름, 학번, 전공, 소개 리턴, 탈퇴한 회원일 경우 null")
+    @Operation(summary = "특정 회원 프로필 조회", description = "이름, 학번, 전공, 소개 조회, 탈퇴한 회원일 경우 null")
     @GetMapping("/{userId}")
     public ResponseEntity<Response<UserProfileResponse>> getUserProfile(
             @Parameter(description = "UserId(PK)", example = "1")
