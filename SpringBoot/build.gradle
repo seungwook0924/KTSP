@@ -23,6 +23,26 @@ repositories {
     mavenCentral()
 }
 
+// QueryDSL 설정
+def queryDslVersion = "7.0" // 25년 7월 기준 가장 최신
+def querydslSrcDir  = layout.buildDirectory.dir("generated/querydsl").get().asFile // 위치: build/generated/querydsl
+
+tasks.withType(JavaCompile).configureEach {
+    options.getGeneratedSourceOutputDirectory().set(file(querydslSrcDir))
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs += querydslSrcDir
+        }
+    }
+}
+configurations {
+    querydsl.extendsFrom compileClasspath
+}
+// QueryDSL 설정
+
 dependencies {
 
     // default
@@ -41,9 +61,17 @@ dependencies {
     implementation 'org.springframework.session:spring-session-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+    //Querydsl 추가
+    implementation("io.github.openfeign.querydsl:querydsl-core:${queryDslVersion}")
+    implementation("io.github.openfeign.querydsl:querydsl-jpa:$queryDslVersion")
+    annotationProcessor("io.github.openfeign.querydsl:querydsl-apt:$queryDslVersion:jpa")
+
     // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
 
     // Mail
     implementation "ognl:ognl:3.4.7"
