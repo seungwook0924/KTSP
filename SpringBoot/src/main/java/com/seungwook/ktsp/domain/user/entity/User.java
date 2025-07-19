@@ -11,7 +11,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 
 import java.math.BigDecimal;
 
@@ -20,7 +19,6 @@ import java.math.BigDecimal;
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE users SET status = 'WITHDRAWN' WHERE id = ?") // 삭제시 WITHDRAWN로 변경(soft delete)
-@SQLRestriction("status != 'WITHDRAWN'") // 조회시 status = 'WITHDRAWN' 상태는 자동으로 제외되도록 제약 조건 적용(soft delete))
 public class User extends BaseEntity {
 
     @Id

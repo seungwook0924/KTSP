@@ -1,7 +1,6 @@
 package com.seungwook.ktsp.global.auth.service;
 
 import com.seungwook.ktsp.domain.user.entity.User;
-import com.seungwook.ktsp.domain.user.entity.enums.UserStatus;
 import com.seungwook.ktsp.domain.user.repository.UserRepository;
 import com.seungwook.ktsp.global.auth.dto.UserSession;
 import com.seungwook.ktsp.global.auth.dto.request.LoginRequest;
@@ -109,7 +108,7 @@ public class AuthService {
 
     // 사용자 인증 및 계정 활성화 여부 검증
     private User authenticate(LoginRequest request) {
-        User user = userRepository.findByStudentNumber(request.getStudentNumber())
+        User user = userRepository.findByStudentNumberExceptWithdrawn(request.getStudentNumber())
                 .orElseThrow(LoginFailedException::new);
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) throw new LoginFailedException();

@@ -43,7 +43,7 @@ public class RememberMeAuthenticationFilter extends OncePerRequestFilter {
 
                 if (userId != null) {
                     // userId DB 조회, 계정이 활성 상태인지 확인
-                    userRepository.findById(userId)
+                    userRepository.findByIdExceptWithdrawn(userId)
                             .filter(User::isActive)
                             .ifPresent(user -> {
 

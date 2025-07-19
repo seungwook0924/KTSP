@@ -16,7 +16,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.session.SessionRegistry;
-import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -42,7 +41,7 @@ public class SecurityConfig {
     private final SessionSecuritySupport sessionSecuritySupport;
     private final UserRepository userRepository;
 
-    @Value("${spring.profiles.active:default}")
+    @Value("${spring.profiles.active}")
     private String activeProfile;
 
     @Bean

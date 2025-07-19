@@ -1,10 +1,12 @@
 package com.seungwook.ktsp.domain.user.controller;
 
 import com.seungwook.ktsp.domain.user.dto.response.UserInfoResponse;
+import com.seungwook.ktsp.domain.user.dto.UserProfile;
 import com.seungwook.ktsp.domain.user.dto.response.UserProfileResponse;
 import com.seungwook.ktsp.domain.user.entity.User;
+import com.seungwook.ktsp.domain.user.entity.enums.UserStatus;
 import com.seungwook.ktsp.domain.user.mapper.UserResponseMapper;
-import com.seungwook.ktsp.domain.user.service.UserService;
+import com.seungwook.ktsp.domain.user.service.UserQueryService;
 import com.seungwook.ktsp.global.auth.service.AuthService;
 import com.seungwook.ktsp.global.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,14 +23,14 @@ import org.springframework.web.bind.annotation.*;
 public class UserQueryController {
 
     private final AuthService authService;
-    private final UserService userService;
+    private final UserQueryService userQueryService;
 
     // 내 정보 조회
     @Operation(summary = "회원 정보 조회", description = "이메일, 이름, 학년, 학번, 전화번호, 전공, 직전학기 성적, 캠퍼스, 자기소개 조회")
     @GetMapping
     public ResponseEntity<Response<UserInfoResponse>> getMyInfo() {
 
-        User user = userService.getUserInformation(authService.getUserId());
+        User user = userQueryService.getUserInformation(authService.getUserId());
         UserInfoResponse response = UserResponseMapper.toUserInfoResponse(user);
 
         return ResponseEntity.ok(Response.<UserInfoResponse>builder()
@@ -38,15 +40,22 @@ public class UserQueryController {
     }
 
     // 특정 회원 프로필 조회
-    @Operation(summary = "특정 회원 프로필 조회", description = "특정 회원의 이름, 전공, 학번 조회")
+    @Operation(summary = "특정 회원 프로필 조회", description = "이름, 학번, 전공, 소개 리턴, 탈퇴한 회원일 경우 null")
     @GetMapping("/{userId}")
     public ResponseEntity<Response<UserProfileResponse>> getUserProfile(
             @Parameter(description = "UserId(PK)", example = "1")
             @PathVariable Long userId) {
 
-        User user = userService.getUserInformation(userId);
-        UserProfileResponse response = UserResponseMapper.toUserProfileResponse(user);
+        UserProfile userProfile = userQueryService.getUserProfile(userId);
 
+        // 탈퇴한 회원이면 data 없음
+        if(userProfile.getUserStatus().equals(UserStatus.WITHDRAWN)) {
+            return ResponseEntity.ok(Response.<UserProfileResponse>builder()
+                    .message("탈퇴한 회원입니다.")
+                    .build());
+        }
+
+        UserProfileResponse response = UserResponseMapper.toUserProfileResponse(userProfile);
         return ResponseEntity.ok(Response.<UserProfileResponse>builder()
                 .message("회원 프로필 조회에 성공했습니다.")
                 .data(response)

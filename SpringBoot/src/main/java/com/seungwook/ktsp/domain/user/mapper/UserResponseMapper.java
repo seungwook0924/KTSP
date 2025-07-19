@@ -1,6 +1,7 @@
 package com.seungwook.ktsp.domain.user.mapper;
 
 import com.seungwook.ktsp.domain.user.dto.response.UserInfoResponse;
+import com.seungwook.ktsp.domain.user.dto.UserProfile;
 import com.seungwook.ktsp.domain.user.dto.response.UserProfileResponse;
 import com.seungwook.ktsp.domain.user.entity.User;
 
@@ -22,12 +23,12 @@ public class UserResponseMapper {
     }
 
     // UserProfileResponse로 변환
-    public static UserProfileResponse toUserProfileResponse(User user) {
+    public static UserProfileResponse toUserProfileResponse(UserProfile userProfile) {
         return new UserProfileResponse(
-                user.getName(),
-                user.getMajor(),
-                user.getStudentNumber().substring(2, 4) + "학번",
-                user.getIntroduction()
+                userProfile.getName(),
+                userProfile.getMajor(),
+                userProfile.getStudentNumber().substring(2, 4) + "학번",
+                userProfile.getIntroduction()
         );
     }
 }
