@@ -66,7 +66,8 @@ public class AccountService {
         isVerifyEmail(request.getEmail());
 
         // 회원 조회
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(UserNotFoundException::new);
+        User user = userRepository.findByEmailExceptWithdrawn(request.getEmail())
+                .orElseThrow(UserNotFoundException::new);
 
         // 비밀번호 변경
         user.changePassword(passwordEncoder.encode(request.getPassword()));

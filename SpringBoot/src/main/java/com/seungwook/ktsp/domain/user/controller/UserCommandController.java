@@ -6,7 +6,7 @@ import com.seungwook.ktsp.domain.user.dto.request.WithdrawnRequest;
 import com.seungwook.ktsp.domain.user.dto.response.UserInfoResponse;
 import com.seungwook.ktsp.domain.user.entity.User;
 import com.seungwook.ktsp.domain.user.mapper.UserResponseMapper;
-import com.seungwook.ktsp.domain.user.service.UserService;
+import com.seungwook.ktsp.domain.user.service.UserCommandService;
 import com.seungwook.ktsp.global.auth.dto.UserSession;
 import com.seungwook.ktsp.global.auth.service.AuthService;
 import com.seungwook.ktsp.global.response.Response;
@@ -27,14 +27,14 @@ import org.springframework.web.bind.annotation.*;
 public class UserCommandController {
 
     private final AuthService authService;
-    private final UserService userService;
+    private final UserCommandService userCommandService;
 
     // 내 정보 수정
     @Operation(summary = "회원 정보 수정", description = "학년, 전화번호, 전공, 직전학기 성적, 캠퍼스, 자기소개 등 수정")
     @PatchMapping
     public ResponseEntity<Response<UserInfoResponse>> updateMyInfo(@Valid @RequestBody UserInfoUpdateRequest request) {
 
-        User user = userService.updateUserInformation(authService.getUserId(), request);
+        User user = userCommandService.updateUserInformation(authService.getUserId(), request);
         UserInfoResponse response = UserResponseMapper.toUserInfoResponse(user);
 
         return ResponseEntity.ok(Response.<UserInfoResponse>builder()
@@ -48,7 +48,7 @@ public class UserCommandController {
     @PatchMapping("/password")
     public ResponseEntity<Response<Void>> updatePassword(@Valid @RequestBody PasswordUpdateRequest request) {
 
-        userService.updatePassword(authService.getUserId(), request);
+        userCommandService.updatePassword(authService.getUserId(), request);
 
         return ResponseEntity.ok(Response.<Void>builder()
                 .message("비밀번호가 변경되었습니다.")
@@ -63,7 +63,7 @@ public class UserCommandController {
                                                         HttpServletRequest httpRequest,
                                                         HttpServletResponse httpResponse) {
 
-        userService.withdrawnUser(userSession, request, httpRequest, httpResponse);
+        userCommandService.withdrawnUser(userSession, request, httpRequest, httpResponse);
 
         return ResponseEntity.ok(Response.<Void>builder()
                 .message("탈퇴가 완료되었습니다.")

@@ -6,8 +6,8 @@ import com.seungwook.ktsp.domain.user.dto.request.WithdrawnRequest;
 import com.seungwook.ktsp.domain.user.entity.User;
 import com.seungwook.ktsp.domain.user.exception.PasswordMismatchException;
 import com.seungwook.ktsp.domain.user.exception.RememberMeAccessDeniedException;
-import com.seungwook.ktsp.domain.user.exception.UserUpdateFailedException;
 import com.seungwook.ktsp.domain.user.exception.UserNotFoundException;
+import com.seungwook.ktsp.domain.user.exception.UserUpdateFailedException;
 import com.seungwook.ktsp.domain.user.repository.UserRepository;
 import com.seungwook.ktsp.global.auth.dto.UserSession;
 import com.seungwook.ktsp.global.auth.service.AuthService;
@@ -24,17 +24,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserCommandService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthService authService;
-
-    // 내 정보 조회
-    @Transactional(readOnly = true)
-    public User getUserInformation(long userId) {
-        return findById(userId);
-    }
 
     // 내 정보 수정
     @Transactional
@@ -98,7 +92,9 @@ public class UserService {
         log.info("회원 탈퇴 완료: {}({})", userId, IpUtil.getClientIP(httpRequest));
     }
 
+    // 탈퇴하지 않은 회원 조회
     private User findById(long userId) {
-        return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        return userRepository.findByIdExceptWithdrawn(userId)
+                .orElseThrow(UserNotFoundException::new);
     }
 }
