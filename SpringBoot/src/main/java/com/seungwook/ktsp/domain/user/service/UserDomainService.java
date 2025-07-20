@@ -59,7 +59,7 @@ public class UserDomainService {
                 .orElseThrow(UserNotFoundException::new);
     }
 
-    // userId를 바탕으로 User 리턴
+    // userId를 바탕으로 활성화된 User 리턴
     @Transactional(readOnly = true)
     public User findActiveUserById(Long userId) {
         return userRepository.findActiveUserById(userId)
@@ -70,6 +70,12 @@ public class UserDomainService {
     @Transactional(readOnly = true)
     public Optional<User> findActiveById(Long userId) {
         return userRepository.findActiveUserById(userId);
+    }
+
+    // userId를 바탕으로 탈퇴하지 않은 User 리턴
+    public User findByIdExceptWithdrawn(long userId) {
+        return userRepository.findByIdExceptWithdrawn(userId)
+                .orElseThrow(UserNotFoundException::new);
     }
 
     // userId를 바탕으로 UserProfile 리턴

@@ -27,4 +27,8 @@ public interface UserRepository extends JpaRepository<User, Long>, UserQueryRepo
     // userId를 바탕으로 Active인 User 조회
     @Query("SELECT u FROM User u WHERE u.id = :id AND u.status = 'ACTIVE'")
     Optional<User> findActiveUserById(@Param("id") Long id);
+
+    // userId를 바탕으로 탈퇴하지 않은 User 리턴
+    @Query("SELECT u FROM User u WHERE u.id = :id AND u.status <> 'WITHDRAWN'")
+    Optional<User> findByIdExceptWithdrawn(@Param("id") Long userId);
 }
