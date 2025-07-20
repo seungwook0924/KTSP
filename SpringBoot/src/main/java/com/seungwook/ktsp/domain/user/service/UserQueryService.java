@@ -26,7 +26,8 @@ public class UserQueryService {
         return userDomainService.findUserProfileById(userId);
     }
 
+    // 활성화된 회원 조회
     private User findById(long userId) {
-        return userDomainService.findByIdExceptWithdrawn(userId);
+        return userDomainService.findActiveUserById(userId);
     }
 }

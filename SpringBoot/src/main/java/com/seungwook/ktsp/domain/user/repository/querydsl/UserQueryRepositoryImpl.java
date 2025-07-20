@@ -1,4 +1,4 @@
-package com.seungwook.ktsp.domain.user.repository;
+package com.seungwook.ktsp.domain.user.repository.querydsl;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.seungwook.ktsp.domain.user.dto.UserProfile;

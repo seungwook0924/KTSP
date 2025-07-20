@@ -90,8 +90,8 @@ public class UserCommandService {
         log.info("회원 탈퇴 완료: {}({})", userId, IpUtil.getClientIP(httpRequest));
     }
 
-    // 탈퇴하지 않은 회원 조회
+    // 활성화된 회원 조회
     private User findById(long userId) {
-        return userDomainService.findByIdExceptWithdrawn(userId);
+        return userDomainService.findActiveUserById(userId);
     }
 }

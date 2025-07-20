@@ -1,4 +1,4 @@
-package com.seungwook.ktsp.domain.user.repository;
+package com.seungwook.ktsp.domain.user.repository.querydsl;
 
 import com.seungwook.ktsp.domain.user.dto.UserProfile;
 import org.springframework.data.repository.query.Param;
