@@ -18,9 +18,8 @@ public enum Semester {
 
     public static Semester resolveByDate(LocalDate date) {
         LocalDate firstSemesterStart = LocalDate.of(date.getYear(), 1, 1); // 1학기 시작
-        LocalDate firstSemesterEnd = LocalDate.of(date.getYear(), 6, 31); // 1학기 종료
+        LocalDate firstSemesterEnd = LocalDate.of(date.getYear(), 6, 30); // 1학기 종료
 
-        if (!date.isBefore(firstSemesterStart) && !date.isAfter(firstSemesterEnd)) return FIRST;
-        else return SECOND;
+        return (date.getMonthValue() <= 6) ? FIRST : SECOND;
     }
 }

@@ -9,13 +9,11 @@ import jakarta.persistence.Entity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.SQLDelete;
 
 @Getter
 @Entity
 @DiscriminatorValue("FREE")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE free_board SET deleted = true WHERE id = ?") // 삭제시 WITHDRAWN로 변경(soft delete)
 public class FreeBoard extends Board {
 
     // 생성자
