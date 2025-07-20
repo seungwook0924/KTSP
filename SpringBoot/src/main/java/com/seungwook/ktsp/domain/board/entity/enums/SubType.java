@@ -2,9 +2,6 @@ package com.seungwook.ktsp.domain.board.entity.enums;
 
 import lombok.Getter;
 
-import java.util.Arrays;
-import java.util.List;
-
 import static com.seungwook.ktsp.domain.board.entity.enums.MainType.*;
 
 @Getter
@@ -35,24 +32,6 @@ public enum SubType {
     SubType(MainType mainType, String label) {
         this.mainType = mainType;
         this.label = label;
-    }
-
-    public static List<SubType> getByMainType(MainType mainType) {
-        return Arrays.stream(values())
-                .filter(st -> st.mainType == mainType)
-                .toList();
-    }
-
-    public MainType getMainType() {
-        return mainType;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public boolean isCommon() {
-        return mainType == null;
     }
 }
 
