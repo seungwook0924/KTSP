@@ -15,7 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long>, UserQueryRepo
 
     boolean existsByPhoneNumber(String phoneNumber);
 
-    // studentNumber를 밭탕으로 탈퇴하지 않은 User 리턴
+    // studentNumber를 바탕으로 탈퇴하지 않은 User 리턴
     @Query("SELECT u FROM User u WHERE u.studentNumber = :studentNumber AND u.status <> 'WITHDRAWN'")
     Optional<User> findByStudentNumberExceptWithdrawn(@Param("studentNumber") String studentNumber);
 
