@@ -12,12 +12,12 @@ public class UserResponseMapper {
         return new UserInfoResponse(
                 user.getEmail(),
                 user.getName(),
-                user.getAcademicYear(),
+                user.getAcademicYear().getLabel(),
                 user.getStudentNumber(),
                 user.getPhoneNumber(),
                 user.getMajor(),
                 user.getPreviousGpa(),
-                user.getCampus(),
+                user.getCampus().getLabel(),
                 user.getIntroduction()
         );
     }
