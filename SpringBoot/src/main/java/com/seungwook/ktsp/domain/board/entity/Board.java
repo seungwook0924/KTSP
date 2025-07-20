@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DiscriminatorColumn(name = "board_type", discriminatorType = DiscriminatorType.STRING)
-public class Board extends BaseEntity {
+public abstract class Board extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,4 +40,28 @@ public class Board extends BaseEntity {
 
     @Column(nullable = false)
     private int hits;
+
+    @Column(nullable = false)
+    private boolean deleted = false;
+
+    protected Board(User user, MainType mainType, SubType subType, String title, String content) {
+        this.user = user;
+        this.mainType = mainType;
+        this.subType = subType;
+        this.title = title;
+        this.content = content;
+        this.hits = 0;
+        this.deleted = false;
+    }
+
+    // title, content 수정
+    protected void updateTitleAndContent(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
+    // 조회수 증가
+    protected void increaseHits() {
+        this.hits++;
+    }
 }
