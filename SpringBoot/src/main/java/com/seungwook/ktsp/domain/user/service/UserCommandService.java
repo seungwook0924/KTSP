@@ -6,9 +6,7 @@ import com.seungwook.ktsp.domain.user.dto.request.WithdrawnRequest;
 import com.seungwook.ktsp.domain.user.entity.User;
 import com.seungwook.ktsp.domain.user.exception.PasswordMismatchException;
 import com.seungwook.ktsp.domain.user.exception.RememberMeAccessDeniedException;
-import com.seungwook.ktsp.domain.user.exception.UserNotFoundException;
 import com.seungwook.ktsp.domain.user.exception.UserUpdateFailedException;
-import com.seungwook.ktsp.domain.user.repository.UserRepository;
 import com.seungwook.ktsp.global.auth.dto.UserSession;
 import com.seungwook.ktsp.global.auth.service.AuthService;
 import com.seungwook.ktsp.global.auth.utils.IpUtil;
@@ -26,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserCommandService {
 
-    private final UserRepository userRepository;
+    private final UserDomainService userDomainService;
     private final PasswordEncoder passwordEncoder;
     private final AuthService authService;
 
@@ -37,10 +35,10 @@ public class UserCommandService {
 
         String newPhoneNumber = request.getPhoneNumber();
         String oldPhoneNumber = user.getPhoneNumber();
-        if (!newPhoneNumber.equals(oldPhoneNumber)) {
-            if(userRepository.existsByPhoneNumber(newPhoneNumber))
+        if (!newPhoneNumber.equals(oldPhoneNumber))
+            if(userDomainService.existsByPhoneNumber(newPhoneNumber))
                 throw new UserUpdateFailedException(HttpStatus.CONFLICT, "이미 등록된 전화번호입니다.");
-        }
+
 
         user.changeUserInformation(request.getAcademicYear(),
                 request.getPhoneNumber(),
@@ -87,14 +85,13 @@ public class UserCommandService {
         authService.logout(httpRequest, httpResponse);
 
         // 탈퇴(soft delete)
-        userRepository.delete(user);
+        userDomainService.delete(user);
 
         log.info("회원 탈퇴 완료: {}({})", userId, IpUtil.getClientIP(httpRequest));
     }
 
     // 탈퇴하지 않은 회원 조회
     private User findById(long userId) {
-        return userRepository.findByIdExceptWithdrawn(userId)
-                .orElseThrow(UserNotFoundException::new);
+        return userDomainService.findByIdExceptWithdrawn(userId);
     }
 }

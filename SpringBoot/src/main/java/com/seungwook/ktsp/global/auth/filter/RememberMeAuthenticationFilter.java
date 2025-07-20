@@ -1,7 +1,6 @@
 package com.seungwook.ktsp.global.auth.filter;
 
-import com.seungwook.ktsp.domain.user.entity.User;
-import com.seungwook.ktsp.domain.user.repository.UserRepository;
+import com.seungwook.ktsp.domain.user.service.UserDomainService;
 import com.seungwook.ktsp.global.auth.dto.UserSession;
 import com.seungwook.ktsp.global.auth.service.RememberMeTokenService;
 import com.seungwook.ktsp.global.auth.support.SessionSecuritySupport;
@@ -25,7 +24,7 @@ import java.io.IOException;
 public class RememberMeAuthenticationFilter extends OncePerRequestFilter {
 
     private final RememberMeTokenService tokenService;
-    private final UserRepository userRepository;
+    private final UserDomainService userDomainService;
     private final SessionSecuritySupport sessionSecuritySupport;
 
     @Override
@@ -43,8 +42,7 @@ public class RememberMeAuthenticationFilter extends OncePerRequestFilter {
 
                 if (userId != null) {
                     // userId DB 조회, 계정이 활성 상태인지 확인
-                    userRepository.findByIdExceptWithdrawn(userId)
-                            .filter(User::isActive)
+                    userDomainService.findActiveById(userId)
                             .ifPresent(user -> {
 
                                 // 기존 세션이 존재하면 무효화
@@ -74,12 +72,13 @@ public class RememberMeAuthenticationFilter extends OncePerRequestFilter {
 
     // REMEMBER_ME 쿠키에서 토큰을 추출
     private String extractTokenFromCookie(HttpServletRequest request) {
+
         if (request.getCookies() == null) return null;
-        for (Cookie cookie : request.getCookies()) {
-            if ("REMEMBER_ME".equals(cookie.getName())) {
+
+        for (Cookie cookie : request.getCookies())
+            if ("REMEMBER_ME".equals(cookie.getName()))
                 return cookie.getValue();
-            }
-        }
+
         return null;
     }
 }

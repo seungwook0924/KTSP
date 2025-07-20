@@ -1,7 +1,7 @@
 package com.seungwook.ktsp.global.auth.service;
 
 import com.seungwook.ktsp.domain.user.entity.User;
-import com.seungwook.ktsp.domain.user.repository.UserRepository;
+import com.seungwook.ktsp.domain.user.service.UserDomainService;
 import com.seungwook.ktsp.global.auth.dto.UserSession;
 import com.seungwook.ktsp.global.auth.dto.request.LoginRequest;
 import com.seungwook.ktsp.global.auth.dto.response.LoginResponse;
@@ -34,7 +34,7 @@ public class AuthService {
 
     private static final String REMEMBER_ME_COOKIE = "REMEMBER_ME";
 
-    private final UserRepository userRepository;
+    private final UserDomainService userDomainService;
     private final SessionRegistry sessionRegistry;
     private final PasswordEncoder passwordEncoder;
     private final RememberMeTokenService rememberMeTokenService;
@@ -108,7 +108,7 @@ public class AuthService {
 
     // 사용자 인증 및 계정 활성화 여부 검증
     private User authenticate(LoginRequest request) {
-        User user = userRepository.findByStudentNumberExceptWithdrawn(request.getStudentNumber())
+        User user = userDomainService.findByStudentNumberExceptWithdrawn(request.getStudentNumber())
                 .orElseThrow(LoginFailedException::new);
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) throw new LoginFailedException();

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Email Verification", description = "이메일 인증 관련 API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/verify")
+@RequestMapping("/public/email")
 public class EmailVerifyController {
 
     private final VerificationService verificationService;
@@ -41,7 +41,7 @@ public class EmailVerifyController {
 
     // 인증코드 검증
     @Operation(summary = "이메일 인증코드 검증", description = "인증코드가 유효한지 검증")
-    @PostMapping
+    @PostMapping("/verify")
     public ResponseEntity<Response<Void>> verify(@Valid @RequestBody VerifyRequest request) {
 
         verificationService.verifyAuthCode(request.getEmail(), request.getVerifyCode().toUpperCase());

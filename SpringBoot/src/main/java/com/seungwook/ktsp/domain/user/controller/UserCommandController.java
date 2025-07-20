@@ -20,7 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "User Command", description = "회원 정보 수정 API")
+@Tag(name = "User")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/service/user")
