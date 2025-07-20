@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "User Query", description = "회원 정보 조회 API (내 정보 및 타인 프로필)")
+@Tag(name = "User")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/service/user")

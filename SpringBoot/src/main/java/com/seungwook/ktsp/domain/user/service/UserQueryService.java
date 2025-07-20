@@ -2,8 +2,6 @@ package com.seungwook.ktsp.domain.user.service;
 
 import com.seungwook.ktsp.domain.user.dto.UserProfile;
 import com.seungwook.ktsp.domain.user.entity.User;
-import com.seungwook.ktsp.domain.user.exception.UserNotFoundException;
-import com.seungwook.ktsp.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserQueryService {
 
-    private final UserRepository userRepository;
+    private final UserDomainService userDomainService;
 
     // 내 정보 조회
     @Transactional(readOnly = true)
@@ -25,12 +23,11 @@ public class UserQueryService {
     // 사용자 프로필 조회
     @Transactional(readOnly = true)
     public UserProfile getUserProfile(long userId) {
-        return userRepository.findUserProfileById(userId)
-                .orElseThrow(UserNotFoundException::new);
+        return userDomainService.findUserProfileById(userId);
     }
 
+    // 활성화된 회원 조회
     private User findById(long userId) {
-        return userRepository.findByIdExceptWithdrawn(userId)
-                .orElseThrow(UserNotFoundException::new);
+        return userDomainService.findActiveUserById(userId);
     }
 }

@@ -1,6 +1,6 @@
 package com.seungwook.ktsp.global.auth.config;
 
-import com.seungwook.ktsp.domain.user.repository.UserRepository;
+import com.seungwook.ktsp.domain.user.service.UserDomainService;
 import com.seungwook.ktsp.global.auth.filter.RememberMeAuthenticationFilter;
 import com.seungwook.ktsp.global.auth.service.RememberMeTokenService;
 import com.seungwook.ktsp.global.auth.support.SessionSecuritySupport;
@@ -39,7 +39,7 @@ public class SecurityConfig {
     private final AccessDeniedHandler accessDeniedHandler;
     private final RememberMeTokenService rememberMeTokenService;
     private final SessionSecuritySupport sessionSecuritySupport;
-    private final UserRepository userRepository;
+    private final UserDomainService userDomainService;
 
     @Value("${spring.profiles.active}")
     private String activeProfile;
@@ -60,13 +60,12 @@ public class SecurityConfig {
                         .sessionRegistry(registry) // SessionRegistry 연동
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/public/**", "/account/**", "/verify/**",
-                                "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**").permitAll()
+                        .requestMatchers("/public/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**").permitAll()
                         .requestMatchers("/service/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new RememberMeAuthenticationFilter(rememberMeTokenService, userRepository, sessionSecuritySupport), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new RememberMeAuthenticationFilter(rememberMeTokenService, userDomainService, sessionSecuritySupport), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(authenticationEntryPoint) // 인증 실패
                         .accessDeniedHandler(accessDeniedHandler) // 권한 부족
