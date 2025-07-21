@@ -8,6 +8,7 @@ import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -133,6 +134,17 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(BAD_REQUEST)
                 .body(buildErrorResponse("요청 파라미터 값이 올바르지 않습니다.", errorId));
+    }
+
+    // @PreAuthorize 등에서 권한이 부족해 접근이 거부된 경우 처리
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException exception, HttpServletRequest request) {
+        String errorId = generateErrorId();
+
+        log.warn("{} - 접근 거부: {} {} | Message: {}", errorId, request.getMethod(), request.getRequestURI(), exception.getMessage());
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(buildErrorResponse("접근 권한이 없습니다.", errorId));
     }
 
     // 외부 리소스 접근 실패 (RestTemplate, WebClient 등)

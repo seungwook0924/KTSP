@@ -8,12 +8,18 @@ import lombok.Getter;
 @Getter
 public class PasswordUpdateRequest {
 
-    @Schema(description = "사용자 비밀번호", example = "SecurePass123!")
-    @NotBlank(message = "비밀번호는 필수 항목입니다.")
+    @Schema(description = "기존 비밀번호", example = "oldPassword123!")
+    @NotBlank(message = "기존 비밀번호를 입력해주세요.")
     @Size(min = 8, max = 30, message = "비밀번호는 최소 8자 ~ 최대 30자 입니다.")
-    private final String password;
+    private final String oldPassword;
 
-    public PasswordUpdateRequest(String password) {
-        this.password = password;
+    @Schema(description = "신규 비밀번호", example = "newPassword123!")
+    @NotBlank(message = "변경할 비밀번호를 입력해주세요.")
+    @Size(min = 8, max = 30, message = "비밀번호는 최소 8자 ~ 최대 30자 입니다.")
+    private final String newPassword;
+
+    public PasswordUpdateRequest(String oldPassword, String newPassword) {
+        this.oldPassword = oldPassword;
+        this.newPassword = newPassword;
     }
 }
