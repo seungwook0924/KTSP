@@ -8,7 +8,7 @@ import com.seungwook.ktsp.domain.user.entity.User;
 import com.seungwook.ktsp.domain.user.mapper.UserResponseMapper;
 import com.seungwook.ktsp.domain.user.service.UserCommandService;
 import com.seungwook.ktsp.global.auth.dto.UserSession;
-import com.seungwook.ktsp.global.auth.service.AuthService;
+import com.seungwook.ktsp.global.auth.support.AuthHandler;
 import com.seungwook.ktsp.global.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/service/user")
 public class UserCommandController {
 
-    private final AuthService authService;
     private final UserCommandService userCommandService;
 
     // 내 정보 수정
@@ -34,7 +33,7 @@ public class UserCommandController {
     @PatchMapping
     public ResponseEntity<Response<UserInfoResponse>> updateMyInfo(@Valid @RequestBody UserInfoUpdateRequest request) {
 
-        User user = userCommandService.updateUserInformation(authService.getUserId(), request);
+        User user = userCommandService.updateUserInformation(AuthHandler.getUserId(), request);
         UserInfoResponse response = UserResponseMapper.toUserInfoResponse(user);
 
         return ResponseEntity.ok(Response.<UserInfoResponse>builder()
@@ -48,7 +47,7 @@ public class UserCommandController {
     @PatchMapping("/password")
     public ResponseEntity<Response<Void>> updatePassword(@Valid @RequestBody PasswordUpdateRequest request) {
 
-        userCommandService.updatePassword(authService.getUserId(), request);
+        userCommandService.updatePassword(AuthHandler.getUserId(), request);
 
         return ResponseEntity.ok(Response.<Void>builder()
                 .message("비밀번호가 변경되었습니다.")

@@ -1,4 +1,4 @@
-package com.seungwook.ktsp.global.auth.dto.request;
+package com.seungwook.ktsp.domain.user.dto.request;
 
 import com.seungwook.ktsp.domain.user.entity.enums.AcademicYear;
 import com.seungwook.ktsp.domain.user.entity.enums.Campus;

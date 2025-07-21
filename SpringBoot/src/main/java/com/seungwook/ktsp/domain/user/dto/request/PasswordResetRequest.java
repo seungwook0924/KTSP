@@ -1,4 +1,4 @@
-package com.seungwook.ktsp.global.auth.dto.request;
+package com.seungwook.ktsp.domain.user.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;

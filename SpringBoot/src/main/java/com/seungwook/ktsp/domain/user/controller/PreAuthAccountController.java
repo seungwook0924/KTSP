@@ -1,7 +1,7 @@
 package com.seungwook.ktsp.domain.user.controller;
 
-import com.seungwook.ktsp.global.auth.dto.request.PasswordResetRequest;
-import com.seungwook.ktsp.global.auth.dto.request.RegisterRequest;
+import com.seungwook.ktsp.domain.user.dto.request.PasswordResetRequest;
+import com.seungwook.ktsp.domain.user.dto.request.RegisterRequest;
 import com.seungwook.ktsp.domain.user.service.PreAuthAccountService;
 import com.seungwook.ktsp.global.response.Response;
 import io.swagger.v3.oas.annotations.Operation;

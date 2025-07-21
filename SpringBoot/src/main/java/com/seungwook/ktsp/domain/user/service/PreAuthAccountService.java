@@ -1,8 +1,8 @@
 package com.seungwook.ktsp.domain.user.service;
 
 import com.seungwook.ktsp.domain.user.entity.User;
-import com.seungwook.ktsp.global.auth.dto.request.PasswordResetRequest;
-import com.seungwook.ktsp.global.auth.dto.request.RegisterRequest;
+import com.seungwook.ktsp.domain.user.dto.request.PasswordResetRequest;
+import com.seungwook.ktsp.domain.user.dto.request.RegisterRequest;
 import com.seungwook.ktsp.global.auth.exception.RegisterFailedException;
 import com.seungwook.ktsp.global.auth.exception.StudentNumberException;
 import com.seungwook.ktsp.global.auth.exception.EmailVerifyException;

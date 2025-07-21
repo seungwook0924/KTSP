@@ -1,8 +1,8 @@
-package com.seungwook.ktsp.domain.board.entity.enums;
+package com.seungwook.ktsp.domain.board.common.entity.enums;
 
 import lombok.Getter;
 
-import static com.seungwook.ktsp.domain.board.entity.enums.MainType.*;
+import static com.seungwook.ktsp.domain.board.common.entity.enums.MainType.*;
 
 @Getter
 public enum SubType {

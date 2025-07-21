@@ -1,8 +1,8 @@
-package com.seungwook.ktsp.domain.board.freeboard.entity;
+package com.seungwook.ktsp.domain.board.function.etc.freeboard.entity;
 
-import com.seungwook.ktsp.domain.board.entity.Board;
-import com.seungwook.ktsp.domain.board.entity.enums.MainType;
-import com.seungwook.ktsp.domain.board.entity.enums.SubType;
+import com.seungwook.ktsp.domain.board.common.entity.Board;
+import com.seungwook.ktsp.domain.board.common.entity.enums.MainType;
+import com.seungwook.ktsp.domain.board.common.entity.enums.SubType;
 import com.seungwook.ktsp.domain.user.entity.User;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;

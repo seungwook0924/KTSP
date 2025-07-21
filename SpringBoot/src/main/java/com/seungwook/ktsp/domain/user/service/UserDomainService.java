@@ -73,6 +73,7 @@ public class UserDomainService {
     }
 
     // userId를 바탕으로 탈퇴하지 않은 User 리턴
+    @Transactional(readOnly = true)
     public User findByIdExceptWithdrawn(long userId) {
         return userRepository.findByIdExceptWithdrawn(userId)
                 .orElseThrow(UserNotFoundException::new);

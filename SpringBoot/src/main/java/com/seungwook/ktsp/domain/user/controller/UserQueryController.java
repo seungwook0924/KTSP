@@ -7,7 +7,7 @@ import com.seungwook.ktsp.domain.user.entity.User;
 import com.seungwook.ktsp.domain.user.entity.enums.UserStatus;
 import com.seungwook.ktsp.domain.user.mapper.UserResponseMapper;
 import com.seungwook.ktsp.domain.user.service.UserQueryService;
-import com.seungwook.ktsp.global.auth.service.AuthService;
+import com.seungwook.ktsp.global.auth.support.AuthHandler;
 import com.seungwook.ktsp.global.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/service/user")
 public class UserQueryController {
 
-    private final AuthService authService;
     private final UserQueryService userQueryService;
 
     // 내 정보 조회
@@ -30,7 +29,7 @@ public class UserQueryController {
     @GetMapping
     public ResponseEntity<Response<UserInfoResponse>> getMyInfo() {
 
-        User user = userQueryService.getUserInformation(authService.getUserId());
+        User user = userQueryService.getUserInformation(AuthHandler.getUserId());
         UserInfoResponse response = UserResponseMapper.toUserInfoResponse(user);
 
         return ResponseEntity.ok(Response.<UserInfoResponse>builder()

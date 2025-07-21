@@ -1,7 +1,7 @@
-package com.seungwook.ktsp.domain.board.entity;
+package com.seungwook.ktsp.domain.board.common.entity;
 
-import com.seungwook.ktsp.domain.board.entity.enums.MainType;
-import com.seungwook.ktsp.domain.board.entity.enums.SubType;
+import com.seungwook.ktsp.domain.board.common.entity.enums.MainType;
+import com.seungwook.ktsp.domain.board.common.entity.enums.SubType;
 import com.seungwook.ktsp.domain.user.entity.User;
 import com.seungwook.ktsp.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -46,6 +46,7 @@ public abstract class Board extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
+    // 생성자
     protected Board(User user, MainType mainType, SubType subType, String title, String content) {
         this.user = user;
         this.mainType = mainType;
