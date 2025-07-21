@@ -30,8 +30,12 @@ public class CommentDomainService {
         return commentRepository.findByBoardAndParentCommentIsNull(board);
     }
 
-    public Comment findById(long id) {
-        return commentRepository.findById(id)
+    public Comment findById(long commentId) {
+        return commentRepository.findById(commentId)
                 .orElseThrow(CommentNotFoundException::new);
+    }
+
+    public Long findWriterIdById(long commentId) {
+        return commentRepository.findWriterIdById(commentId);
     }
 }

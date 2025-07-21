@@ -24,4 +24,9 @@ public class BoardDomainService {
         return boardRepository.findById(boardId)
                 .orElseThrow(BoardNotFoundException::new);
     }
+
+    @Transactional(readOnly = true)
+    public Long findWriterIdById(long boardId) {
+        return boardRepository.findWriterIdById(boardId);
+    }
 }
