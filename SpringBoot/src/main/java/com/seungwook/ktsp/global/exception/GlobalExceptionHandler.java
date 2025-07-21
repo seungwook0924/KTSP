@@ -2,6 +2,7 @@ package com.seungwook.ktsp.global.exception;
 
 import com.seungwook.ktsp.global.response.ErrorResponse;
 import jakarta.mail.MessagingException;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSourceResolvable;
@@ -134,6 +135,16 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(BAD_REQUEST)
                 .body(buildErrorResponse("요청 파라미터 값이 올바르지 않습니다.", errorId));
+    }
+
+    // getReferenceById()로 반환된 프록시 객체가 실제 DB 접근 시 대상 엔티티가 존재하지 않을 경우 발생하는 예외 처리
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleEntityNotFound(EntityNotFoundException ex, HttpServletRequest request) {
+        String errorId = generateErrorId();
+        log.warn("{} - EntityNotFoundException: {} {} | {}", errorId, request.getMethod(), request.getRequestURI(), ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(buildErrorResponse("요청한 리소스를 찾을 수 없습니다.", errorId));
     }
 
     // @PreAuthorize 등에서 권한이 부족해 접근이 거부된 경우 처리

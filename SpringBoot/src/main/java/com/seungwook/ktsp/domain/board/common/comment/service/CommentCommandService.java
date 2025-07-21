@@ -24,7 +24,7 @@ public class CommentCommandService {
     @Transactional
     public void registerComment(long userId, CommentRequest request) {
         User user = userDomainService.findActiveUserById(userId);
-        Board board = boardDomainService.findById(request.getBoardId());
+        Board board = boardDomainService.getReferenceById(request.getBoardId());
         Comment comment = Comment.createComment(user, board, request.getComment());
         commentDomainService.save(comment);
     }
@@ -33,7 +33,7 @@ public class CommentCommandService {
     @Transactional
     @PreAuthorize("@commentAccessHandler.check(#commentId)")
     public void updateComment(long commentId, CommentUpdateRequest request) {
-        Comment comment = commentDomainService.findById(commentId);
+        Comment comment = commentDomainService.getReferenceById(commentId);
         comment.updateComment(request.getComment());
     }
 
@@ -41,7 +41,7 @@ public class CommentCommandService {
     @Transactional
     @PreAuthorize("@commentAccessHandler.check(#commentId)")
     public void deleteComment(long commentId) {
-        Comment comment = commentDomainService.findById(commentId);
+        Comment comment = commentDomainService.getReferenceById(commentId);
         commentDomainService.delete(comment);
     }
 }

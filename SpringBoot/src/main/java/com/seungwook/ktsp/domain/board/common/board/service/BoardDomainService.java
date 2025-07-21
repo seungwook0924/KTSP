@@ -19,14 +19,23 @@ public class BoardDomainService {
         boardRepository.save(board);
     }
 
+    // 게시글 작성자 userId 리턴
+    @Transactional(readOnly = true)
+    public Long findWriterIdById(long boardId) {
+        return boardRepository.findWriterIdById(boardId);
+    }
+
+    // 프록시 객체 반환(성능 최적화)
+    public Board getReferenceById(long boardId) {
+        if (!boardRepository.existsById(boardId))
+            throw new BoardNotFoundException();
+
+        return boardRepository.getReferenceById(boardId);
+    }
+
     @Transactional(readOnly = true)
     public Board findById(long boardId) {
         return boardRepository.findById(boardId)
                 .orElseThrow(BoardNotFoundException::new);
-    }
-
-    @Transactional(readOnly = true)
-    public Long findWriterIdById(long boardId) {
-        return boardRepository.findWriterIdById(boardId);
     }
 }

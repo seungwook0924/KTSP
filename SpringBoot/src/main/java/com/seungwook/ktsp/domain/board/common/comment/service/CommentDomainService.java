@@ -30,12 +30,21 @@ public class CommentDomainService {
         return commentRepository.findByBoardAndParentCommentIsNull(board);
     }
 
+    // 댓글 작성자 userId 리턴
+    public Long findWriterIdById(long commentId) {
+        return commentRepository.findWriterIdById(commentId);
+    }
+
+    // 프록시 객체 반환(성능 최적화)
+    public Comment getReferenceById(long commentId) {
+        if(!commentRepository.existsById(commentId))
+            throw new CommentNotFoundException();
+
+        return commentRepository.getReferenceById(commentId);
+    }
+
     public Comment findById(long commentId) {
         return commentRepository.findById(commentId)
                 .orElseThrow(CommentNotFoundException::new);
-    }
-
-    public Long findWriterIdById(long commentId) {
-        return commentRepository.findWriterIdById(commentId);
     }
 }
