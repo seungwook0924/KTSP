@@ -1,4 +1,4 @@
-package com.seungwook.ktsp.global.common.support;
+package com.seungwook.ktsp.global.support;
 
 import com.seungwook.ktsp.domain.user.entity.User;
 import com.seungwook.ktsp.domain.user.entity.enums.AcademicYear;

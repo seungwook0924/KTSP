@@ -2,6 +2,7 @@ package com.seungwook.ktsp.domain.board.common.board.handler;
 
 import com.seungwook.ktsp.domain.board.common.board.service.BoardDomainService;
 import com.seungwook.ktsp.global.auth.support.AuthHandler;
+import com.seungwook.ktsp.global.handler.AccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
