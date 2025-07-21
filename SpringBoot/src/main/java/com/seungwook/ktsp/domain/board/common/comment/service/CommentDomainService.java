@@ -4,7 +4,6 @@ import com.seungwook.ktsp.domain.board.common.board.entity.Board;
 import com.seungwook.ktsp.domain.board.common.comment.entity.Comment;
 import com.seungwook.ktsp.domain.board.common.comment.exception.CommentNotFoundException;
 import com.seungwook.ktsp.domain.board.common.comment.repository.CommentRepository;
-import com.seungwook.ktsp.domain.board.function.etc.notice.entity.Notice;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,17 +15,19 @@ public class CommentDomainService {
 
     private final CommentRepository commentRepository;
 
+    // 댓글 생성
     public void save(Comment comment) {
         commentRepository.save(comment);
     }
 
-    public List<Comment> findParentComment(Board board) {
-        return commentRepository.findByBoardAndParentCommentIsNull(board);
+    // 댓글 삭제
+    public void delete(Comment comment) {
+        commentRepository.delete(comment);
     }
 
-    // freeBoard의 부모 댓글 반환
-    public List<Comment> findByFreeBoardAndParentIsNull(Notice notice) {
-        return commentRepository.findByBoardAndParentIsNull(notice);
+    // 해당 게시글의 모든 부모 댓글 반환
+    public List<Comment> findParentComment(Board board) {
+        return commentRepository.findByBoardAndParentCommentIsNull(board);
     }
 
     public Comment findById(long id) {

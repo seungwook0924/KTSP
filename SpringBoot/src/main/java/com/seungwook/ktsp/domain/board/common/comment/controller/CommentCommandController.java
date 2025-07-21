@@ -20,7 +20,7 @@ public class CommentCommandController {
 
     @PostMapping
     public ResponseEntity<Response<Void>> registerComment(@RequestBody CommentRequest request) {
-        commentCommandService.registerFreeBoardComment(AuthHandler.getUserId(), request);
+        commentCommandService.registerComment(AuthHandler.getUserId(), request);
 
         return ResponseEntity.ok(Response.<Void>builder()
                 .message("자유게시판 댓글 등록 성공")

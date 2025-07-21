@@ -17,8 +17,4 @@ public class CommentQueryService {
     private final BoardDomainService boardDomainService;
     private final UserDomainService userDomainService;
 
-    public List<Comment> getFreeBoardComment(Notice notice) {
-        return commentDomainService.findByFreeBoardAndParentIsNull(notice);
-    }
-
 }

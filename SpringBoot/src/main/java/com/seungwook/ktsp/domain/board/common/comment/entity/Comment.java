@@ -54,4 +54,8 @@ public class Comment {
         if (parent.getParent() != null) throw new CommentException("대댓글의 대댓글은 허용하지 않음.");
         return new Comment(user, parent.getBoard(), comment, parent);
     }
+
+    public void updateComment(String comment) {
+        this.comment = comment;
+    }
 }

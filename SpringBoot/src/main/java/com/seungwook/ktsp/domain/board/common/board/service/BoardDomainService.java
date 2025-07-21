@@ -19,6 +19,7 @@ public class BoardDomainService {
         boardRepository.save(board);
     }
 
+    @Transactional(readOnly = true)
     public Board findById(long boardId) {
         return boardRepository.findById(boardId)
                 .orElseThrow(BoardNotFoundException::new);
