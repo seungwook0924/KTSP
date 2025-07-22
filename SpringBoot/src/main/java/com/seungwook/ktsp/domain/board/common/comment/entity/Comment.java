@@ -24,7 +24,7 @@ public class Comment {
 
     // Comment와 Board는 N:1 관계
     // 여러개의 댓글은 하나의 게시글에 달릴 수 있다.
-    @ManyToOne(fetch = FetchType.LAZY) //N:1 매핑, 지연로딩
+    @ManyToOne(fetch = FetchType.LAZY) // N:1 매핑, 지연로딩
     private Board board;
 
     // 부모 댓글

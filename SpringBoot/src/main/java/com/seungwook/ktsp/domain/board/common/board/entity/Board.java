@@ -22,7 +22,9 @@ public abstract class Board extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    // Board와 User는 N:1 관계
+    // 여러개의 Board는 하나의 User에 의해 작성될 수 있다.
+    @ManyToOne(fetch = FetchType.LAZY) // N:1 매핑, 지연로딩
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
