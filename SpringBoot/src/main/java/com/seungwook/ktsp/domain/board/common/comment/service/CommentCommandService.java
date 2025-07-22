@@ -23,7 +23,7 @@ public class CommentCommandService {
     // 댓글 등록
     @Transactional
     public void registerComment(long userId, CommentRequest request) {
-        User user = userDomainService.findActiveUserById(userId);
+        User user = userDomainService.getReferenceById(userId);
         Board board = boardDomainService.getReferenceById(request.getBoardId());
         Comment comment = Comment.createComment(user, board, request.getComment());
         commentDomainService.save(comment);

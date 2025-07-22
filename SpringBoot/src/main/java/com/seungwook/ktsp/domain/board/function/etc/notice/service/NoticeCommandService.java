@@ -20,7 +20,7 @@ public class NoticeCommandService {
     @Transactional
     public void noticeRegister(long userId, BoardRegisterRequest request) {
 
-        User user = userDomainService.findActiveUserById(userId);
+        User user = userDomainService.getReferenceById(userId);
 
         Notice notice = Notice.createNotice(user, request.getTitle(), request.getContent());
 

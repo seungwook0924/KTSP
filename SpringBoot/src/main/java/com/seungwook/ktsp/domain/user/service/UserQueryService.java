@@ -17,17 +17,12 @@ public class UserQueryService {
     // 내 정보 조회
     @Transactional(readOnly = true)
     public User getUserInformation(long userId) {
-        return findById(userId);
+        return userDomainService.findActiveUserById(userId);
     }
 
     // 사용자 프로필 조회
     @Transactional(readOnly = true)
     public UserProfile getUserProfile(long userId) {
         return userDomainService.findUserProfileById(userId);
-    }
-
-    // 활성화된 회원 조회
-    private User findById(long userId) {
-        return userDomainService.findActiveUserById(userId);
     }
 }
