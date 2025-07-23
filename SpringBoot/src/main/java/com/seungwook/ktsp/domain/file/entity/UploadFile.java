@@ -20,7 +20,7 @@ public class UploadFile {
     @Column(name = "original_name", nullable = false, length = 255)
     private String originalName;
 
-    @Column(name = "uuid", nullable = false, length = 36, columnDefinition = "CHAR(36)")
+    @Column(name = "uuid", nullable = false, length = 36, columnDefinition = "CHAR(36)", unique = true)
     private String uuid;
 
     @Column(name = "type", nullable = false, length = 20)

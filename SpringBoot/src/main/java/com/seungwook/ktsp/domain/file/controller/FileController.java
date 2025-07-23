@@ -1,16 +1,14 @@
 package com.seungwook.ktsp.domain.file.controller;
 
-import com.seungwook.ktsp.domain.file.service.FileUploadService;
+import com.seungwook.ktsp.domain.file.dto.AttachedFile;
+import com.seungwook.ktsp.domain.file.service.FileService;
 import com.seungwook.ktsp.global.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "File", description = "File 관련 관련 API")
@@ -19,13 +17,13 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/service/file")
 public class FileController {
 
-    private final FileUploadService fileUploadService;
+    private final FileService fileService;
 
-    @Operation(summary = "파일 업로드", description = "일반 파일 업로드")
+    @Operation(summary = "일반 파일 업로드", description = "MultipartFile 데이터 요청")
     @PostMapping
     public ResponseEntity<Response<String>> uploadFile(@Parameter(description = "일반 파일", required = true) @RequestPart("file") MultipartFile file) {
 
-        String response = fileUploadService.uploadFile(file, false);
+        String response = fileService.uploadFile(file, false);
 
         return ResponseEntity.ok(Response.<String>builder()
                 .message("일반 파일 업로드 성공")
@@ -33,15 +31,27 @@ public class FileController {
                 .build());
     }
 
-    @Operation(summary = "파일 업로드", description = "이미지 파일 업로드")
+    @Operation(summary = "이미지 파일 업로드", description = "MultipartFile 데이터 요청")
     @PostMapping("/image")
     public ResponseEntity<Response<String>> uploadImage(@Parameter(description = "이미지 파일", required = true) @RequestPart("file") MultipartFile file) {
 
-        String response = fileUploadService.uploadFile(file, true);
+        String response = fileService.uploadFile(file, true);
 
         return ResponseEntity.ok(Response.<String>builder()
                 .message("이미지 파일 업로드 성공")
                 .data(response)
                 .build());
+    }
+
+    @Operation(summary = "파일 다운로드")
+    @GetMapping("/{uuid}")
+    public ResponseEntity<byte[]> downloadFile(@PathVariable String uuid) {
+
+        AttachedFile attachedFile = fileService.downloadFile(uuid);
+
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename*=UTF-8''" + attachedFile.getEncodedFileName()) // 인코딩된 파일 이름
+                .header("Content-Type", attachedFile.getContentType())
+                .body(attachedFile.getFileContent());
     }
 }

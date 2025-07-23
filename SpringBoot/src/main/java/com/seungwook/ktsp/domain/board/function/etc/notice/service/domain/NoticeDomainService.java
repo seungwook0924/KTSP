@@ -1,4 +1,4 @@
-package com.seungwook.ktsp.domain.board.function.etc.notice.service;
+package com.seungwook.ktsp.domain.board.function.etc.notice.service.domain;
 
 import com.seungwook.ktsp.domain.board.common.exception.BoardNotFoundException;
 import com.seungwook.ktsp.domain.board.function.etc.notice.entity.Notice;

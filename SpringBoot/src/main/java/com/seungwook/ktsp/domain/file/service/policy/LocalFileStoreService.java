@@ -1,5 +1,7 @@
-package com.seungwook.ktsp.domain.file.service;
+package com.seungwook.ktsp.domain.file.service.policy;
 
+import com.seungwook.ktsp.domain.file.dto.AttachedFile;
+import com.seungwook.ktsp.domain.file.dto.AttachedFileInfo;
 import com.seungwook.ktsp.domain.file.entity.UploadFile;
 import com.seungwook.ktsp.domain.file.exception.FileException;
 import com.seungwook.ktsp.domain.file.utils.FileNameUtils;
@@ -7,12 +9,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import static com.seungwook.ktsp.domain.file.utils.FileNameUtils.ensureDotPrefix;
+import static java.net.URLEncoder.encode;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.Files.probeContentType;
+import static java.nio.file.Files.readAllBytes;
 
 @Slf4j
 @Service
@@ -24,6 +31,9 @@ public class LocalFileStoreService implements FileStoreService {
 
     @Value("${file.local-storage.access-url-prefix}")
     private String accessUrlPrefix;
+
+    @Value("${file.local-storage.download-url-prefix}")
+    private String downloadUrlPrefix;
 
     @Override
     public UploadFile storeFile(MultipartFile file, boolean isImageFile) {
@@ -47,7 +57,7 @@ public class LocalFileStoreService implements FileStoreService {
         UploadFile uploadFile = UploadFile.createUploadFile(fileName, extension);
 
         // 파일 경로 생성
-        Path path = Paths.get(directoryPath, uploadFile.getUuid() + FileNameUtils.ensureDotPrefix(extension));
+        Path path = Paths.get(directoryPath, uploadFile.getUuid() + ensureDotPrefix(extension));
 
         // 디렉터리 탈출(Path Traversal) 공격 방지
         validatePathInsideDirectory(path, directoryPath);
@@ -62,7 +72,7 @@ public class LocalFileStoreService implements FileStoreService {
     public void deleteFile(UploadFile uploadFile) {
 
         // 경로 생성
-        Path path = Paths.get(directoryPath, uploadFile.getUuid() + FileNameUtils.ensureDotPrefix(uploadFile.getType()));
+        Path path = Paths.get(directoryPath, uploadFile.getUuid() + ensureDotPrefix(uploadFile.getType()));
 
         // 디렉터리 탈출(Path Traversal) 공격 방지
         validatePathInsideDirectory(path, directoryPath);
@@ -74,21 +84,48 @@ public class LocalFileStoreService implements FileStoreService {
     }
 
     @Override
+    public AttachedFile downloadFile(UploadFile uploadFile) {
+        File file = new File(directoryPath, uploadFile.getUuid() + ensureDotPrefix(uploadFile.getType()));
+
+        if (!file.exists()) {
+            log.warn("존재하지 않은 파일 다운로드 요청 - file: {}", uploadFile.getOriginalName() + "(" + uploadFile.getUuid() + uploadFile.getType() + ")");
+            throw new FileException("존재하지 않은 파일입니다.");
+        }
+
+        try {
+            byte[] fileContent = readAllBytes(file.toPath());
+            String contentType = probeContentType(file.toPath());
+
+            // 파일 이름 URL 인코딩
+            String encodedFileName = encode(uploadFile.getOriginalName() + ensureDotPrefix(uploadFile.getType()), UTF_8).replace("+", "%20"); // 브라우저에서 공백 처리
+
+            return new AttachedFile(fileContent, contentType, encodedFileName);
+
+        } catch (IOException e) {
+            throw new RuntimeException("첨부파일 다운로드 요청 실패", e);
+        }
+    }
+
+    @Override
     public String getFileAccessPath(UploadFile uploadFile) {
 
-        // 경로 생성
-        Path path = Paths.get(directoryPath, uploadFile.getUuid() + FileNameUtils.ensureDotPrefix(uploadFile.getType()));
+        // 이미지 파일 여부 검사
+        if (FileNameUtils.isImageExtension(uploadFile.getType())) {
+            // 경로 생성
+            Path path = Paths.get(directoryPath, uploadFile.getUuid() + ensureDotPrefix(uploadFile.getType()));
 
-        // 디렉터리 탈출(Path Traversal) 공격 방지
-        validatePathInsideDirectory(path, directoryPath);
+            // 디렉터리 탈출(Path Traversal) 공격 방지
+            validatePathInsideDirectory(path, directoryPath);
 
-        // 접근 경로 생성
-        String relativePath = accessUrlPrefix + uploadFile.getUuid() + FileNameUtils.ensureDotPrefix(uploadFile.getType());
+            return accessUrlPrefix + uploadFile.getUuid() + ensureDotPrefix(uploadFile.getType());
+        }
 
-        return ServletUriComponentsBuilder
-                .fromCurrentContextPath() // BaseURL을 포함
-                .path(relativePath)
-                .toUriString();
+        return downloadUrlPrefix + uploadFile.getUuid();
+    }
+
+    @Override
+    public AttachedFileInfo getAttachedFileInfo(UploadFile uploadFile) {
+        return new AttachedFileInfo(uploadFile.getOriginalName(), downloadUrlPrefix + uploadFile.getUuid(), uploadFile.getType());
     }
 
     // 파일 저장

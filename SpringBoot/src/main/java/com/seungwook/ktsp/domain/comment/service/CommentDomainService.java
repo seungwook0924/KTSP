@@ -1,6 +1,5 @@
 package com.seungwook.ktsp.domain.comment.service;
 
-import com.seungwook.ktsp.domain.board.common.entity.Board;
 import com.seungwook.ktsp.domain.comment.entity.Comment;
 import com.seungwook.ktsp.domain.comment.exception.CommentNotFoundException;
 import com.seungwook.ktsp.domain.comment.repository.CommentRepository;
@@ -26,8 +25,8 @@ public class CommentDomainService {
     }
 
     // 해당 게시글의 모든 부모 댓글 반환
-    public List<Comment> findParentComment(Board board) {
-        return commentRepository.findByBoardAndParentCommentIsNull(board);
+    public List<Comment> findParentComment(long boardId) {
+        return commentRepository.findParentCommentsByBoardId(boardId);
     }
 
     // 댓글 작성자 userId 리턴

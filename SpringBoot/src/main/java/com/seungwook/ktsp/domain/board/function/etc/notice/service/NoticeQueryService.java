@@ -1,6 +1,7 @@
 package com.seungwook.ktsp.domain.board.function.etc.notice.service;
 
 import com.seungwook.ktsp.domain.board.function.etc.notice.entity.Notice;
+import com.seungwook.ktsp.domain.board.function.etc.notice.service.domain.NoticeDomainService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

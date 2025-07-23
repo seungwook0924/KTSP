@@ -44,14 +44,17 @@ public class FileNameUtils {
 
     // 이미지 검증
     public static void validateImageExtension(MultipartFile file, String extension) {
-        // 이미지 확장자 검사
-        if (!SUPPORTED_IMAGE_EXTENSIONS.contains(extension)) {
-            throw new FileException("지원하는 이미지 파일이 아닙니다.");
-        }
+
+        if (!isImageExtension(extension)) throw new FileException("지원하는 이미지 파일이 아닙니다.");
 
         // MIME 타입 검증
         String contentType = file.getContentType();
         if (contentType == null || !contentType.startsWith("image/"))
             throw new FileException("잘못된 이미지 파일입니다.");
+    }
+
+    public static boolean isImageExtension(String extension) {
+        // 이미지 확장자 검사
+        return SUPPORTED_IMAGE_EXTENSIONS.contains(extension);
     }
 }

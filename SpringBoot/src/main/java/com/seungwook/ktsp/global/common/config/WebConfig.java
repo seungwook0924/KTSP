@@ -18,6 +18,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Value("${file.local-storage.board-directory}")
     private String fileDirectory;
 
+    // 정적 파일(첨부파일) 매핑 경로
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/files/**")

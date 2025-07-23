@@ -1,4 +1,4 @@
-package com.seungwook.ktsp.domain.file.service;
+package com.seungwook.ktsp.domain.file.service.policy;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 
