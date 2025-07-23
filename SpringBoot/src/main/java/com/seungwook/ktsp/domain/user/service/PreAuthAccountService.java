@@ -1,8 +1,8 @@
 package com.seungwook.ktsp.domain.user.service;
 
 import com.seungwook.ktsp.domain.user.entity.User;
-import com.seungwook.ktsp.global.auth.dto.request.PasswordResetRequest;
-import com.seungwook.ktsp.global.auth.dto.request.RegisterRequest;
+import com.seungwook.ktsp.domain.user.dto.request.PasswordResetRequest;
+import com.seungwook.ktsp.domain.user.dto.request.UserRegisterRequest;
 import com.seungwook.ktsp.global.auth.exception.RegisterFailedException;
 import com.seungwook.ktsp.global.auth.exception.StudentNumberException;
 import com.seungwook.ktsp.global.auth.exception.EmailVerifyException;
@@ -29,7 +29,7 @@ public class PreAuthAccountService {
 
     // 회원가입
     @Transactional
-    public void register(RegisterRequest request, HttpServletRequest httpRequest) {
+    public void register(UserRegisterRequest request, HttpServletRequest httpRequest) {
 
         // 강원대학교 이메일인지 검사
         checkEmailDomain(request.getEmail());
@@ -90,7 +90,7 @@ public class PreAuthAccountService {
     }
 
     // User 객체 생성
-    private User createUser(RegisterRequest request) {
+    private User createUser(UserRegisterRequest request) {
         return User.createUser(request.getEmail(),
                 passwordEncoder.encode(request.getPassword()),
                 request.getStudentNumber(),

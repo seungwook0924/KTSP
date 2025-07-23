@@ -1,7 +1,10 @@
 package com.seungwook.ktsp.global.auth.utils;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class IpUtil {
     private static final String[] IP_HEADER_CANDIDATES = {
             "X-Forwarded-For",

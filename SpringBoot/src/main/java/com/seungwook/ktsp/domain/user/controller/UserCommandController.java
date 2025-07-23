@@ -2,13 +2,13 @@ package com.seungwook.ktsp.domain.user.controller;
 
 import com.seungwook.ktsp.domain.user.dto.request.PasswordUpdateRequest;
 import com.seungwook.ktsp.domain.user.dto.request.UserInfoUpdateRequest;
-import com.seungwook.ktsp.domain.user.dto.request.WithdrawnRequest;
+import com.seungwook.ktsp.domain.user.dto.request.UserWithdrawnRequest;
 import com.seungwook.ktsp.domain.user.dto.response.UserInfoResponse;
 import com.seungwook.ktsp.domain.user.entity.User;
 import com.seungwook.ktsp.domain.user.mapper.UserResponseMapper;
 import com.seungwook.ktsp.domain.user.service.UserCommandService;
 import com.seungwook.ktsp.global.auth.dto.UserSession;
-import com.seungwook.ktsp.global.auth.service.AuthService;
+import com.seungwook.ktsp.global.auth.support.AuthHandler;
 import com.seungwook.ktsp.global.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/service/user")
 public class UserCommandController {
 
-    private final AuthService authService;
     private final UserCommandService userCommandService;
 
     // 내 정보 수정
@@ -34,7 +33,7 @@ public class UserCommandController {
     @PatchMapping
     public ResponseEntity<Response<UserInfoResponse>> updateMyInfo(@Valid @RequestBody UserInfoUpdateRequest request) {
 
-        User user = userCommandService.updateUserInformation(authService.getUserId(), request);
+        User user = userCommandService.updateUserInformation(AuthHandler.getUserId(), request);
         UserInfoResponse response = UserResponseMapper.toUserInfoResponse(user);
 
         return ResponseEntity.ok(Response.<UserInfoResponse>builder()
@@ -48,7 +47,7 @@ public class UserCommandController {
     @PatchMapping("/password")
     public ResponseEntity<Response<Void>> updatePassword(@Valid @RequestBody PasswordUpdateRequest request) {
 
-        userCommandService.updatePassword(authService.getUserId(), request);
+        userCommandService.updatePassword(AuthHandler.getUserId(), request);
 
         return ResponseEntity.ok(Response.<Void>builder()
                 .message("비밀번호가 변경되었습니다.")
@@ -59,7 +58,7 @@ public class UserCommandController {
     @Operation(summary = "회원 탈퇴", description = "회원 탈퇴, 자동 로그인 상태에선 요청 거부")
     @DeleteMapping
     public ResponseEntity<Response<Void>> withdrawnUser(@AuthenticationPrincipal UserSession userSession,
-                                                        @Valid @RequestBody WithdrawnRequest request,
+                                                        @Valid @RequestBody UserWithdrawnRequest request,
                                                         HttpServletRequest httpRequest,
                                                         HttpServletResponse httpResponse) {
 

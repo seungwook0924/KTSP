@@ -6,7 +6,6 @@ import com.seungwook.ktsp.global.auth.dto.UserSession;
 import com.seungwook.ktsp.global.auth.dto.request.LoginRequest;
 import com.seungwook.ktsp.global.auth.dto.response.LoginResponse;
 import com.seungwook.ktsp.global.auth.exception.LoginFailedException;
-import com.seungwook.ktsp.global.auth.exception.UserContextException;
 import com.seungwook.ktsp.global.auth.support.SessionSecuritySupport;
 import com.seungwook.ktsp.global.auth.utils.IpUtil;
 import jakarta.servlet.http.Cookie;
@@ -32,6 +31,7 @@ import java.time.Duration;
 @RequiredArgsConstructor
 public class AuthService {
 
+    // 자동 로그인 쿠키 이름
     private static final String REMEMBER_ME_COOKIE = "REMEMBER_ME";
 
     private final UserDomainService userDomainService;
@@ -39,24 +39,6 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final RememberMeTokenService rememberMeTokenService;
     private final SessionSecuritySupport sessionSecuritySupport;
-
-    // 요청 사용자 식별 메서드
-    @Transactional(readOnly = true)
-    public long getUserId() {
-        // 현재 요청의 SecurityContext에서 인증 객체 추출
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        // 인증 객체가 없거나 인증되지 않은 경우 예외 발생
-        if (authentication == null || !authentication.isAuthenticated())
-            throw new UserContextException("로그인이 필요합니다.");
-
-        // 인증 객체의 principal이 UserSession이 아닐 경우 예외 발생 (타입 불일치 방어)
-        Object principal = authentication.getPrincipal();
-        if (!(principal instanceof UserSession session))
-            throw new UserContextException("잘못된 인증 세션입니다.");
-
-        return session.getId();
-    }
 
     // 로그인
     @Transactional(readOnly = true)
@@ -160,5 +142,5 @@ public class AuthService {
                 .secure(true) // HTTPS에서만 적용
                 .path("/") // 도메인의 모든 하위 경로 요청에 쿠키 포함
                 .sameSite("None"); // 크로스 도메인 전송 허용
-        }
+    }
 }
