@@ -18,9 +18,9 @@ public class NoticeCommandController {
     private final NoticeCommandService noticeCommandService;
 
     @PostMapping
-    public ResponseEntity<Response<Void>> saveNotice(@Valid @RequestBody BoardRegisterRequest request) {
+    public ResponseEntity<Response<Void>> registerNotice(@Valid @RequestBody BoardRegisterRequest request) {
 
-        noticeCommandService.noticeRegister(AuthHandler.getUserId(), request);
+        noticeCommandService.registerNotice(AuthHandler.getUserId(), request);
 
         return ResponseEntity.ok(Response.<Void>builder()
                 .message("공지사항 등록 성공")
@@ -30,10 +30,20 @@ public class NoticeCommandController {
     @PatchMapping("/{boardId}")
     public ResponseEntity<Response<Void>> updateNotice(@PathVariable long boardId, @Valid @RequestBody BoardUpdateRequest request) {
 
-        noticeCommandService.noticeUpdate(boardId, request);
+        noticeCommandService.updateNotice(boardId, request);
 
         return ResponseEntity.ok(Response.<Void>builder()
                 .message("공지사항 수정 성공")
+                .build());
+    }
+
+    @DeleteMapping("/{boardId}")
+    public ResponseEntity<Response<Void>> deleteNotice(@PathVariable long boardId) {
+
+        noticeCommandService.deleteNotice(boardId);
+
+        return ResponseEntity.ok(Response.<Void>builder()
+                .message("공지사항 삭제 성공")
                 .build());
     }
 }

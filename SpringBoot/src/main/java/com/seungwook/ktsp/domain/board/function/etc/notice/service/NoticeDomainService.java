@@ -1,6 +1,6 @@
 package com.seungwook.ktsp.domain.board.function.etc.notice.service;
 
-import com.seungwook.ktsp.domain.board.common.board.exception.BoardNotFoundException;
+import com.seungwook.ktsp.domain.board.common.exception.BoardNotFoundException;
 import com.seungwook.ktsp.domain.board.function.etc.notice.entity.Notice;
 import com.seungwook.ktsp.domain.board.function.etc.notice.repository.NoticeRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +16,11 @@ public class NoticeDomainService {
     @Transactional
     public void save(Notice notice) {
         noticeRepository.save(notice);
+    }
+
+    @Transactional
+    public void delete(Notice notice) {
+        noticeRepository.delete(notice);
     }
 
     @Transactional(readOnly = true)

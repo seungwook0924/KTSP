@@ -17,8 +17,9 @@ public class NoticeCommandService {
     private final NoticeDomainService noticeDomainService;
     private final UserDomainService userDomainService;
 
+    // 공지사항 등록
     @Transactional
-    public void noticeRegister(long userId, BoardRegisterRequest request) {
+    public void registerNotice(long userId, BoardRegisterRequest request) {
 
         User user = userDomainService.getReferenceById(userId);
 
@@ -27,11 +28,23 @@ public class NoticeCommandService {
         noticeDomainService.save(notice);
     }
 
+    // 공지사항 수정
     @Transactional
     @PreAuthorize("@boardAccessHandler.check(#boardId)")
-    public void noticeUpdate(long boardId, BoardUpdateRequest request) {
+    public void updateNotice(long boardId, BoardUpdateRequest request) {
+
         Notice notice = noticeDomainService.findAsNotice(boardId);
 
         notice.updateNotice(request.getTitle(), request.getContent());
+    }
+
+    // 공지사항 삭제
+    @Transactional
+    @PreAuthorize("@boardAccessHandler.check(#boardId)")
+    public void deleteNotice(long boardId) {
+
+        Notice notice = noticeDomainService.findAsNotice(boardId);
+
+        noticeDomainService.delete(notice);
     }
 }

@@ -1,8 +1,8 @@
 package com.seungwook.ktsp.domain.board.function.etc.common.mapper;
 
-import com.seungwook.ktsp.domain.board.common.board.entity.Board;
-import com.seungwook.ktsp.domain.board.common.comment.dto.response.CommentResponse;
-import com.seungwook.ktsp.domain.board.common.comment.entity.Comment;
+import com.seungwook.ktsp.domain.board.common.entity.Board;
+import com.seungwook.ktsp.domain.comment.dto.response.CommentResponse;
+import com.seungwook.ktsp.domain.comment.entity.Comment;
 import com.seungwook.ktsp.domain.board.function.etc.common.dto.response.BoardResponse;
 import com.seungwook.ktsp.domain.board.function.etc.notice.entity.Notice;
 

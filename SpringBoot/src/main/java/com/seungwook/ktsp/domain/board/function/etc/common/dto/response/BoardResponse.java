@@ -1,6 +1,6 @@
 package com.seungwook.ktsp.domain.board.function.etc.common.dto.response;
 
-import com.seungwook.ktsp.domain.board.common.comment.dto.response.CommentResponse;
+import com.seungwook.ktsp.domain.comment.dto.response.CommentResponse;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
