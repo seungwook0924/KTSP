@@ -28,14 +28,19 @@ public class LocalFileStoreService implements FileStoreService {
     @Override
     public UploadFile storeFile(MultipartFile file, boolean isImageFile) {
 
+        // MultipartFile 에서 원본 이름 추출
         String originalFilename = file.getOriginalFilename();
 
+        // 확장자 검사
         FileNameUtils.validateFilenameWithExtension(originalFilename);
 
+        // 파일이름만 추출
         String fileName = FileNameUtils.extractFilenameWithoutExtension(originalFilename);
 
+        // 확장자만 추출
         String extension = FileNameUtils.extractExtension(originalFilename);
 
+        // 이미지 파일이라면 이미지 검증
         if (isImageFile) FileNameUtils.validateImageExtension(file, extension);
 
         // UploadFile 객체 생성
@@ -43,6 +48,9 @@ public class LocalFileStoreService implements FileStoreService {
 
         // 파일 경로 생성
         Path path = Paths.get(directoryPath, uploadFile.getUuid() + FileNameUtils.ensureDotPrefix(extension));
+
+        // 디렉터리 탈출(Path Traversal) 공격 방지
+        validatePathInsideDirectory(path, directoryPath);
 
         // 파일 저장
         saveFile(file, path);
@@ -52,7 +60,13 @@ public class LocalFileStoreService implements FileStoreService {
 
     @Override
     public void deleteFile(UploadFile uploadFile) {
+
+        // 경로 생성
         Path path = Paths.get(directoryPath, uploadFile.getUuid() + FileNameUtils.ensureDotPrefix(uploadFile.getType()));
+
+        // 디렉터리 탈출(Path Traversal) 공격 방지
+        validatePathInsideDirectory(path, directoryPath);
+
         File file = path.toFile();
 
         if (file.exists() && !file.delete())
@@ -61,6 +75,14 @@ public class LocalFileStoreService implements FileStoreService {
 
     @Override
     public String getFileAccessPath(UploadFile uploadFile) {
+
+        // 경로 생성
+        Path path = Paths.get(directoryPath, uploadFile.getUuid() + FileNameUtils.ensureDotPrefix(uploadFile.getType()));
+
+        // 디렉터리 탈출(Path Traversal) 공격 방지
+        validatePathInsideDirectory(path, directoryPath);
+
+        // 접근 경로 생성
         String relativePath = accessUrlPrefix + uploadFile.getUuid() + FileNameUtils.ensureDotPrefix(uploadFile.getType());
 
         return ServletUriComponentsBuilder
@@ -77,5 +99,14 @@ public class LocalFileStoreService implements FileStoreService {
             log.error("파일 저장 실패 - 경로: {}, 원인: {}", path.toAbsolutePath(), e.getMessage());
             throw new RuntimeException("Failed to save the file.", e);
         }
+    }
+
+    // 디렉터리 탈출(Path Traversal) 공격 방지
+    public static void validatePathInsideDirectory(Path filePath, String baseDirectory) {
+        Path normalizedFilePath = filePath.normalize().toAbsolutePath();
+        Path normalizedBaseDir = Paths.get(baseDirectory).normalize().toAbsolutePath();
+
+        if (!normalizedFilePath.startsWith(normalizedBaseDir))
+            throw new FileException("유효하지 않은 파일 경로입니다.");
     }
 }

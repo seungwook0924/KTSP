@@ -21,8 +21,9 @@ public class BoardDomainService {
 
     // 게시글 작성자 userId 리턴
     @Transactional(readOnly = true)
-    public Long findWriterIdById(long boardId) {
-        return boardRepository.findWriterIdById(boardId);
+    public long findWriterIdById(long boardId) {
+        return boardRepository.findWriterIdById(boardId)
+                .orElseThrow(BoardNotFoundException::new);
     }
 
     // 프록시 객체 반환(성능 최적화)

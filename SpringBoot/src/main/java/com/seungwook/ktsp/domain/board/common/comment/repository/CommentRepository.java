@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
@@ -14,6 +15,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     // commentId를 바탕으로 댓글 작성자의 userId를 리턴(AccessHandler 최적화)
     @Query("SELECT c.user.id FROM Comment c WHERE c.id = :commentId")
-    Long findWriterIdById(Long commentId);
+    Optional<Long> findWriterIdById(Long commentId);
 
 }

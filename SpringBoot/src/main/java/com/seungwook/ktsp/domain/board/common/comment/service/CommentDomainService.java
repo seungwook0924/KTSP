@@ -32,7 +32,8 @@ public class CommentDomainService {
 
     // 댓글 작성자 userId 리턴
     public Long findWriterIdById(long commentId) {
-        return commentRepository.findWriterIdById(commentId);
+        return commentRepository.findWriterIdById(commentId)
+                .orElseThrow(CommentNotFoundException::new);
     }
 
     // 프록시 객체 반환(성능 최적화)

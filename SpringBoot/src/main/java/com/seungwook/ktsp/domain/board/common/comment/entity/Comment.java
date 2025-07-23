@@ -20,11 +20,13 @@ public class Comment {
     // Comment와 User는 N:1 관계
     // 여러 댓글은 하나의 유저에 의해 작성될 수 있다.
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     // Comment와 Board는 N:1 관계
     // 여러개의 댓글은 하나의 게시글에 달릴 수 있다.
     @ManyToOne(fetch = FetchType.LAZY) // N:1 매핑, 지연로딩
+    @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 
     // 부모 댓글
@@ -33,7 +35,7 @@ public class Comment {
     private Comment parent; // null이면 일반 댓글, not null이면 대댓글
 
     // 댓글 내용
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 255)
     private String comment;
 
     // 생성자

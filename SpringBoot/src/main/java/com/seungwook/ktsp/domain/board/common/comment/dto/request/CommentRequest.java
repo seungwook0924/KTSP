@@ -1,12 +1,14 @@
 package com.seungwook.ktsp.domain.board.common.comment.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
 @Getter
 public class CommentRequest {
 
+    @Positive(message = "잘못된 요청입니다.")
     private final long boardId;
 
     @NotBlank

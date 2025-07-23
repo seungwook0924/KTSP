@@ -27,7 +27,7 @@ public class NoticeQueryController {
         BoardResponse response = EtcResponseMapper.toNoticeResponse(notice);
 
         return ResponseEntity.ok(Response.<BoardResponse>builder()
-                .message("자유게시판 게시글 조회 성공")
+                .message("공지사항 조회 성공")
                 .data(response)
                 .build());
     }

@@ -12,7 +12,6 @@ public class FileNameUtils {
 
     private static final Set<String> SUPPORTED_IMAGE_EXTENSIONS = Set.of("jpg", "jpeg", "png", "webp");
 
-
     // 유효성 검사
     public static void validateFilenameWithExtension(String filename) {
         if (filename == null || !filename.contains("."))
@@ -43,6 +42,7 @@ public class FileNameUtils {
         return ext.startsWith(".") ? ext : "." + ext;
     }
 
+    // 이미지 검증
     public static void validateImageExtension(MultipartFile file, String extension) {
         // 이미지 확장자 검사
         if (!SUPPORTED_IMAGE_EXTENSIONS.contains(extension)) {

@@ -28,7 +28,7 @@ public class NoticeCommandController {
     }
 
     @PatchMapping("/{boardId}")
-    public ResponseEntity<Response<Void>> updateFreeBoard(@PathVariable long boardId, @Valid @RequestBody BoardUpdateRequest request) {
+    public ResponseEntity<Response<Void>> updateNotice(@PathVariable long boardId, @Valid @RequestBody BoardUpdateRequest request) {
 
         noticeCommandService.noticeUpdate(boardId, request);
 

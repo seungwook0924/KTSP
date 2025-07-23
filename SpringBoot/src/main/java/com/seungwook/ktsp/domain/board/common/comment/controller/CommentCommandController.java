@@ -4,6 +4,7 @@ import com.seungwook.ktsp.domain.board.common.comment.dto.request.CommentRequest
 import com.seungwook.ktsp.domain.board.common.comment.service.CommentCommandService;
 import com.seungwook.ktsp.global.auth.support.AuthHandler;
 import com.seungwook.ktsp.global.response.Response;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +20,7 @@ public class CommentCommandController {
     private final CommentCommandService commentCommandService;
 
     @PostMapping
-    public ResponseEntity<Response<Void>> registerComment(@RequestBody CommentRequest request) {
+    public ResponseEntity<Response<Void>> registerComment(@Valid @RequestBody CommentRequest request) {
         commentCommandService.registerComment(AuthHandler.getUserId(), request);
 
         return ResponseEntity.ok(Response.<Void>builder()
