@@ -50,7 +50,7 @@ public class CommonExceptionHandler {
     public ResponseEntity<ErrorResponse> handleJsonException(HttpMessageNotReadableException exception) {
         String errorId = generateErrorId();
 
-        log.warn("{} - ContentType Exception : {}\n", exception.getMessage(), errorId);
+        log.warn("{} - ContentType Exception : {}\n", errorId, exception.getMessage());
 
         return ResponseEntity.status(BAD_REQUEST)
                 .body(buildErrorResponse("ContentType 값이 올바르지 않습니다.", errorId));
