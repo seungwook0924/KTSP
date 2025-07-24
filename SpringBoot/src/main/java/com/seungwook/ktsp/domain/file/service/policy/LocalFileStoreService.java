@@ -4,10 +4,10 @@ import com.seungwook.ktsp.domain.file.dto.AttachedFile;
 import com.seungwook.ktsp.domain.file.dto.AttachedFileInfo;
 import com.seungwook.ktsp.domain.file.entity.UploadFile;
 import com.seungwook.ktsp.domain.file.exception.FileException;
-import com.seungwook.ktsp.domain.file.utils.FileNameUtils;
+import com.seungwook.ktsp.domain.file.service.domain.UploadFileDomainService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -15,15 +15,15 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static com.seungwook.ktsp.domain.file.utils.FileNameUtils.ensureDotPrefix;
+import static com.seungwook.ktsp.domain.file.utils.FileNameUtils.*;
 import static java.net.URLEncoder.encode;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.probeContentType;
 import static java.nio.file.Files.readAllBytes;
 
 @Slf4j
-@Service
 @MainStorePolicy
+@RequiredArgsConstructor
 public class LocalFileStoreService implements FileStoreService {
 
     @Value("${file.local-storage.board-directory}")
@@ -35,6 +35,8 @@ public class LocalFileStoreService implements FileStoreService {
     @Value("${file.local-storage.download-url-prefix}")
     private String downloadUrlPrefix;
 
+    private final UploadFileDomainService uploadFileDomainService;
+
     @Override
     public UploadFile storeFile(MultipartFile file, boolean isImageFile) {
 
@@ -42,16 +44,16 @@ public class LocalFileStoreService implements FileStoreService {
         String originalFilename = file.getOriginalFilename();
 
         // 확장자 검사
-        FileNameUtils.validateFilenameWithExtension(originalFilename);
+        validateFilenameWithExtension(originalFilename);
 
         // 파일이름만 추출
-        String fileName = FileNameUtils.extractFilenameWithoutExtension(originalFilename);
+        String fileName = extractFilenameWithoutExtension(originalFilename);
 
         // 확장자만 추출
-        String extension = FileNameUtils.extractExtension(originalFilename);
+        String extension = extractExtension(originalFilename);
 
         // 이미지 파일이라면 이미지 검증
-        if (isImageFile) FileNameUtils.validateImageExtension(file, extension);
+        if (isImageFile) validateImageExtension(file, extension);
 
         // UploadFile 객체 생성
         UploadFile uploadFile = UploadFile.createUploadFile(fileName, extension);
@@ -64,6 +66,9 @@ public class LocalFileStoreService implements FileStoreService {
 
         // 파일 저장
         saveFile(file, path);
+
+        // UploadFile 객체 저장
+        uploadFileDomainService.save(uploadFile);
 
         return uploadFile;
     }
@@ -92,25 +97,14 @@ public class LocalFileStoreService implements FileStoreService {
             throw new FileException("존재하지 않은 파일입니다.");
         }
 
-        try {
-            byte[] fileContent = readAllBytes(file.toPath());
-            String contentType = probeContentType(file.toPath());
-
-            // 파일 이름 URL 인코딩
-            String encodedFileName = encode(uploadFile.getOriginalName() + ensureDotPrefix(uploadFile.getType()), UTF_8).replace("+", "%20"); // 브라우저에서 공백 처리
-
-            return new AttachedFile(fileContent, contentType, encodedFileName);
-
-        } catch (IOException e) {
-            throw new RuntimeException("첨부파일 다운로드 요청 실패", e);
-        }
+        return toAttachedFile(file, uploadFile);
     }
 
     @Override
     public String getFileAccessPath(UploadFile uploadFile) {
 
         // 이미지 파일 여부 검사
-        if (FileNameUtils.isImageExtension(uploadFile.getType())) {
+        if (isImageExtension(uploadFile.getType())) {
             // 경로 생성
             Path path = Paths.get(directoryPath, uploadFile.getUuid() + ensureDotPrefix(uploadFile.getType()));
 
@@ -135,6 +129,22 @@ public class LocalFileStoreService implements FileStoreService {
         } catch (IOException e) {
             log.error("파일 저장 실패 - 경로: {}, 원인: {}", path.toAbsolutePath(), e.getMessage());
             throw new RuntimeException("Failed to save the file.", e);
+        }
+    }
+
+    // 파일 다운로드
+    private AttachedFile toAttachedFile(File file, UploadFile uploadFile) {
+        try {
+            byte[] fileContent = readAllBytes(file.toPath());
+            String contentType = probeContentType(file.toPath());
+
+            // 파일 이름 URL 인코딩
+            String encodedFileName = encode(uploadFile.getOriginalName() + ensureDotPrefix(uploadFile.getType()), UTF_8).replace("+", "%20"); // 브라우저에서 공백 처리
+
+            return new AttachedFile(fileContent, contentType, encodedFileName);
+
+        } catch (IOException e) {
+            throw new RuntimeException("첨부파일 다운로드 요청 실패", e);
         }
     }
 
