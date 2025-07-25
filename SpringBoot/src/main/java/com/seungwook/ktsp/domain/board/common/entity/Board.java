@@ -8,14 +8,12 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.SQLDelete;
 
 @Getter
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DiscriminatorColumn(name = "board_type", discriminatorType = DiscriminatorType.STRING)
-@SQLDelete(sql = "UPDATE board SET deleted = true WHERE id = ?") // 삭제시 delete=true로 변경(soft delete)
 public abstract class Board extends BaseEntity {
 
     @Id

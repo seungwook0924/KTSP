@@ -1,22 +1,25 @@
 package com.seungwook.ktsp.domain.board.function.etc.notice.service;
 
+import com.seungwook.ktsp.domain.board.common.exception.BoardNotFoundException;
 import com.seungwook.ktsp.domain.board.common.service.BoardFileBindingService;
 import com.seungwook.ktsp.domain.board.function.etc.common.dto.request.BoardRegisterRequest;
 import com.seungwook.ktsp.domain.board.function.etc.common.dto.request.BoardUpdateRequest;
 import com.seungwook.ktsp.domain.board.function.etc.notice.entity.Notice;
-import com.seungwook.ktsp.domain.board.function.etc.notice.service.domain.NoticeDomainService;
+import com.seungwook.ktsp.domain.board.function.etc.notice.repository.NoticeRepository;
 import com.seungwook.ktsp.domain.user.entity.User;
 import com.seungwook.ktsp.domain.user.service.UserDomainService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-public class NoticeCommandService {
+public class NoticeService {
 
-    private final NoticeDomainService noticeDomainService;
+    private final NoticeRepository noticeRepository;
     private final UserDomainService userDomainService;
     private final BoardFileBindingService boardFileBindingService;
 
@@ -29,10 +32,16 @@ public class NoticeCommandService {
 
         // 공지사항 생성
         Notice notice = Notice.createNotice(user, request.getTitle(), request.getContent());
-        noticeDomainService.save(notice);
+        noticeRepository.save(notice);
 
         // 이미지 및 첨부파일을 공지사항과 연결
         boardFileBindingService.bindFilesToBoard(notice, request.getContent(), request.getAttachedFiles());
+    }
+
+    // 공지사항 조회
+    @Transactional(readOnly = true)
+    public Notice getNotice(long boardId) {
+        return findAsNotice(boardId);
     }
 
     // 공지사항 수정
@@ -40,7 +49,9 @@ public class NoticeCommandService {
     @PreAuthorize("@boardAccessHandler.check(#boardId)")
     public void updateNotice(long boardId, BoardUpdateRequest request) {
 
-        Notice notice = noticeDomainService.findAsNotice(boardId);
+        Notice notice = findAsNotice(boardId);
+
+        // 파일 등 정리 로직
 
         notice.updateNotice(request.getTitle(), request.getContent());
     }
@@ -50,8 +61,16 @@ public class NoticeCommandService {
     @PreAuthorize("@boardAccessHandler.check(#boardId)")
     public void deleteNotice(long boardId) {
 
-        Notice notice = noticeDomainService.findAsNotice(boardId);
+        Notice notice = findAsNotice(boardId);
 
-        noticeDomainService.delete(notice);
+        // 파일 등 삭제 로직
+
+        noticeRepository.delete(notice);
+    }
+
+    // 공용 메서드
+    private Notice findAsNotice(long boardId) {
+        return noticeRepository.findNoticeById(boardId)
+                .orElseThrow(BoardNotFoundException::new);
     }
 }

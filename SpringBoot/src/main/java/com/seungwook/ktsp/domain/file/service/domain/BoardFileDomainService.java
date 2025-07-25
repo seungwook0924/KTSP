@@ -17,6 +17,7 @@ public class BoardFileDomainService {
         boardFileRepository.save(boardFile);
     }
 
+    // 게시글에 연결된 모든 fileId(UploadFile PK)를 리턴
     public List<Long> findByBoardIdIn(long boardId) {
         return boardFileRepository.findUploadFileIdsByBoardId(boardId);
     }

@@ -7,6 +7,7 @@ import com.seungwook.ktsp.domain.file.service.domain.BoardFileDomainService;
 import com.seungwook.ktsp.domain.file.service.domain.UploadFileDomainService;
 import com.seungwook.ktsp.domain.file.service.policy.FileStoreService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BoardFileBindingService {
@@ -22,6 +24,7 @@ public class BoardFileBindingService {
     private final UploadFileDomainService uploadFileDomainService;
     private final BoardFileDomainService boardFileDomainService;
 
+    // 이미지 및 첨부파일을 게시글과 연결
     public void bindFilesToBoard(Board board, String content, List<String> attachedFiles) {
 
         // 본문에 표시된 이미지 파일 uuid

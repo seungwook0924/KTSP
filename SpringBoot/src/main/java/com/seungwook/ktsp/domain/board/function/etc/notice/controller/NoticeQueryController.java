@@ -3,8 +3,7 @@ package com.seungwook.ktsp.domain.board.function.etc.notice.controller;
 import com.seungwook.ktsp.domain.board.function.etc.common.dto.response.BoardResponse;
 import com.seungwook.ktsp.domain.board.function.etc.common.mapper.EtcResponseMapper;
 import com.seungwook.ktsp.domain.board.function.etc.notice.entity.Notice;
-import com.seungwook.ktsp.domain.board.function.etc.notice.service.NoticeQueryService;
-import com.seungwook.ktsp.domain.comment.service.CommentDomainService;
+import com.seungwook.ktsp.domain.board.function.etc.notice.service.NoticeService;
 import com.seungwook.ktsp.domain.file.dto.AttachedFileInfo;
 import com.seungwook.ktsp.domain.file.service.FileService;
 import com.seungwook.ktsp.global.response.Response;
@@ -22,14 +21,13 @@ import java.util.List;
 @RequestMapping("/public/board/notice")
 public class NoticeQueryController {
 
-    private final NoticeQueryService noticeQueryService;
-    private final CommentDomainService commentDomainService;
+    private final NoticeService noticeService;
     private final FileService fileService;
 
     @GetMapping("/{boardId}")
     public ResponseEntity<Response<BoardResponse>> viewNotice(@PathVariable long boardId) {
 
-        Notice notice = noticeQueryService.getNotice(boardId);
+        Notice notice = noticeService.getNotice(boardId);
 
         List<AttachedFileInfo> attachedFileInfos = fileService.getAttachedFileDownloadPath(boardId);
 
