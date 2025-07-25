@@ -37,11 +37,11 @@ public class FileService {
 
         String accessUrlPrefix = fileStoreService.getAccessUrlPrefix();
         String uuid = uploadFile.getUuid();
-        String type = uploadFile.getType();
+        String extension = uploadFile.getExtension();
 
         // 이미지 파일이라면
-        if (isImageExtension(uploadFile.getType()))
-            return accessUrlPrefix + uuid + ensureDotPrefix(type);
+        if (isImageExtension(uploadFile.getExtension()))
+            return accessUrlPrefix + uuid + ensureDotPrefix(extension);
 
         // 일반 첨부파일이라면 uuid만 리턴
         return uuid;

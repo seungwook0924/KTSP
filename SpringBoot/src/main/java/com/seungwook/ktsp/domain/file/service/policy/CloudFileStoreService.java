@@ -31,7 +31,7 @@ public class CloudFileStoreService implements FileStoreService{
     @Value("${file.cloud-storage.access-url-prefix}")
     private String accessUrlPrefix;
 
-    @Value("${file.local-storage.download-url-prefix}")
+    @Value("${file.download-url-prefix}")
     private String downloadUrlPrefix;
 
     private final S3Client s3Client;
@@ -72,7 +72,7 @@ public class CloudFileStoreService implements FileStoreService{
 
     @Override
     public void deleteFile(UploadFile uploadFile) {
-        String key = uploadFile.getUuid() + ensureDotPrefix(uploadFile.getType());
+        String key = uploadFile.getUuid() + ensureDotPrefix(uploadFile.getExtension());
 
         s3Client.deleteObject(builder -> builder
                 .bucket(bucket)
@@ -83,7 +83,7 @@ public class CloudFileStoreService implements FileStoreService{
     @Override
     public AttachedFile downloadFile(UploadFile uploadFile) {
 
-        String key = uploadFile.getUuid() + ensureDotPrefix(uploadFile.getType());
+        String key = uploadFile.getUuid() + ensureDotPrefix(uploadFile.getExtension());
 
         ResponseInputStream<GetObjectResponse> file = s3Client.getObject(builder -> builder
                 .bucket(bucket)
@@ -100,7 +100,7 @@ public class CloudFileStoreService implements FileStoreService{
 
     @Override
     public AttachedFileInfo getAttachedFileInfo(UploadFile uploadFile) {
-        return new AttachedFileInfo(uploadFile.getOriginalName(), downloadUrlPrefix + uploadFile.getUuid(), uploadFile.getType());
+        return new AttachedFileInfo(uploadFile.getOriginalName(), downloadUrlPrefix + uploadFile.getUuid(), uploadFile.getExtension());
     }
 
     // 파일 저장
@@ -127,7 +127,7 @@ public class CloudFileStoreService implements FileStoreService{
             String contentType = file.response().contentType();
 
             // 파일 이름 URL 인코딩
-            String encodedFileName = encode(uploadFile.getOriginalName() + ensureDotPrefix(uploadFile.getType()), UTF_8).replace("+", "%20"); // 브라우저에서 공백 처리
+            String encodedFileName = encode(uploadFile.getOriginalName() + ensureDotPrefix(uploadFile.getExtension()), UTF_8).replace("+", "%20"); // 브라우저에서 공백 처리
 
             return new AttachedFile(fileContent, contentType, encodedFileName);
         } catch (IOException e) {

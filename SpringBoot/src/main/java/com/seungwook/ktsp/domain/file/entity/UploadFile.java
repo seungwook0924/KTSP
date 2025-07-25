@@ -23,13 +23,13 @@ public class UploadFile {
     @Column(name = "uuid", nullable = false, length = 36, columnDefinition = "CHAR(36)", unique = true)
     private String uuid;
 
-    @Column(name = "type", nullable = false, length = 20)
-    private String type;
+    @Column(name = "extension", nullable = false, length = 20)
+    private String extension;
 
-    private UploadFile(String originalName, String type) {
+    private UploadFile(String originalName, String extension) {
         this.originalName = originalName;
         this.uuid = UUID.randomUUID().toString();
-        this.type = type;
+        this.extension = extension;
     }
 
     public static UploadFile createUploadFile(String originalName, String type) {

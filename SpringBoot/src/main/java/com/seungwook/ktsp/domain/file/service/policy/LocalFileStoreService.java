@@ -32,7 +32,7 @@ public class LocalFileStoreService implements FileStoreService {
     @Value("${file.local-storage.access-url-prefix}")
     private String accessUrlPrefix;
 
-    @Value("${file.local-storage.download-url-prefix}")
+    @Value("${file.download-url-prefix}")
     private String downloadUrlPrefix;
 
     private final UploadFileDomainService uploadFileDomainService;
@@ -77,7 +77,7 @@ public class LocalFileStoreService implements FileStoreService {
     public void deleteFile(UploadFile uploadFile) {
 
         // 경로 생성
-        Path path = Paths.get(directoryPath, uploadFile.getUuid() + ensureDotPrefix(uploadFile.getType()));
+        Path path = Paths.get(directoryPath, uploadFile.getUuid() + ensureDotPrefix(uploadFile.getExtension()));
 
         // 디렉터리 탈출(Path Traversal) 공격 방지
         validatePathInsideDirectory(path, directoryPath);
@@ -90,10 +90,10 @@ public class LocalFileStoreService implements FileStoreService {
 
     @Override
     public AttachedFile downloadFile(UploadFile uploadFile) {
-        File file = new File(directoryPath, uploadFile.getUuid() + ensureDotPrefix(uploadFile.getType()));
+        File file = new File(directoryPath, uploadFile.getUuid() + ensureDotPrefix(uploadFile.getExtension()));
 
         if (!file.exists()) {
-            log.warn("존재하지 않은 파일 다운로드 요청 - file: {}", uploadFile.getOriginalName() + "(" + uploadFile.getUuid() + uploadFile.getType() + ")");
+            log.warn("존재하지 않은 파일 다운로드 요청 - file: {}", uploadFile.getOriginalName() + "(" + uploadFile.getUuid() + uploadFile.getExtension() + ")");
             throw new FileException("존재하지 않은 파일입니다.");
         }
 
@@ -107,7 +107,7 @@ public class LocalFileStoreService implements FileStoreService {
 
     @Override
     public AttachedFileInfo getAttachedFileInfo(UploadFile uploadFile) {
-        return new AttachedFileInfo(uploadFile.getOriginalName(), downloadUrlPrefix + uploadFile.getUuid(), uploadFile.getType());
+        return new AttachedFileInfo(uploadFile.getOriginalName(), downloadUrlPrefix + uploadFile.getUuid(), uploadFile.getExtension());
     }
 
     // 파일 저장
@@ -127,7 +127,7 @@ public class LocalFileStoreService implements FileStoreService {
             String contentType = probeContentType(file.toPath());
 
             // 파일 이름 URL 인코딩
-            String encodedFileName = encode(uploadFile.getOriginalName() + ensureDotPrefix(uploadFile.getType()), UTF_8).replace("+", "%20"); // 브라우저에서 공백 처리
+            String encodedFileName = encode(uploadFile.getOriginalName() + ensureDotPrefix(uploadFile.getExtension()), UTF_8).replace("+", "%20"); // 브라우저에서 공백 처리
 
             return new AttachedFile(fileContent, contentType, encodedFileName);
 
