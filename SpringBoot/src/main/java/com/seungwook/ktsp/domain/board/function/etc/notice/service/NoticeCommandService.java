@@ -24,9 +24,9 @@ public class NoticeCommandService {
 
     private final NoticeDomainService noticeDomainService;
     private final UserDomainService userDomainService;
-    private final UuidExtractor uuidExtractor;
     private final UploadFileDomainService uploadFileDomainService;
     private final BoardFileDomainService boardFileDomainService;
+    private final UuidExtractor uuidExtractor;
 
     // 공지사항 등록
     @Transactional
@@ -40,8 +40,10 @@ public class NoticeCommandService {
         // 첨부파일로 전송된 파일 uuid
         List<String> attachedFileUuids = request.getAttachedFiles();
 
+        // 이미지 파일 uuid를 비교하여 실제 존재하는 것만 가져옴
         List<UploadFile> images = uploadFileDomainService.findByUuidIn(imageFileUuids);
 
+        // 첨부 파일 uuid를 비교하여 실제 존재하는 것만 가져옴
         List<UploadFile> attachedFiles = uploadFileDomainService.findByUuidIn(attachedFileUuids);
 
         Notice notice = Notice.createNotice(user, request.getTitle(), request.getContent());

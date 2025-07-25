@@ -13,6 +13,7 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.io.IOException;
 
@@ -26,6 +27,9 @@ public class CloudFileStoreService implements FileStoreService{
 
     @Value("${file.cloud-storage.bucket}")
     private String bucket;
+
+    @Value("${file.cloud-storage.access-url-prefix}")
+    private String accessUrlPrefix;
 
     @Value("${file.local-storage.download-url-prefix}")
     private String downloadUrlPrefix;
@@ -90,13 +94,8 @@ public class CloudFileStoreService implements FileStoreService{
     }
 
     @Override
-    public String getFileAccessPath(UploadFile uploadFile) {
-
-        // 이미지 파일 여부 검사
-        if (isImageExtension(uploadFile.getType()))
-            return "/" + uploadFile.getUuid() + ensureDotPrefix(uploadFile.getType());
-
-        return downloadUrlPrefix + uploadFile.getUuid() + ensureDotPrefix(uploadFile.getType());
+    public String getAccessUrlPrefix() {
+        return accessUrlPrefix;
     }
 
     @Override
@@ -115,7 +114,7 @@ public class CloudFileStoreService implements FileStoreService{
                             .build(),
                     RequestBody.fromInputStream(file.getInputStream(), file.getSize())
             );
-        } catch (IOException e) {
+        } catch (IOException | S3Exception e) {
             log.error("파일 업로드 중 IOException 발생", e);
             throw new RuntimeException("파일 업로드 실패", e);
         }

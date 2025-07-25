@@ -101,20 +101,8 @@ public class LocalFileStoreService implements FileStoreService {
     }
 
     @Override
-    public String getFileAccessPath(UploadFile uploadFile) {
-
-        // 이미지 파일 여부 검사
-        if (isImageExtension(uploadFile.getType())) {
-            // 경로 생성
-            Path path = Paths.get(directoryPath, uploadFile.getUuid() + ensureDotPrefix(uploadFile.getType()));
-
-            // 디렉터리 탈출(Path Traversal) 공격 방지
-            validatePathInsideDirectory(path, directoryPath);
-
-            return accessUrlPrefix + uploadFile.getUuid() + ensureDotPrefix(uploadFile.getType());
-        }
-
-        return downloadUrlPrefix + uploadFile.getUuid();
+    public String getAccessUrlPrefix() {
+        return accessUrlPrefix;
     }
 
     @Override

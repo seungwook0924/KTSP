@@ -15,6 +15,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.seungwook.ktsp.domain.file.utils.FileNameUtils.ensureDotPrefix;
+import static com.seungwook.ktsp.domain.file.utils.FileNameUtils.isImageExtension;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -24,7 +27,6 @@ public class FileService {
     private final BoardFileDomainService boardFileDomainService;
     private final UploadFileDomainService uploadFileDomainService;
 
-
     // 파일 업로드
     @Transactional
     public String uploadFile(MultipartFile file, boolean isImageFile) {
@@ -33,7 +35,16 @@ public class FileService {
 
         uploadFileDomainService.save(uploadFile);
 
-        return fileStoreService.getFileAccessPath(uploadFile);
+        String accessUrlPrefix = fileStoreService.getAccessUrlPrefix();
+        String uuid = uploadFile.getUuid();
+        String type = uploadFile.getType();
+
+        // 이미지 파일이라면
+        if (isImageExtension(uploadFile.getType()))
+            return accessUrlPrefix + uuid + ensureDotPrefix(type);
+
+        // 일반 첨부파일이라면 uuid만 리턴
+        return uuid;
     }
 
     // 첨부파일 다운로드 주소 리턴

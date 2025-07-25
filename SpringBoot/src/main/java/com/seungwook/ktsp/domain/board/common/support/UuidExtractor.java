@@ -1,9 +1,9 @@
 package com.seungwook.ktsp.domain.board.common.support;
 
+import com.seungwook.ktsp.domain.file.service.policy.FileStoreService;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -13,12 +13,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UuidExtractor {
 
-    @Value("${file.local-storage.access-url-prefix}")
-    private String accessUrlPrefix;
+    private final FileStoreService fileStoreService;
 
     public List<String> extractImageUUIDs(String htmlContent) {
         List<String> srcList = extractImageSrcList(htmlContent);
-
+        String accessUrlPrefix = fileStoreService.getAccessUrlPrefix();
         return srcList.stream()
                 .filter(src -> src.startsWith(accessUrlPrefix))
                 .map(src -> {
