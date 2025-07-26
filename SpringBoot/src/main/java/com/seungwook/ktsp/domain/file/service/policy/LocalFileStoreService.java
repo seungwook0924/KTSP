@@ -65,7 +65,7 @@ public class LocalFileStoreService implements FileStoreService {
         validatePathInsideDirectory(path, directoryPath);
 
         // 파일 저장
-        saveFile(file, path);
+        save(file, path);
 
         // UploadFile 객체 저장
         uploadFileDomainService.save(uploadFile);
@@ -97,6 +97,7 @@ public class LocalFileStoreService implements FileStoreService {
             throw new FileException("존재하지 않은 파일입니다.");
         }
 
+        // 바이너리 변환 후 AttachedFile로 변환
         return toAttachedFile(file, uploadFile);
     }
 
@@ -111,7 +112,7 @@ public class LocalFileStoreService implements FileStoreService {
     }
 
     // 파일 저장
-    private void saveFile(MultipartFile file, Path path) {
+    private void save(MultipartFile file, Path path) {
         try {
             file.transferTo(path.toFile());
         } catch (IOException e) {
@@ -120,7 +121,7 @@ public class LocalFileStoreService implements FileStoreService {
         }
     }
 
-    // 파일 다운로드
+    // 바이너리 변환 후 AttachedFile로 변환
     private AttachedFile toAttachedFile(File file, UploadFile uploadFile) {
         try {
             byte[] fileContent = readAllBytes(file.toPath());

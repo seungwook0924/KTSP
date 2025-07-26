@@ -3,6 +3,7 @@ package com.seungwook.ktsp.domain.file.service.policy;
 import com.seungwook.ktsp.domain.file.dto.AttachedFile;
 import com.seungwook.ktsp.domain.file.dto.AttachedFileInfo;
 import com.seungwook.ktsp.domain.file.entity.UploadFile;
+import com.seungwook.ktsp.domain.file.exception.FileException;
 import com.seungwook.ktsp.domain.file.service.domain.UploadFileDomainService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,7 +63,7 @@ public class CloudFileStoreService implements FileStoreService{
         String key = uploadFile.getUuid() + ensureDotPrefix(extension);
 
         // 파일 저장
-        saveFile(file, key);
+        save(file, key);
 
         // UploadFile 객체 저장
         uploadFileDomainService.save(uploadFile);
@@ -72,24 +73,24 @@ public class CloudFileStoreService implements FileStoreService{
 
     @Override
     public void deleteFile(UploadFile uploadFile) {
+
+        // key(파일 이름 + 확장자)
         String key = uploadFile.getUuid() + ensureDotPrefix(uploadFile.getExtension());
 
-        s3Client.deleteObject(builder -> builder
-                .bucket(bucket)
-                .key(key)
-                .build());
+        // 삭제
+        delete(key);
     }
 
     @Override
     public AttachedFile downloadFile(UploadFile uploadFile) {
 
+        // key(파일 이름 + 확장자)
         String key = uploadFile.getUuid() + ensureDotPrefix(uploadFile.getExtension());
 
-        ResponseInputStream<GetObjectResponse> file = s3Client.getObject(builder -> builder
-                .bucket(bucket)
-                .key(key)
-                .build());
+        // 주어진 key를 기반으로 클라우드에서 파일 데이터를 스트림으로 조회
+        ResponseInputStream<GetObjectResponse> file = getFileStreamByKey(key);
 
+        // 바이너리 변환 후 AttachedFile로 변환
         return toAttachedFile(file, uploadFile, key);
     }
 
@@ -100,11 +101,14 @@ public class CloudFileStoreService implements FileStoreService{
 
     @Override
     public AttachedFileInfo getAttachedFileInfo(UploadFile uploadFile) {
-        return new AttachedFileInfo(uploadFile.getOriginalName(), downloadUrlPrefix + uploadFile.getUuid(), uploadFile.getExtension(), uploadFile.getKiloByte());
+        return new AttachedFileInfo(uploadFile.getOriginalName(),
+                downloadUrlPrefix + uploadFile.getUuid(),
+                uploadFile.getExtension(),
+                uploadFile.getKiloByte());
     }
 
     // 파일 저장
-    private void saveFile(MultipartFile file, String key) {
+    private void save(MultipartFile file, String key) {
         try {
             s3Client.putObject(
                     PutObjectRequest.builder()
@@ -115,12 +119,25 @@ public class CloudFileStoreService implements FileStoreService{
                     RequestBody.fromInputStream(file.getInputStream(), file.getSize())
             );
         } catch (IOException | S3Exception e) {
-            log.error("파일 업로드 중 IOException 발생", e);
-            throw new RuntimeException("파일 업로드 실패", e);
+            log.error("파일 업로드 중 예외 발생", e);
+            throw new FileException("파일 업로드에 실패했습니다.");
         }
     }
 
-    // 파일 다운로드
+    // 주어진 key를 기반으로 S3(R2)에서 파일 데이터를 스트림으로 조회
+    private ResponseInputStream<GetObjectResponse> getFileStreamByKey(String key) {
+        try {
+            return s3Client.getObject(builder -> builder
+                    .bucket(bucket)
+                    .key(key)
+                    .build());
+        } catch (S3Exception e) {
+            log.error("파일 다운로드 중 S3Excetpion 발생 - key: {}", key, e);
+            throw new FileException("파일 다운로드에 실패했습니다.");
+        }
+    }
+
+    // 바이너리 변환 후 AttachedFile로 변환
     private AttachedFile toAttachedFile(ResponseInputStream<GetObjectResponse> file, UploadFile uploadFile, String key) {
         try {
             byte[] fileContent = file.readAllBytes();
@@ -131,8 +148,21 @@ public class CloudFileStoreService implements FileStoreService{
 
             return new AttachedFile(fileContent, contentType, encodedFileName);
         } catch (IOException e) {
-            log.error("파일 다운로드 실패 - key: {}", key, e);
-            throw new RuntimeException("첨부파일 다운로드 요청 실패", e);
+            log.error("파일 다운로드 중 IOException 발생 - key: {}", key, e);
+            throw new FileException("파일 다운로드에 실패했습니다.");
+        }
+    }
+
+    // 파일 삭제
+    private void delete(String key) {
+        try {
+            s3Client.deleteObject(builder -> builder
+                    .bucket(bucket)
+                    .key(key)
+                    .build());
+        } catch (S3Exception e) {
+            log.error("파일 삭제 실패 - key: {}", key, e);
+            throw new FileException("파일 삭제에 실패했습니다.");
         }
     }
 }
