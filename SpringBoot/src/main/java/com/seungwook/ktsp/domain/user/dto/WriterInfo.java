@@ -7,6 +7,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class WriterInfo {
+    private final long userId;
     private final String name;
     private final String major;
     private final String studentNumber;

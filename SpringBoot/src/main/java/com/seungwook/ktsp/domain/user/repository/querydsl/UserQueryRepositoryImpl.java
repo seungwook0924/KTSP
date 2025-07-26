@@ -40,6 +40,7 @@ public class UserQueryRepositoryImpl implements UserQueryRepository {
         return Optional.ofNullable(
                 queryFactory
                         .select(Projections.constructor(WriterInfo.class,
+                                user.id,
                                 user.name,
                                 user.major,
                                 user.studentNumber,

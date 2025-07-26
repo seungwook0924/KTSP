@@ -38,9 +38,11 @@ public class UserMapper {
     // WriterInfo -> Writer로 변환
     public static Writer toWriter(WriterInfo writerInfo) {
         if (writerInfo.getUserStatus().equals(UserStatus.WITHDRAWN))
-            return new Writer("탈퇴한 사용자", "알 수 없음", "알 수 없음");
+            return new Writer(writerInfo.getUserId(), "탈퇴한 사용자", "알 수 없음", "알 수 없음");
 
-        return new Writer(writerInfo.getName(),
+        return new Writer(
+                writerInfo.getUserId(),
+                writerInfo.getName(),
                 writerInfo.getMajor(),
                 writerInfo.getStudentNumber().substring(2, 4) + "학번"
         );

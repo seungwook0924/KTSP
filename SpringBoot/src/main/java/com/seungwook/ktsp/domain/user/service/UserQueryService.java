@@ -28,6 +28,7 @@ public class UserQueryService {
     }
 
     // 게시글 작성자 정보 조회
+    @Transactional(readOnly = true)
     public WriterInfo getWriterInfo(long userId) {
         return userDomainService.findWriterInfoById(userId);
     }
