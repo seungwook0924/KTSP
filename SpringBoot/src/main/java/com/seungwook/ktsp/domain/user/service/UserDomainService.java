@@ -1,6 +1,7 @@
 package com.seungwook.ktsp.domain.user.service;
 
 import com.seungwook.ktsp.domain.user.dto.UserProfile;
+import com.seungwook.ktsp.domain.user.dto.WriterInfo;
 import com.seungwook.ktsp.domain.user.entity.User;
 import com.seungwook.ktsp.domain.user.exception.UserNotFoundException;
 import com.seungwook.ktsp.domain.user.repository.UserRepository;
@@ -89,8 +90,15 @@ public class UserDomainService {
 
     // userId를 바탕으로 UserProfile 리턴
     @Transactional(readOnly = true)
-    public UserProfile findUserProfileById(Long userId) {
+    public UserProfile findUserProfileById(long userId) {
         return userRepository.findUserProfileById(userId)
                 .orElseThrow(UserNotFoundException::new);
+    }
+
+    // userId를 바탕으로 WriterInfo 리턴(게시글 작성시 보여질 정보)
+    @Transactional(readOnly = true)
+    public WriterInfo findWriterInfoById(long userId) {
+        return userRepository.findWriterInfoById(userId)
+                .orElseThrow(() -> new UserNotFoundException("작성자 정보를 조회할 수 없습니다."));
     }
 }

@@ -4,11 +4,13 @@ import com.seungwook.ktsp.domain.user.entity.enums.AcademicYear;
 import com.seungwook.ktsp.domain.user.entity.enums.Campus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.math.BigDecimal;
 
 @Getter
+@AllArgsConstructor
 public class UserRegisterRequest {
 
     @Schema(description = "이메일", example = "user123@kangwon.ac.kr")
@@ -59,16 +61,4 @@ public class UserRegisterRequest {
     @DecimalMax(value = "4.5", inclusive = true, message = "학점은 최대 4.5 이하이어야 합니다.")
     @Digits(integer = 1, fraction = 2, message = "학점은 소수점 둘째자리까지 입력 가능합니다.")
     private final BigDecimal previousGpa;
-
-    public UserRegisterRequest(String email, String password, String studentNumber, String name, Campus campus, AcademicYear academicYear, String phoneNumber, String major, BigDecimal previousGpa) {
-        this.email = email;
-        this.password = password;
-        this.studentNumber = studentNumber;
-        this.name = name;
-        this.campus = campus;
-        this.academicYear = academicYear;
-        this.phoneNumber = phoneNumber;
-        this.major = major;
-        this.previousGpa = previousGpa;
-    }
 }

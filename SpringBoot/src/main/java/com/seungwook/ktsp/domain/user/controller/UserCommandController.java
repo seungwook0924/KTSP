@@ -5,7 +5,7 @@ import com.seungwook.ktsp.domain.user.dto.request.UserInfoUpdateRequest;
 import com.seungwook.ktsp.domain.user.dto.request.UserWithdrawnRequest;
 import com.seungwook.ktsp.domain.user.dto.response.UserInfoResponse;
 import com.seungwook.ktsp.domain.user.entity.User;
-import com.seungwook.ktsp.domain.user.mapper.UserResponseMapper;
+import com.seungwook.ktsp.domain.user.mapper.UserMapper;
 import com.seungwook.ktsp.domain.user.service.UserCommandService;
 import com.seungwook.ktsp.global.auth.dto.UserSession;
 import com.seungwook.ktsp.global.auth.support.AuthHandler;
@@ -34,7 +34,7 @@ public class UserCommandController {
     public ResponseEntity<Response<UserInfoResponse>> updateMyInfo(@Valid @RequestBody UserInfoUpdateRequest request) {
 
         User user = userCommandService.updateUserInformation(AuthHandler.getUserId(), request);
-        UserInfoResponse response = UserResponseMapper.toUserInfoResponse(user);
+        UserInfoResponse response = UserMapper.toUserInfoResponse(user);
 
         return ResponseEntity.ok(Response.<UserInfoResponse>builder()
                 .message("내 정보를 수정했습니다.")

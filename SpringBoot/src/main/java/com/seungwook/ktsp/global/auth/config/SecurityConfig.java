@@ -60,7 +60,7 @@ public class SecurityConfig {
                         .sessionRegistry(registry) // SessionRegistry 연동
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/public/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**").permitAll()
+                        .requestMatchers("/public/**", "/files/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**").permitAll()
                         .requestMatchers("/service/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()

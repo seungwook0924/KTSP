@@ -4,9 +4,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class LoginRequest {
 
     @Schema(description = "사용자 학번", example = "202312345")
@@ -22,10 +24,4 @@ public class LoginRequest {
 
     @Schema(description = "자동 로그인 여부")
     private final boolean isRememberMe;
-
-    public LoginRequest(String studentNumber, String password, boolean isRememberMe) {
-        this.studentNumber = studentNumber;
-        this.password = password;
-        this.isRememberMe = isRememberMe;
-    }
 }

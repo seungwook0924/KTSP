@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import static com.seungwook.ktsp.global.exception.utils.ErrorUtil.buildErrorResponse;
 import static com.seungwook.ktsp.global.exception.utils.ErrorUtil.generateErrorId;
@@ -88,6 +89,21 @@ public class CommonExceptionHandler {
                 .body(buildErrorResponse("서버에 문제가 발생했습니다.", errorId));
     }
 
+    // 정적 리소스를 찾을 수 없는 경우
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNoResourceFoundException(NoResourceFoundException ex, HttpServletRequest request) {
+        String errorId = generateErrorId();
+
+        log.warn("{} - NoResourceFoundException: {} {} | Message: {}",
+                errorId,
+                request.getMethod(),
+                request.getRequestURI(),
+                ex.getMessage()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(buildErrorResponse("요청한 파일을 찾을 수 없습니다.", errorId));
+    }
 
     // 처리되지 않은 예외를 최종적으로 처리
     @ExceptionHandler(Exception.class)

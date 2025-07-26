@@ -4,11 +4,13 @@ import com.seungwook.ktsp.domain.user.entity.enums.AcademicYear;
 import com.seungwook.ktsp.domain.user.entity.enums.Campus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.math.BigDecimal;
 
 @Getter
+@AllArgsConstructor
 public class UserInfoUpdateRequest {
 
     @Schema(description = "사용자 학년", example = "FIRST_YEAR, SECOND_YEAR, THIRD_YEAR, FOURTH_YEAR, GRADUATE")
@@ -41,13 +43,4 @@ public class UserInfoUpdateRequest {
     @Schema(description = "자기소개", example = "안녕하세요. 백엔드 개발자 홍길동입니다.")
     @Size(max = 255)
     private final String introduction;
-
-    public UserInfoUpdateRequest(AcademicYear academicYear, String phoneNumber, String major, BigDecimal previousGpa, Campus campus, String introduction) {
-        this.academicYear = academicYear;
-        this.phoneNumber = phoneNumber;
-        this.major = major;
-        this.previousGpa = previousGpa;
-        this.campus = campus;
-        this.introduction = introduction;
-    }
 }
