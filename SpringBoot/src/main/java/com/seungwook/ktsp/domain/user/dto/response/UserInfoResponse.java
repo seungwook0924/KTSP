@@ -1,9 +1,11 @@
 package com.seungwook.ktsp.domain.user.dto.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import java.math.BigDecimal;
 
 @Getter
+@AllArgsConstructor
 public class UserInfoResponse {
 
     private final String email;
@@ -15,16 +17,4 @@ public class UserInfoResponse {
     private final BigDecimal previousGpa;
     private final String campus;
     private final String introduction;
-
-    public UserInfoResponse(String email, String name, String academicYear, String studentNumber, String phoneNumber, String major, BigDecimal previousGpa, String campus, String introduction) {
-        this.email = email;
-        this.name = name;
-        this.academicYear = academicYear;
-        this.studentNumber = studentNumber;
-        this.phoneNumber = phoneNumber;
-        this.major = major;
-        this.previousGpa = previousGpa;
-        this.campus = campus;
-        this.introduction = introduction;
-    }
 }

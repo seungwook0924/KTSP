@@ -34,14 +34,16 @@ public class NoticeService {
         Notice notice = Notice.createNotice(user, request.getTitle(), request.getContent());
         noticeRepository.save(notice);
 
-        // 이미지 및 첨부파일을 Notice와 연결
+        // 이미지 및 첨부파일 연결
         boardFileBindingService.bindFilesToBoard(notice, request.getContent(), request.getAttachedFiles());
     }
 
     // 공지사항 조회
-    @Transactional(readOnly = true)
+    @Transactional
     public Notice getNotice(long boardId) {
-        return findAsNotice(boardId);
+        Notice notice = findAsNotice(boardId);
+        notice.increaseHit();
+        return notice;
     }
 
     // 공지사항 수정
@@ -52,7 +54,7 @@ public class NoticeService {
         // 공지사항 조회
         Notice notice = findAsNotice(boardId);
 
-        // 이미지 및 첨부파일을 공지사항과 연결
+        // 이미지 및 첨부파일 수정 반영
         boardFileBindingService.updateBoundFiles(notice, request.getContent(), request.getAttachedFiles());
 
         // 공지사항 업데이트
@@ -67,7 +69,7 @@ public class NoticeService {
         // 공지사항 조회
         Notice notice = findAsNotice(boardId);
 
-        // 공지사항과 연결된 파일 삭제
+        // 연결된 파일 삭제
         boardFileBindingService.deleteBoundFiles(notice);
 
         // 공지사항 삭제

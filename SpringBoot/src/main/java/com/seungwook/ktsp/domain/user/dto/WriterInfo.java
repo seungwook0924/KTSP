@@ -6,10 +6,9 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class UserProfile {
+public class WriterInfo {
     private final String name;
     private final String major;
     private final String studentNumber;
-    private final String introduction;
     private final UserStatus userStatus;
 }

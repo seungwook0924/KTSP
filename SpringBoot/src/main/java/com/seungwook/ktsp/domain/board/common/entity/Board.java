@@ -43,9 +43,6 @@ public abstract class Board extends BaseEntity {
     @Column(nullable = false)
     private int hits;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
-
     // 생성자
     protected Board(User user, MainType mainType, SubType subType, String title, String content) {
         this.user = user;
@@ -54,7 +51,6 @@ public abstract class Board extends BaseEntity {
         this.title = title;
         this.content = content;
         this.hits = 0;
-        this.deleted = false;
     }
 
     // title, content 수정

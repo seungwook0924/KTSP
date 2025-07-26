@@ -4,9 +4,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class VerifyRequest {
 
     @Schema(description = "이메일", example = "user123@kangwon.ac.kr")
@@ -19,9 +21,4 @@ public class VerifyRequest {
     @NotBlank(message = "인증 코드는 필수 입니다.")
     @Size(min = 6, max = 6, message = "인증코드는 6자입니다.")
     private final String verifyCode;
-
-    public VerifyRequest(String email, String verifyCode) {
-        this.email = email;
-        this.verifyCode = verifyCode;
-    }
 }

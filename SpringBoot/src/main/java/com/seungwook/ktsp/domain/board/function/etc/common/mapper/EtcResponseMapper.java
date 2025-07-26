@@ -1,5 +1,6 @@
 package com.seungwook.ktsp.domain.board.function.etc.common.mapper;
 
+import com.seungwook.ktsp.domain.board.common.dto.response.Writer;
 import com.seungwook.ktsp.domain.board.function.etc.common.dto.response.BoardResponse;
 import com.seungwook.ktsp.domain.board.function.etc.notice.entity.Notice;
 import com.seungwook.ktsp.domain.file.dto.AttachedFileInfo;
@@ -8,9 +9,11 @@ import java.util.List;
 
 public class EtcResponseMapper {
 
-    public static BoardResponse toNoticeResponse(Notice notice, List<AttachedFileInfo> attachedFileInfos) {
+    public static BoardResponse toNoticeResponse(Writer writer, Notice notice, List<AttachedFileInfo> attachedFileInfos) {
         return new BoardResponse(
+                writer,
                 notice.getId(),
+                notice.getHits(),
                 notice.getTitle(),
                 notice.getContent(),
                 notice.getCreatedAt(),

@@ -3,11 +3,13 @@ package com.seungwook.ktsp.domain.board.function.etc.common.dto.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.List;
 
 @Getter
+@AllArgsConstructor
 public class BoardUpdateRequest {
 
     @Schema(description = "게시글 제목")
@@ -22,10 +24,4 @@ public class BoardUpdateRequest {
 
     @Schema(description = "첨부파일 UUID", example = "550e8400-e29b-41d4-a716-446655440000")
     private final List<String> attachedFiles;
-
-    public BoardUpdateRequest(String title, String content, List<String> attachedFiles) {
-        this.title = title;
-        this.content = content;
-        this.attachedFiles = attachedFiles;
-    }
 }

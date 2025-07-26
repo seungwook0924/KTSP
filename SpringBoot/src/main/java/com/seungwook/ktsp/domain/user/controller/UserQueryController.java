@@ -5,7 +5,7 @@ import com.seungwook.ktsp.domain.user.dto.UserProfile;
 import com.seungwook.ktsp.domain.user.dto.response.UserProfileResponse;
 import com.seungwook.ktsp.domain.user.entity.User;
 import com.seungwook.ktsp.domain.user.entity.enums.UserStatus;
-import com.seungwook.ktsp.domain.user.mapper.UserResponseMapper;
+import com.seungwook.ktsp.domain.user.mapper.UserMapper;
 import com.seungwook.ktsp.domain.user.service.UserQueryService;
 import com.seungwook.ktsp.global.auth.support.AuthHandler;
 import com.seungwook.ktsp.global.response.Response;
@@ -30,7 +30,7 @@ public class UserQueryController {
     public ResponseEntity<Response<UserInfoResponse>> getMyInfo() {
 
         User user = userQueryService.getUserInformation(AuthHandler.getUserId());
-        UserInfoResponse response = UserResponseMapper.toUserInfoResponse(user);
+        UserInfoResponse response = UserMapper.toUserInfoResponse(user);
 
         return ResponseEntity.ok(Response.<UserInfoResponse>builder()
                 .message("내 정보를 불러왔습니다.")
@@ -54,7 +54,7 @@ public class UserQueryController {
                     .build());
         }
 
-        UserProfileResponse response = UserResponseMapper.toUserProfileResponse(userProfile);
+        UserProfileResponse response = UserMapper.toUserProfileResponse(userProfile);
         return ResponseEntity.ok(Response.<UserProfileResponse>builder()
                 .message("회원 프로필 조회에 성공했습니다.")
                 .data(response)

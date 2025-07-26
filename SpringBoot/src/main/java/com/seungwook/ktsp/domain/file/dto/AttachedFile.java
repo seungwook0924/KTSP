@@ -1,8 +1,10 @@
 package com.seungwook.ktsp.domain.file.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class AttachedFile {
 
     // 파일 내용
@@ -13,10 +15,4 @@ public class AttachedFile {
 
     // 인코딩된 파일 이름
     private final String encodedFileName;
-
-    public AttachedFile(byte[] fileContent, String contentType, String encodedFileName) {
-        this.fileContent = fileContent;
-        this.contentType = contentType;
-        this.encodedFileName = encodedFileName;
-    }
 }
