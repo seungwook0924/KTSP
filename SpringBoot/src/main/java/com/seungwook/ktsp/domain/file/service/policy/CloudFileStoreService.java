@@ -56,7 +56,7 @@ public class CloudFileStoreService implements FileStoreService{
         if (isImageFile) validateImageExtension(file, extension);
 
         // UploadFile 객체 생성
-        UploadFile uploadFile = UploadFile.createUploadFile(fileName, extension);
+        UploadFile uploadFile = UploadFile.createUploadFile(fileName, extension, file.getSize());
 
         // key = uuid + 확장자
         String key = uploadFile.getUuid() + ensureDotPrefix(extension);
@@ -100,7 +100,7 @@ public class CloudFileStoreService implements FileStoreService{
 
     @Override
     public AttachedFileInfo getAttachedFileInfo(UploadFile uploadFile) {
-        return new AttachedFileInfo(uploadFile.getOriginalName(), downloadUrlPrefix + uploadFile.getUuid(), uploadFile.getExtension());
+        return new AttachedFileInfo(uploadFile.getOriginalName(), downloadUrlPrefix + uploadFile.getUuid(), uploadFile.getExtension(), uploadFile.getKiloByte());
     }
 
     // 파일 저장

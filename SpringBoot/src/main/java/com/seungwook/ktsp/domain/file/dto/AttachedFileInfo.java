@@ -11,9 +11,12 @@ public class AttachedFileInfo {
 
     private final String extension;
 
-    public AttachedFileInfo(String fileName, String downloadPath, String extension) {
+    private final double kb;
+
+    public AttachedFileInfo(String fileName, String downloadPath, String extension, double kb) {
         this.fileName = fileName;
         this.downloadPath = downloadPath;
         this.extension = extension;
+        this.kb = kb;
     }
 }

@@ -56,7 +56,7 @@ public class LocalFileStoreService implements FileStoreService {
         if (isImageFile) validateImageExtension(file, extension);
 
         // UploadFile 객체 생성
-        UploadFile uploadFile = UploadFile.createUploadFile(fileName, extension);
+        UploadFile uploadFile = UploadFile.createUploadFile(fileName, extension, file.getSize());
 
         // 파일 경로 생성
         Path path = Paths.get(directoryPath, uploadFile.getUuid() + ensureDotPrefix(extension));
@@ -107,7 +107,7 @@ public class LocalFileStoreService implements FileStoreService {
 
     @Override
     public AttachedFileInfo getAttachedFileInfo(UploadFile uploadFile) {
-        return new AttachedFileInfo(uploadFile.getOriginalName(), downloadUrlPrefix + uploadFile.getUuid(), uploadFile.getExtension());
+        return new AttachedFileInfo(uploadFile.getOriginalName(), downloadUrlPrefix + uploadFile.getUuid(), uploadFile.getExtension(), uploadFile.getKiloByte());
     }
 
     // 파일 저장

@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -26,13 +27,23 @@ public class UploadFile {
     @Column(name = "extension", nullable = false, length = 20)
     private String extension;
 
-    private UploadFile(String originalName, String extension) {
+    @Column(name = "kb", nullable = false)
+    private Double kiloByte;
+
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    private UploadFile(String originalName, String extension, double kiloByte) {
         this.originalName = originalName;
         this.uuid = UUID.randomUUID().toString();
         this.extension = extension;
+        this.kiloByte = kiloByte;
+        this.createdAt = LocalDateTime.now();
     }
 
-    public static UploadFile createUploadFile(String originalName, String type) {
-        return new UploadFile(originalName, type);
+    public static UploadFile createUploadFile(String originalName, String type, long byteSize) {
+        double megaByteSize = byteSize / 1024.0; // 바이트 -> 킬로바이트
+        double roundedSize = Math.round(megaByteSize * 100.0) / 100.0; // 소수점 둘째 자리 반올림
+        return new UploadFile(originalName, type, roundedSize);
     }
 }
