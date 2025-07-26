@@ -49,11 +49,13 @@ public class NoticeService {
     @PreAuthorize("@boardAccessHandler.check(#boardId)")
     public void updateNotice(long boardId, BoardUpdateRequest request) {
 
+        // 공지사항 조회
         Notice notice = findAsNotice(boardId);
 
         // 이미지 및 첨부파일을 공지사항과 연결
         boardFileBindingService.updateBoundFiles(notice, request.getContent(), request.getAttachedFiles());
 
+        // 공지사항 업데이트
         notice.updateNotice(request.getTitle(), request.getContent());
     }
 
@@ -62,10 +64,13 @@ public class NoticeService {
     @PreAuthorize("@boardAccessHandler.check(#boardId)")
     public void deleteNotice(long boardId) {
 
+        // 공지사항 조회
         Notice notice = findAsNotice(boardId);
 
-        // 파일 등 삭제 로직
+        // 공지사항과 연결된 파일 삭제
+        boardFileBindingService.deleteBoundFiles(notice);
 
+        // 공지사항 삭제
         noticeRepository.delete(notice);
     }
 
