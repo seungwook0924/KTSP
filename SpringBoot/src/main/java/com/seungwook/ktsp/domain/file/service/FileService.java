@@ -74,14 +74,15 @@ public class FileService {
     }
 
     // 파일 삭제
+    @Transactional
     public void deleteFile(String uuid) {
 
         UploadFile uploadFile = uploadFileDomainService.findByUuid(uuid);
 
-        // 스토리지에서 파일 삭제
-        fileStoreService.deleteFile(uploadFile);
-
         // DB에서 제거
         uploadFileDomainService.delete(uploadFile);
+
+        // 스토리지에서 파일 삭제
+        fileStoreService.deleteFile(uploadFile);
     }
 }

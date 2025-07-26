@@ -42,8 +42,8 @@ public class UploadFile {
     }
 
     public static UploadFile createUploadFile(String originalName, String type, long byteSize) {
-        double megaByteSize = byteSize / 1024.0; // 바이트 -> 킬로바이트
-        double roundedSize = Math.round(megaByteSize * 100.0) / 100.0; // 소수점 둘째 자리 반올림
+        double kiloByteSize = byteSize / 1024.0; // 바이트 -> 킬로바이트
+        double roundedSize = Math.round(kiloByteSize * 100.0) / 100.0; // 소수점 둘째 자리 반올림
         return new UploadFile(originalName, type, roundedSize);
     }
 }
