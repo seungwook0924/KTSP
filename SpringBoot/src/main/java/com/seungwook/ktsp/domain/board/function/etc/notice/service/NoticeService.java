@@ -34,7 +34,7 @@ public class NoticeService {
         Notice notice = Notice.createNotice(user, request.getTitle(), request.getContent());
         noticeRepository.save(notice);
 
-        // 이미지 및 첨부파일을 공지사항과 연결
+        // 이미지 및 첨부파일을 Notice와 연결
         boardFileBindingService.bindFilesToBoard(notice, request.getContent(), request.getAttachedFiles());
     }
 
@@ -51,7 +51,8 @@ public class NoticeService {
 
         Notice notice = findAsNotice(boardId);
 
-        // 파일 등 정리 로직
+        // 이미지 및 첨부파일을 공지사항과 연결
+        boardFileBindingService.updateBoundFiles(notice, request.getContent(), request.getAttachedFiles());
 
         notice.updateNotice(request.getTitle(), request.getContent());
     }

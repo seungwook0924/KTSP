@@ -16,7 +16,7 @@ public interface FileStoreService {
     // 파일 다운로드
     AttachedFile downloadFile(UploadFile uploadFile);
 
-    // 파일 접근 가능 접두사 리턴
+    // 파일 접근 가능 URL 접두사 리턴
     String getAccessUrlPrefix();
 
     // 첨부파일 정보 리턴

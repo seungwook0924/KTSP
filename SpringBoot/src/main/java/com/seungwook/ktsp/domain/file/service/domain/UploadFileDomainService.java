@@ -30,4 +30,8 @@ public class UploadFileDomainService {
     public List<UploadFile> findByIdIn(List<Long> fileIds) {
         return uploadFileRepository.findByIdIn(fileIds);
     }
+
+    public void delete(UploadFile uploadFile) {
+        uploadFileRepository.delete(uploadFile);
+    }
 }

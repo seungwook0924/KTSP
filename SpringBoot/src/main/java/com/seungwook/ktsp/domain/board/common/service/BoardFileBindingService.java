@@ -11,10 +11,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+// 이미지 및 첨부파일을 게시글과 연결하는 클래스
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -24,30 +29,73 @@ public class BoardFileBindingService {
     private final UploadFileDomainService uploadFileDomainService;
     private final BoardFileDomainService boardFileDomainService;
 
-    // 이미지 및 첨부파일을 게시글과 연결
+    // 게시글 생성시 연결
+    @Transactional
     public void bindFilesToBoard(Board board, String content, List<String> attachedFiles) {
 
-        // 본문에 표시된 이미지 파일 uuid
-        List<String> imageFileUuids = extractImageUUIDs(content);
+        // 이미지 + 첨부파일 uuid 통합
+        Set<String> requestedUuids = Stream.concat(
+                new HashSet<>(extractImageUUIDs(content)).stream(), // 요청 이미지 uuid 추출(Set으로 중복 제거)
+                new HashSet<>(attachedFiles).stream()) // 요청 첨부파일 uuid(Set으로 중복 제거)
+                .collect(Collectors.toSet());
 
-        // 이미지 파일 uuid를 비교하여 실제 존재하는 것만 가져옴
-        List<UploadFile> registeredImages = uploadFileDomainService.findByUuidIn(imageFileUuids);
+        // UploadFile 조회 및 BoardFile 생성
+        if (!requestedUuids.isEmpty()) {
 
-        // 첨부 파일 uuid를 비교하여 실제 존재하는 것만 가져옴
-        List<UploadFile> registeredAttachedFiles = uploadFileDomainService.findByUuidIn(attachedFiles);
+            // uuid를 비교하여 실제 존재하는 것만 가져옴
+            List<UploadFile> filesToAdd = uploadFileDomainService.findByUuidIn(requestedUuids.stream().toList());
 
-        // 이미지 파일 등록
-        for (UploadFile file : registeredImages) {
-            BoardFile boardFile = BoardFile.createBoardFile(board, file);
-            boardFileDomainService.save(boardFile);
-        }
-
-        // 첨부파일 등록
-        for (UploadFile file : registeredAttachedFiles) {
-            BoardFile boardFile = BoardFile.createBoardFile(board, file);
-            boardFileDomainService.save(boardFile);
+            for (UploadFile file : filesToAdd) {
+                BoardFile newBoardFile = BoardFile.createBoardFile(board, file);
+                boardFileDomainService.save(newBoardFile);
+            }
         }
     }
+
+    // 게시글 수정시 연결
+    @Transactional
+    public void updateBoundFiles(Board board, String content, List<String> attachedFiles) {
+
+        // 기존 연결된 BoardFile 조회
+        List<BoardFile> existingBoardFiles = boardFileDomainService.findByBoard(board);
+        Set<String> existingUuids = existingBoardFiles.stream()
+                .map(bf -> bf.getFile().getUuid())
+                .collect(Collectors.toSet());
+
+        // 이미지 + 첨부파일 uuid 통합
+        Set<String> requestedUuids = Stream.concat(
+                new HashSet<>(extractImageUUIDs(content)).stream(), // 요청 이미지 uuid 추출(Set으로 중복 제거)
+                new HashSet<>(attachedFiles).stream()) // 요청 첨부파일 uuid(Set으로 중복 제거)
+                .collect(Collectors.toSet());
+
+        // 삭제 대상(기존 파일 목록중 새로 요청한 파일에 없는 것) 추출
+        List<BoardFile> boardFilesToDelete = existingBoardFiles.stream()
+                .filter(bf -> !requestedUuids.contains(bf.getFile().getUuid()))
+                .toList();
+
+        // 추가 대상(새로 요청한 파일 목록중 기존파일에 없는 것) UUID 추출
+        Set<String> uuidsToAdd = requestedUuids.stream()
+                .filter(uuid -> !existingUuids.contains(uuid))
+                .collect(Collectors.toSet());
+
+        // BoardFile 삭제 (UploadFile도 자동 삭제)
+        for (BoardFile boardFile : boardFilesToDelete) {
+            boardFileDomainService.delete(boardFile);
+        }
+
+        // UploadFile 조회 및 BoardFile 생성
+        if (!uuidsToAdd.isEmpty()) {
+
+            // uuid를 비교하여 실제 존재하는 것만 가져옴
+            List<UploadFile> filesToAdd = uploadFileDomainService.findByUuidIn(uuidsToAdd.stream().toList());
+
+            for (UploadFile file : filesToAdd) {
+                BoardFile newBoardFile = BoardFile.createBoardFile(board, file);
+                boardFileDomainService.save(newBoardFile);
+            }
+        }
+    }
+
 
     // HTML 이미지 태그에서 uuid 추출
     private List<String> extractImageUUIDs(String htmlContent) {

@@ -67,7 +67,21 @@ public class FileService {
 
     // 첨부파일 다운로드
     public AttachedFile downloadFile(String uuid) {
+
         UploadFile uploadFile = uploadFileDomainService.findByUuid(uuid);
+
         return fileStoreService.downloadFile(uploadFile);
+    }
+
+    // 파일 삭제
+    public void deleteFile(String uuid) {
+
+        UploadFile uploadFile = uploadFileDomainService.findByUuid(uuid);
+
+        // 스토리지에서 파일 삭제
+        fileStoreService.deleteFile(uploadFile);
+
+        // DB에서 제거
+        uploadFileDomainService.delete(uploadFile);
     }
 }

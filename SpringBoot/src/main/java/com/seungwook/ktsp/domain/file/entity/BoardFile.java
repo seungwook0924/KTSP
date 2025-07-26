@@ -22,9 +22,9 @@ public class BoardFile {
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 
-    // BoardFile과 UploadFile는 N:1 관계
-    // 여러개의 BoardFile은 하나의 UploadFile에 매핑 될 수 있다.
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE) // N:1 매핑, 지연로딩, BoardFile이 삭제되면 UploadFile도 함께 삭제(재사용될 가능성 없음)
+    // BoardFile과 UploadFile는 1:1 관계
+    // 하나의 BoardFile은 하나의 UploadFile에 매핑 될 수 있다.
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true) // 1:1 매핑, 지연로딩
     @JoinColumn(name = "file_id", nullable = false)
     private UploadFile file;
 

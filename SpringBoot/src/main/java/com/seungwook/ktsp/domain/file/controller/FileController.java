@@ -54,4 +54,16 @@ public class FileController {
                 .header("Content-Type", attachedFile.getContentType())
                 .body(attachedFile.getFileContent());
     }
+
+    @Operation(summary = "파일 삭제")
+    @DeleteMapping("/{uuid}")
+    public ResponseEntity<Response<Void>> deleteFile(@PathVariable String uuid) {
+
+        fileService.deleteFile(uuid);
+
+        return ResponseEntity
+                .noContent() // 204
+                .build();
+
+    }
 }
