@@ -9,6 +9,8 @@ import com.seungwook.ktsp.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -23,7 +25,8 @@ import static java.nio.file.Files.probeContentType;
 import static java.nio.file.Files.readAllBytes;
 
 @Slf4j
-@MainStorePolicy
+@Primary
+@Service
 @RequiredArgsConstructor
 public class LocalFileStoreService implements FileStoreService {
 
