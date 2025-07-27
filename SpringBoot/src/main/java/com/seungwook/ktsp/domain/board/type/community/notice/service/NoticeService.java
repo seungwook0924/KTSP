@@ -52,11 +52,11 @@ public class NoticeService {
     @Transactional
     public Notice getNotice(long boardId) {
 
-        Notice notice = findAsNotice(boardId);
+        // 조회수 증가
+        noticeRepository.increaseHits(boardId);
 
-        notice.increaseHit();
-
-        return notice;
+        // 공지사항 조회
+        return findAsNotice(boardId);
     }
 
     // 공지사항 수정

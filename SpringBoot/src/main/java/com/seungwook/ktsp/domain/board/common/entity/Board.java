@@ -58,9 +58,4 @@ public abstract class Board extends BaseEntity {
         this.title = title;
         this.content = content;
     }
-
-    // 조회수 증가
-    protected void increaseHits() {
-        this.hits++;
-    }
 }
