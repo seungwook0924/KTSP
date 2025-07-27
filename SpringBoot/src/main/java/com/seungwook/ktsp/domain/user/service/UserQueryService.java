@@ -1,6 +1,7 @@
 package com.seungwook.ktsp.domain.user.service;
 
 import com.seungwook.ktsp.domain.user.dto.UserProfile;
+import com.seungwook.ktsp.domain.user.dto.WriterInfo;
 import com.seungwook.ktsp.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,5 +25,11 @@ public class UserQueryService {
     @Transactional(readOnly = true)
     public UserProfile getUserProfile(long userId) {
         return userDomainService.findUserProfileById(userId);
+    }
+
+    // 게시글 작성자 정보 조회
+    @Transactional(readOnly = true)
+    public WriterInfo getWriterInfo(long userId) {
+        return userDomainService.findWriterInfoById(userId);
     }
 }

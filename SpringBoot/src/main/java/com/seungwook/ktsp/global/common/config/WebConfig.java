@@ -15,13 +15,15 @@ import java.time.format.DateTimeFormatter;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
+    // 실제 파일 저장 경로
     @Value("${file.local-storage.board-directory}")
     private String fileDirectory;
 
+    // 정적 파일(첨부파일) 매핑 경로
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/files/**")
-                .addResourceLocations("file:" + fileDirectory);
+        registry.addResourceHandler("/files/**") // 요청경로 : /files/
+                .addResourceLocations("file:" + fileDirectory); // 'file:' -> 로컬 파일 시스템 접두사
     }
 
     // 컨텐츠 협상 설정
