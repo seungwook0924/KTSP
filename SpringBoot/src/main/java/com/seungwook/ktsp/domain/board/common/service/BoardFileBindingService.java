@@ -90,8 +90,8 @@ public class BoardFileBindingService {
     // 파일 삭제 및 BoardFile 삭제 (UploadFile도 자동 삭제)
     private void deleteFileAndBoardFile(List<BoardFile> boardFilesToDelete) {
         for (BoardFile boardFile : boardFilesToDelete) {
-            fileStoreService.deleteFile(boardFile.getFile());
             boardFileDomainService.delete(boardFile);
+            fileStoreService.deleteFile(boardFile.getFile());
         }
     }
 

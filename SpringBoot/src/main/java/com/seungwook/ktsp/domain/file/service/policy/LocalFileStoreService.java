@@ -5,6 +5,7 @@ import com.seungwook.ktsp.domain.file.dto.AttachedFileInfo;
 import com.seungwook.ktsp.domain.file.entity.UploadFile;
 import com.seungwook.ktsp.domain.file.exception.FileException;
 import com.seungwook.ktsp.domain.file.service.domain.UploadFileDomainService;
+import com.seungwook.ktsp.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,7 +39,7 @@ public class LocalFileStoreService implements FileStoreService {
     private final UploadFileDomainService uploadFileDomainService;
 
     @Override
-    public UploadFile storeFile(MultipartFile file, boolean isImageFile) {
+    public UploadFile storeFile(User user, MultipartFile file, boolean isImageFile) {
 
         // MultipartFile 에서 원본 이름 추출
         String originalFilename = file.getOriginalFilename();
@@ -56,7 +57,7 @@ public class LocalFileStoreService implements FileStoreService {
         if (isImageFile) validateImageExtension(file, extension);
 
         // UploadFile 객체 생성
-        UploadFile uploadFile = UploadFile.createUploadFile(fileName, extension, file.getSize());
+        UploadFile uploadFile = UploadFile.createUploadFile(user, fileName, extension, file.getSize());
 
         // 파일 경로 생성
         Path path = Paths.get(directoryPath, uploadFile.getUuid() + ensureDotPrefix(extension));

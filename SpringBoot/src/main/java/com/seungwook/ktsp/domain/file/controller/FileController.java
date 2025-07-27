@@ -2,6 +2,7 @@ package com.seungwook.ktsp.domain.file.controller;
 
 import com.seungwook.ktsp.domain.file.dto.AttachedFile;
 import com.seungwook.ktsp.domain.file.service.FileService;
+import com.seungwook.ktsp.global.auth.support.AuthHandler;
 import com.seungwook.ktsp.global.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -23,7 +24,7 @@ public class FileController {
     @PostMapping
     public ResponseEntity<Response<String>> uploadFile(@Parameter(description = "일반 파일", required = true) @RequestPart("file") MultipartFile file) {
 
-        String response = fileService.uploadFile(file, false);
+        String response = fileService.uploadFile(AuthHandler.getUserId(), file, false);
 
         return ResponseEntity.ok(Response.<String>builder()
                 .message("일반 파일 업로드 성공")
@@ -35,7 +36,7 @@ public class FileController {
     @PostMapping("/image")
     public ResponseEntity<Response<String>> uploadImage(@Parameter(description = "이미지 파일", required = true) @RequestPart("file") MultipartFile file) {
 
-        String response = fileService.uploadFile(file, true);
+        String response = fileService.uploadFile(AuthHandler.getUserId(), file, true);
 
         return ResponseEntity.ok(Response.<String>builder()
                 .message("이미지 파일 업로드 성공")
@@ -59,7 +60,7 @@ public class FileController {
     @DeleteMapping("/{uuid}")
     public ResponseEntity<Response<Void>> deleteFile(@PathVariable String uuid) {
 
-        fileService.deleteFile(uuid);
+        fileService.deleteFile(uuid, AuthHandler.getUserId(), AuthHandler.getUserRole());
 
         return ResponseEntity
                 .noContent() // 204

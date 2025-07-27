@@ -1,5 +1,6 @@
 package com.seungwook.ktsp.domain.file.entity;
 
+import com.seungwook.ktsp.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -18,6 +19,12 @@ public class UploadFile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // UploadFile과 User는 N:1 관계
+    // 여러개의 파일은 한명의 User에 의해 업로드 될 수 있다.
+    @ManyToOne(fetch = FetchType.LAZY) // N:1 매핑, 지연로딩
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     @Column(name = "original_name", nullable = false, length = 255)
     private String originalName;
 
@@ -33,7 +40,8 @@ public class UploadFile {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    private UploadFile(String originalName, String extension, double kiloByte) {
+    private UploadFile(User user, String originalName, String extension, double kiloByte) {
+        this.user = user;
         this.originalName = originalName;
         this.uuid = UUID.randomUUID().toString();
         this.extension = extension;
@@ -41,9 +49,9 @@ public class UploadFile {
         this.createdAt = LocalDateTime.now();
     }
 
-    public static UploadFile createUploadFile(String originalName, String type, long byteSize) {
+    public static UploadFile createUploadFile(User user, String originalName, String type, long byteSize) {
         double kiloByteSize = byteSize / 1024.0; // 바이트 -> 킬로바이트
         double roundedSize = Math.round(kiloByteSize * 100.0) / 100.0; // 소수점 둘째 자리 반올림
-        return new UploadFile(originalName, type, roundedSize);
+        return new UploadFile(user, originalName, type, roundedSize);
     }
 }

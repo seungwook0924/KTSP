@@ -3,12 +3,13 @@ package com.seungwook.ktsp.domain.file.service.policy;
 import com.seungwook.ktsp.domain.file.dto.AttachedFile;
 import com.seungwook.ktsp.domain.file.dto.AttachedFileInfo;
 import com.seungwook.ktsp.domain.file.entity.UploadFile;
+import com.seungwook.ktsp.domain.user.entity.User;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface FileStoreService {
 
     // 파일 저장
-    UploadFile storeFile(MultipartFile file, boolean isImageFile);
+    UploadFile storeFile(User user, MultipartFile file, boolean isImageFile);
 
     // 파일 삭제
     void deleteFile(UploadFile uploadFile);
