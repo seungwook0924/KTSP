@@ -1,4 +1,4 @@
-package com.seungwook.ktsp.domain.board.function.etc.common.dto.response;
+package com.seungwook.ktsp.domain.board.type.community.common.dto.response;
 
 import com.seungwook.ktsp.domain.board.common.dto.response.Writer;
 import com.seungwook.ktsp.domain.comment.dto.response.CommentResponse;
@@ -11,7 +11,7 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class BoardResponse {
+public class CommunityResponse {
 
     private final Writer writer;
     private final long boardId;

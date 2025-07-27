@@ -5,6 +5,7 @@ import com.seungwook.ktsp.domain.board.common.service.BoardDomainService;
 import com.seungwook.ktsp.domain.comment.dto.request.CommentRequest;
 import com.seungwook.ktsp.domain.comment.dto.request.CommentUpdateRequest;
 import com.seungwook.ktsp.domain.comment.entity.Comment;
+import com.seungwook.ktsp.domain.comment.service.domain.CommentDomainService;
 import com.seungwook.ktsp.domain.user.entity.User;
 import com.seungwook.ktsp.domain.user.service.UserDomainService;
 import lombok.RequiredArgsConstructor;

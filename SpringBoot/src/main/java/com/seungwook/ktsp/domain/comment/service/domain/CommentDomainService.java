@@ -1,4 +1,4 @@
-package com.seungwook.ktsp.domain.comment.service;
+package com.seungwook.ktsp.domain.comment.service.domain;
 
 import com.seungwook.ktsp.domain.comment.entity.Comment;
 import com.seungwook.ktsp.domain.comment.exception.CommentNotFoundException;

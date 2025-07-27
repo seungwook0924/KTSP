@@ -21,8 +21,8 @@ public enum SubType {
     PROJECT(PROJECT_CONTEST, "프로젝트"),
     CONTEST(PROJECT_CONTEST, "공모전"),
 
-    NOTICE(ETC, "공지사항"),
-    REPORT(ETC, "오류·사용자 신고");
+    NOTICE(COMMUNITY, "공지사항"),
+    REPORT(COMMUNITY, "오류·사용자 신고");
 
     private final MainType mainType;
     private final String label;

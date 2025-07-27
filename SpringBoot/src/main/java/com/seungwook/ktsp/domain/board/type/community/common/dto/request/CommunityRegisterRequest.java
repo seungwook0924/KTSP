@@ -1,4 +1,4 @@
-package com.seungwook.ktsp.domain.board.function.etc.common.dto.request;
+package com.seungwook.ktsp.domain.board.type.community.common.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class BoardUpdateRequest {
+public class CommunityRegisterRequest {
 
     @Schema(description = "게시글 제목")
     @NotBlank

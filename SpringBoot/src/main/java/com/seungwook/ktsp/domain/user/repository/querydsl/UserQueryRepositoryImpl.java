@@ -5,12 +5,13 @@ import com.seungwook.ktsp.domain.user.dto.UserProfile;
 import com.seungwook.ktsp.domain.user.dto.WriterInfo;
 import lombok.RequiredArgsConstructor;
 import com.querydsl.core.types.Projections;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 import static com.seungwook.ktsp.domain.user.entity.QUser.*;
 
-
+@Repository
 @RequiredArgsConstructor
 public class UserQueryRepositoryImpl implements UserQueryRepository {
 
