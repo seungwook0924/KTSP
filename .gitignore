@@ -43,3 +43,4 @@ Database/ignore
 SpringBoot/src/main/resources/*.properties
 SpringBoot/src/main/resources/*.yml
 SpringBoot/log
+SpringBoot/board-files

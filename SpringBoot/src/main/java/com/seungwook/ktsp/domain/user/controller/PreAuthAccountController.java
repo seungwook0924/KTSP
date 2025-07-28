@@ -1,7 +1,7 @@
 package com.seungwook.ktsp.domain.user.controller;
 
-import com.seungwook.ktsp.global.auth.dto.request.PasswordResetRequest;
-import com.seungwook.ktsp.global.auth.dto.request.RegisterRequest;
+import com.seungwook.ktsp.domain.user.dto.request.PasswordResetRequest;
+import com.seungwook.ktsp.domain.user.dto.request.UserRegisterRequest;
 import com.seungwook.ktsp.domain.user.service.PreAuthAccountService;
 import com.seungwook.ktsp.global.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,7 +28,7 @@ public class PreAuthAccountController {
     @Operation(summary = "회원가입", description = "이메일 인증을 완료한 사용자 회원가입")
     @PreAuthorize("!isAuthenticated()") // 이미 인증된 상태라면 거부
     @PostMapping
-    public ResponseEntity<Response<Void>> register(@Valid @RequestBody RegisterRequest request, HttpServletRequest httpRequest) {
+    public ResponseEntity<Response<Void>> register(@Valid @RequestBody UserRegisterRequest request, HttpServletRequest httpRequest) {
 
         preAuthAccountService.register(request, httpRequest);
 

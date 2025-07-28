@@ -1,6 +1,7 @@
 package com.seungwook.ktsp.domain.user.service;
 
 import com.seungwook.ktsp.domain.user.dto.UserProfile;
+import com.seungwook.ktsp.domain.user.dto.WriterInfo;
 import com.seungwook.ktsp.domain.user.entity.User;
 import com.seungwook.ktsp.domain.user.exception.UserNotFoundException;
 import com.seungwook.ktsp.domain.user.repository.UserRepository;
@@ -26,6 +27,14 @@ public class UserDomainService {
     @Transactional
     public void delete(User user) {
         userRepository.delete(user);
+    }
+
+    // 프록시 객체 반환(성능 최적화)
+    public User getReferenceById(long userId) {
+        if (!userRepository.existsById(userId))
+            throw new UserNotFoundException();
+
+        return userRepository.getReferenceById(userId);
     }
 
     // 이미 등록된 이메일인지 검사
@@ -56,14 +65,14 @@ public class UserDomainService {
     @Transactional(readOnly = true)
     public User findByEmailExceptWithdrawn(String email) {
         return userRepository.findByEmailExceptWithdrawn(email)
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(() -> new UserNotFoundException("탈퇴했거나 존재하지 않는 사용자입니다."));
     }
 
     // userId를 바탕으로 활성화된 User 리턴
     @Transactional(readOnly = true)
     public User findActiveUserById(Long userId) {
         return userRepository.findActiveUserById(userId)
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(() -> new UserNotFoundException("활성화된 회원이 아니거나 사용자를 찾을 수 없습니다."));
     }
 
     // userId를 바탕으로 Optional<User> 리턴
@@ -73,15 +82,23 @@ public class UserDomainService {
     }
 
     // userId를 바탕으로 탈퇴하지 않은 User 리턴
+    @Transactional(readOnly = true)
     public User findByIdExceptWithdrawn(long userId) {
         return userRepository.findByIdExceptWithdrawn(userId)
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(() -> new UserNotFoundException("탈퇴했거나 존재하지 않는 사용자입니다."));
     }
 
     // userId를 바탕으로 UserProfile 리턴
     @Transactional(readOnly = true)
-    public UserProfile findUserProfileById(Long userId) {
+    public UserProfile findUserProfileById(long userId) {
         return userRepository.findUserProfileById(userId)
                 .orElseThrow(UserNotFoundException::new);
+    }
+
+    // userId를 바탕으로 WriterInfo 리턴(게시글 작성시 보여질 정보)
+    @Transactional(readOnly = true)
+    public WriterInfo findWriterInfoById(long userId) {
+        return userRepository.findWriterInfoById(userId)
+                .orElseThrow(() -> new UserNotFoundException("작성자 정보를 조회할 수 없습니다."));
     }
 }

@@ -1,17 +1,32 @@
 package com.seungwook.ktsp.global.common.config;
 
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.time.format.DateTimeFormatter;
 
 @Configuration
+@EnableSpringDataWebSupport(pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO) // 페이징 직렬화 오류 방지
 public class WebConfig implements WebMvcConfigurer {
+
+    // 실제 파일 저장 경로
+    @Value("${file.local-storage.board-directory}")
+    private String fileDirectory;
+
+    // 정적 파일(첨부파일) 매핑 경로
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/files/**") // 요청경로 : /files/
+                .addResourceLocations("file:" + fileDirectory); // 'file:' -> 로컬 파일 시스템 접두사
+    }
 
     // 컨텐츠 협상 설정
     @Override
