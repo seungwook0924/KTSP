@@ -5,5 +5,5 @@ public enum MainType {
     MAJOR_LEARNER,
     PROJECT_CONTEST,
     CHALLENGE_LEARNER,
-    ETC
+    COMMUNITY
 }

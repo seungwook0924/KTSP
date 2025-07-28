@@ -1,7 +1,7 @@
 package com.seungwook.ktsp.domain.comment.handler;
 
 import com.seungwook.ktsp.global.handler.AccessHandler;
-import com.seungwook.ktsp.domain.comment.service.CommentDomainService;
+import com.seungwook.ktsp.domain.comment.service.domain.CommentDomainService;
 import com.seungwook.ktsp.global.auth.support.AuthHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package com.seungwook.ktsp.domain.board.function.etc.notice.entity;
+package com.seungwook.ktsp.domain.board.type.community.notice.entity;
 
 import com.seungwook.ktsp.domain.board.common.entity.Board;
 import com.seungwook.ktsp.domain.board.common.entity.enums.MainType;
@@ -23,16 +23,11 @@ public class Notice extends Board {
 
     // 정적 팩터리
     public static Notice createNotice(User user, String title, String content) {
-        return new Notice(user, MainType.ETC, SubType.NOTICE, title, content);
+        return new Notice(user, MainType.COMMUNITY, SubType.NOTICE, title, content);
     }
 
     // 게시글 수정
     public void updateNotice(String title, String content) {
         updateTitleAndContent(title, content);
-    }
-
-    // 조회수 증가
-    public void increaseHit() {
-        increaseHits();
     }
 }
