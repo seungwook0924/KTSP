@@ -2,7 +2,6 @@ package com.seungwook.ktsp.domain.board.type.community.notice.service;
 
 import com.seungwook.ktsp.domain.board.common.exception.BoardNotFoundException;
 import com.seungwook.ktsp.domain.board.common.service.BoardFileBindingService;
-import com.seungwook.ktsp.domain.board.type.community.common.dto.CommunityList;
 import com.seungwook.ktsp.domain.board.type.community.common.dto.request.CommunityRegisterRequest;
 import com.seungwook.ktsp.domain.board.type.community.common.dto.request.CommunityUpdateRequest;
 import com.seungwook.ktsp.domain.board.type.community.notice.entity.Notice;
@@ -11,8 +10,6 @@ import com.seungwook.ktsp.domain.user.entity.User;
 import com.seungwook.ktsp.domain.user.service.UserDomainService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class NoticeService {
+public class NoticeCommandService {
 
     private final NoticeRepository noticeRepository;
     private final UserDomainService userDomainService;
@@ -39,24 +36,6 @@ public class NoticeService {
 
         // 이미지 및 첨부파일 연결
         boardFileBindingService.bindFilesToBoard(notice, request.getContent(), request.getAttachedFiles());
-    }
-
-    // 전체 공지사항 조회
-    public Page<CommunityList> getAllNotice(int page) {
-
-        // 최대 15개의 데이터 페이징
-        return noticeRepository.findAllNoticePage(PageRequest.of(page, 15));
-    }
-
-    // 공지사항 조회
-    @Transactional
-    public Notice getNotice(long boardId) {
-
-        // 조회수 증가
-        noticeRepository.increaseHits(boardId);
-
-        // 공지사항 조회
-        return findAsNotice(boardId);
     }
 
     // 공지사항 수정
@@ -88,7 +67,6 @@ public class NoticeService {
         // 공지사항 삭제
         noticeRepository.delete(notice);
     }
-
 
 
     // 공용 메서드
