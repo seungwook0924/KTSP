@@ -29,6 +29,7 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository{
                         notice.id,
                         notice.title,
                         notice.hits,
+                        notice.user.name,
                         notice.createdAt)
                 )
                 .from(notice)

@@ -1,7 +1,7 @@
 package com.seungwook.ktsp.domain.board.type.community.notice.controller;
 
 import com.seungwook.ktsp.domain.board.common.dto.response.Writer;
-import com.seungwook.ktsp.domain.board.type.community.common.dto.CommunityList;
+import com.seungwook.ktsp.domain.board.type.community.common.dto.response.CommunityListResponse;
 import com.seungwook.ktsp.domain.board.type.community.common.dto.response.CommunityResponse;
 import com.seungwook.ktsp.domain.board.type.community.common.mapper.CommunityMapper;
 import com.seungwook.ktsp.domain.board.type.community.notice.entity.Notice;
@@ -33,14 +33,14 @@ public class NoticeQueryController {
 
     @Operation(summary = "모든 공지사항 조회", description = "모든 공지사항 조회, 페이징 크기 = 15")
     @GetMapping
-    public ResponseEntity<Response<Page<CommunityList>>> viewNoticeList(@RequestParam(defaultValue = "0") int page) {
+    public ResponseEntity<Response<Page<CommunityListResponse>>> viewNoticeList(@RequestParam(defaultValue = "0") int page) {
 
         // 모든 공지사항 조회
-        Page<CommunityList> allNotice = noticeService.getAllNotice(page);
+        Page<CommunityListResponse> response = CommunityMapper.toNoticeList(noticeService.getAllNotice(page));
 
-        return ResponseEntity.ok(Response.<Page<CommunityList>>builder()
+        return ResponseEntity.ok(Response.<Page<CommunityListResponse>>builder()
                 .message("공지사항 조회 성공")
-                .data(allNotice)
+                .data(response)
                 .build());
     }
 
