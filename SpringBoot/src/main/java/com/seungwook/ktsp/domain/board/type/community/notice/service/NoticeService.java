@@ -44,7 +44,7 @@ public class NoticeService {
     // 전체 공지사항 조회
     public Page<CommunityList> getAllNotice(int page) {
 
-        // 최대 10개의 데이터 페이징
+        // 최대 15개의 데이터 페이징
         return noticeRepository.findAllNoticePage(PageRequest.of(page, 15));
     }
 

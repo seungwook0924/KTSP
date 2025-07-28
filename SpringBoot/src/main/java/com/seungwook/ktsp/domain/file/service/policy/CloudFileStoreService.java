@@ -135,7 +135,7 @@ public class CloudFileStoreService implements FileStoreService{
                     .key(key)
                     .build());
         } catch (S3Exception e) {
-            log.error("파일 다운로드 중 S3Excetpion 발생 - key: {}", key, e);
+            log.error("파일 다운로드 중 S3Exception 발생 - key: {}", key, e);
             throw new FileException("파일 다운로드에 실패했습니다.");
         }
     }

@@ -23,5 +23,6 @@ public class CommunityRegisterRequest {
     private final String content;
 
     @Schema(description = "첨부파일 UUID", example = "550e8400-e29b-41d4-a716-446655440000")
+    @Size(max = 5, message = "첨부파일은 최대 5개 까지만 업로드 가능합니다.")
     private final List<String> attachedFiles;
 }
