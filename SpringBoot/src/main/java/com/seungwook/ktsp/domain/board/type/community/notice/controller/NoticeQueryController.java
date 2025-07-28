@@ -10,6 +10,7 @@ import com.seungwook.ktsp.domain.file.dto.AttachedFileInfo;
 import com.seungwook.ktsp.domain.file.service.FileService;
 import com.seungwook.ktsp.domain.user.mapper.UserMapper;
 import com.seungwook.ktsp.domain.user.service.UserQueryService;
+import com.seungwook.ktsp.global.auth.support.AuthHandler;
 import com.seungwook.ktsp.global.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -56,8 +57,11 @@ public class NoticeQueryController {
         // 첨부파일
         List<AttachedFileInfo> attachedFileInfos = fileService.getAttachedFileDownloadPath(boardId);
 
-        // 응답 본문(공지사항 + 작성자 + 첨부파일)
-        CommunityResponse response = CommunityMapper.toNoticeResponse(writer, notice, attachedFileInfos);
+        // 수정 및 삭제 권한 소유 여부
+        boolean manageable = AuthHandler.hasManagePermission(writer.getUserId());
+
+        // 응답 본문(작성자 + 공지사항 + 첨부파일)
+        CommunityResponse response = CommunityMapper.toNoticeResponse(writer, notice, attachedFileInfos, manageable);
 
         return ResponseEntity.ok(Response.<CommunityResponse>builder()
                 .message("공지사항 조회 성공")

@@ -9,13 +9,14 @@ import java.util.List;
 
 public class CommunityMapper {
 
-    public static CommunityResponse toNoticeResponse(Writer writer, Notice notice, List<AttachedFileInfo> attachedFileInfos) {
+    public static CommunityResponse toNoticeResponse(Writer writer, Notice notice, List<AttachedFileInfo> attachedFileInfos, boolean manageable) {
         return new CommunityResponse(
                 writer,
                 notice.getId(),
                 notice.getHits(),
                 notice.getTitle(),
                 notice.getContent(),
+                manageable, // 수정 및 삭제 권한 보유 여부
                 notice.getCreatedAt(),
                 notice.getModifiedAt(),
                 List.of(), // 공지사항은 댓글 없음

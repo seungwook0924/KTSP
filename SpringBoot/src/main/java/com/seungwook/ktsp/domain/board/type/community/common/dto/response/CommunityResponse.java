@@ -18,6 +18,7 @@ public class CommunityResponse {
     private final int hits;
     private final String title;
     private final String content;
+    private final boolean manageable;
     private final LocalDateTime createdAt;
     private final LocalDateTime modifiedAt;
     private final List<CommentResponse> comments;

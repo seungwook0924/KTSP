@@ -15,6 +15,6 @@ public abstract class AccessHandler {
 
     // 관리자 권한 여부
     private boolean isAdmin() {
-        return AuthHandler.getUserRole().equals(UserRole.ADMIN);
+        return AuthHandler.getUserRole() == UserRole.ADMIN;
     }
 }
