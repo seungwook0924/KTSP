@@ -35,7 +35,8 @@ public class ReportCommandService {
         reportRepository.save(report);
 
         // 이미지 및 첨부파일 연결
-        boardFileBindingService.bindFilesToBoard(report, request.getContent(), request.getAttachedFiles());
+        if (request.getAttachedFiles() != null && !request.getAttachedFiles().isEmpty())
+            boardFileBindingService.bindFilesToBoard(report, request.getContent(), request.getAttachedFiles());
     }
 
     @Transactional

@@ -8,7 +8,6 @@ import com.seungwook.ktsp.domain.board.type.community.notice.entity.Notice;
 import com.seungwook.ktsp.domain.board.type.community.notice.service.NoticeQueryService;
 import com.seungwook.ktsp.domain.file.dto.AttachedFileInfo;
 import com.seungwook.ktsp.domain.file.service.FileService;
-import com.seungwook.ktsp.domain.user.mapper.UserMapper;
 import com.seungwook.ktsp.domain.user.service.UserQueryService;
 import com.seungwook.ktsp.global.auth.support.AuthHandler;
 import com.seungwook.ktsp.global.response.Response;
@@ -52,7 +51,7 @@ public class NoticeQueryController {
         Notice notice = noticeQueryService.getNotice(boardId);
 
         // 작성자
-        Writer writer = UserMapper.toWriter(userQueryService.getWriterInfo(notice.getUser().getId()));
+        Writer writer = userQueryService.getWriter(notice.getUser().getId());
 
         // 첨부파일
         List<AttachedFileInfo> attachedFileInfos = fileService.getAttachedFileDownloadPath(boardId);

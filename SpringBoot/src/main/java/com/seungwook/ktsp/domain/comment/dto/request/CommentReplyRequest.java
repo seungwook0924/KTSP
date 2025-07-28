@@ -8,10 +8,10 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class CommentRequest {
+public class CommentReplyRequest {
 
     @Positive(message = "잘못된 접근입니다.")
-    private final long boardId;
+    private final long parentCommentId;
 
     @NotBlank
     @Size(max = 255, message = "댓글은 최대 255 글자까지 입력할 수 있습니다.")

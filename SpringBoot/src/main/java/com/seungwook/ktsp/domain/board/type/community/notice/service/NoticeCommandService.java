@@ -35,7 +35,8 @@ public class NoticeCommandService {
         noticeRepository.save(notice);
 
         // 이미지 및 첨부파일 연결
-        boardFileBindingService.bindFilesToBoard(notice, request.getContent(), request.getAttachedFiles());
+        if (request.getAttachedFiles() != null && !request.getAttachedFiles().isEmpty())
+            boardFileBindingService.bindFilesToBoard(notice, request.getContent(), request.getAttachedFiles());
     }
 
     // 공지사항 수정
@@ -47,7 +48,8 @@ public class NoticeCommandService {
         Notice notice = findAsNotice(boardId);
 
         // 이미지 및 첨부파일 수정 반영
-        boardFileBindingService.updateBoundFiles(notice, request.getContent(), request.getAttachedFiles());
+        if (request.getAttachedFiles() != null && !request.getAttachedFiles().isEmpty())
+            boardFileBindingService.updateBoundFiles(notice, request.getContent(), request.getAttachedFiles());
 
         // 공지사항 업데이트
         notice.updateNotice(request.getTitle(), request.getContent());

@@ -6,6 +6,7 @@ import com.seungwook.ktsp.domain.board.type.community.common.dto.response.Commun
 import com.seungwook.ktsp.domain.board.type.community.common.dto.response.CommunityResponse;
 import com.seungwook.ktsp.domain.board.type.community.notice.entity.Notice;
 import com.seungwook.ktsp.domain.board.type.community.report.entity.Report;
+import com.seungwook.ktsp.domain.comment.dto.response.CommentResponse;
 import com.seungwook.ktsp.domain.file.dto.AttachedFileInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -82,7 +83,7 @@ public class CommunityMapper {
         return new PageImpl<>(content, communityLists.getPageable(), communityLists.getTotalElements());
     }
 
-    public static CommunityResponse toReportResponse(Writer writer, Report report, List<AttachedFileInfo> attachedFileInfos, boolean manageable) {
+    public static CommunityResponse toReportResponse(Writer writer, Report report, List<AttachedFileInfo> attachedFileInfos, boolean manageable, List<CommentResponse> comments) {
         return new CommunityResponse(
                 writer,
                 report.getId(),
@@ -92,7 +93,7 @@ public class CommunityMapper {
                 manageable, // 수정 및 삭제 권한 보유 여부
                 report.getCreatedAt(),
                 report.getModifiedAt(),
-                List.of(),
+                comments,
                 attachedFileInfos
         );
     }

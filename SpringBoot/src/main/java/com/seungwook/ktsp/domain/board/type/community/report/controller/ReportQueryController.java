@@ -6,11 +6,11 @@ import com.seungwook.ktsp.domain.board.type.community.common.dto.response.Commun
 import com.seungwook.ktsp.domain.board.type.community.common.mapper.CommunityMapper;
 import com.seungwook.ktsp.domain.board.type.community.report.entity.Report;
 import com.seungwook.ktsp.domain.board.type.community.report.service.ReportQueryService;
+import com.seungwook.ktsp.domain.comment.dto.response.CommentResponse;
+import com.seungwook.ktsp.domain.comment.service.CommentQueryService;
 import com.seungwook.ktsp.domain.file.dto.AttachedFileInfo;
 import com.seungwook.ktsp.domain.file.service.FileService;
-import com.seungwook.ktsp.domain.user.dto.WriterInfo;
 import com.seungwook.ktsp.domain.user.entity.enums.UserRole;
-import com.seungwook.ktsp.domain.user.mapper.UserMapper;
 import com.seungwook.ktsp.domain.user.service.UserQueryService;
 import com.seungwook.ktsp.global.auth.support.AuthHandler;
 import com.seungwook.ktsp.global.response.Response;
@@ -26,12 +26,13 @@ import java.util.List;
 @Tag(name = "리포트")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/public/service/notice")
+@RequestMapping("/service/board/report")
 public class ReportQueryController {
 
     private final FileService fileService;
     private final ReportQueryService reportQueryService;
     private final UserQueryService userQueryService;
+    private final CommentQueryService commentQueryService;
 
     @Operation(summary = "모든 리포트 조회", description = "일반 유저라면 본인이 작성한 것만, 관리자라면 모든 리포트 조회, 페이징 크기 = 15")
     @GetMapping
@@ -51,7 +52,7 @@ public class ReportQueryController {
                 .build());
     }
 
-    @Operation(summary = "공지사항 상세 조회", description = "특정 공지사항 조회")
+    @Operation(summary = "리포트 상세 조회", description = "특정 리포트 조회")
     @GetMapping("/{boardId}")
     public ResponseEntity<Response<CommunityResponse>> viewReport(@PathVariable long boardId) {
 
@@ -59,16 +60,19 @@ public class ReportQueryController {
         Report report = reportQueryService.getReport(boardId);
 
         // 작성자
-        Writer writer = UserMapper.toWriter(userQueryService.getWriterInfo(report.getUser().getId()));
+        Writer writer = userQueryService.getWriter(report.getUser().getId());
 
         // 첨부파일
         List<AttachedFileInfo> attachedFileInfos = fileService.getAttachedFileDownloadPath(boardId);
 
+        // 댓글
+        List<CommentResponse> comments = commentQueryService.getBoardComments(report);
+
         // 수정 및 삭제 권한 소유 여부
         boolean manageable = AuthHandler.hasManagePermission(writer.getUserId());
 
-        // 응답 본문(작성자 + 공지사항 + 첨부파일)
-        CommunityResponse response = CommunityMapper.toReportResponse(writer, report, attachedFileInfos, manageable);
+        // 응답 본문(작성자 + 리포트 + 첨부파일)
+        CommunityResponse response = CommunityMapper.toReportResponse(writer, report, attachedFileInfos, manageable, comments);
 
         return ResponseEntity.ok(Response.<CommunityResponse>builder()
                 .message("공지사항 조회 성공")

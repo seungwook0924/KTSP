@@ -1,5 +1,6 @@
 package com.seungwook.ktsp.domain.comment.service.domain;
 
+import com.seungwook.ktsp.domain.comment.dto.CommentInfo;
 import com.seungwook.ktsp.domain.comment.entity.Comment;
 import com.seungwook.ktsp.domain.comment.exception.CommentNotFoundException;
 import com.seungwook.ktsp.domain.comment.repository.CommentRepository;
@@ -24,11 +25,6 @@ public class CommentDomainService {
         commentRepository.delete(comment);
     }
 
-    // 해당 게시글의 모든 부모 댓글 반환
-    public List<Comment> findParentComment(long boardId) {
-        return commentRepository.findParentCommentsByBoardId(boardId);
-    }
-
     // 댓글 작성자 userId 리턴
     public Long findWriterIdById(long commentId) {
         return commentRepository.findWriterIdById(commentId)
@@ -41,6 +37,11 @@ public class CommentDomainService {
             throw new CommentNotFoundException();
 
         return commentRepository.getReferenceById(commentId);
+    }
+
+    // 특정 게시글의 모든 댓글 반환
+    public List<CommentInfo> getComments(long boardId) {
+        return commentRepository.getCommentsByBoardId(boardId);
     }
 
     public Comment findById(long commentId) {

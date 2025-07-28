@@ -3,6 +3,7 @@ package com.seungwook.ktsp.domain.comment.entity;
 import com.seungwook.ktsp.domain.board.common.entity.Board;
 import com.seungwook.ktsp.domain.comment.exception.CommentException;
 import com.seungwook.ktsp.domain.user.entity.User;
+import com.seungwook.ktsp.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Comment {
+public class Comment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,6 +58,7 @@ public class Comment {
         return new Comment(user, parent.getBoard(), comment, parent);
     }
 
+    // 댓글 수정
     public void updateComment(String comment) {
         this.comment = comment;
     }
