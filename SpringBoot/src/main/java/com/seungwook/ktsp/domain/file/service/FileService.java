@@ -90,7 +90,7 @@ public class FileService {
 
         // 파일 삭제 권한이 있는지 검사
         boolean isNotResourceOwner = uploadFile.getUser().getId() != requestUserId;
-        boolean isNotAdmin = !requestUserRole.equals(UserRole.ADMIN);
+        boolean isNotAdmin = requestUserRole != UserRole.ADMIN;
         if (isNotResourceOwner && isNotAdmin)
             throw new FileException(HttpStatus.FORBIDDEN, "파일을 삭제할 권한이 없습니다.");
 

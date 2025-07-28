@@ -23,7 +23,7 @@ public class Report extends Board {
 
     // 정적 팩터리
     public static Report createReport(User user, String title, String content) {
-        return new Report(user, MainType.COMMUNITY, SubType.NOTICE, title, content);
+        return new Report(user, MainType.COMMUNITY, SubType.REPORT, title, content);
     }
 
     // 게시글 수정
