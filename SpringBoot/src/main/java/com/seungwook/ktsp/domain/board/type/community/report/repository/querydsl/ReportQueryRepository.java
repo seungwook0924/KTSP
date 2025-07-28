@@ -8,4 +8,7 @@ public interface ReportQueryRepository {
 
     // 본인이 작성한 모든 리포트 리턴
     Page<CommunityList> getUserReports(Long userId, Pageable pageable);
+
+    // 관리자 전용 모든 리포트 리턴
+    Page<CommunityList> getAllReports(Pageable pageable);
 }

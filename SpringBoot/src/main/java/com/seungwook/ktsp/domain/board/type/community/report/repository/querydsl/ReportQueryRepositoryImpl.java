@@ -20,10 +20,9 @@ public class ReportQueryRepositoryImpl implements ReportQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
+    // 본인이 작성한 Report 리스트 페이징 조회
     @Override
     public Page<CommunityList> getUserReports(Long userId, Pageable pageable) {
-
-        // 본인이 작성한 Report 리스트 페이징 조회
         List<CommunityList> contents = queryFactory
                 .select(Projections.constructor(
                         CommunityList.class,
@@ -46,6 +45,36 @@ public class ReportQueryRepositoryImpl implements ReportQueryRepository {
                         .select(report.count())
                         .from(report)
                         .where(report.user.id.eq(userId))
+                        .fetchOne()
+        ).orElse(0L);
+
+
+        return new PageImpl<>(contents, pageable, total);
+    }
+
+    // 본인이 작성한 Report 리스트 페이징 조회
+    @Override
+    public Page<CommunityList> getAllReports(Pageable pageable) {
+        List<CommunityList> contents = queryFactory
+                .select(Projections.constructor(
+                        CommunityList.class,
+                        report.id,
+                        report.title,
+                        report.hits,
+                        report.user.name,
+                        report.createdAt
+                ))
+                .from(report)
+                .orderBy(report.id.desc()) // 최신순 정렬
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        // 전체 개수 조회
+        Long total = Optional.ofNullable(
+                queryFactory
+                        .select(report.count())
+                        .from(report)
                         .fetchOne()
         ).orElse(0L);
 

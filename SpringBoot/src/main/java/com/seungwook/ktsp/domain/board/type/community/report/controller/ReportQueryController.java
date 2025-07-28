@@ -1,13 +1,15 @@
-package com.seungwook.ktsp.domain.board.type.community.notice.controller;
+package com.seungwook.ktsp.domain.board.type.community.report.controller;
 
 import com.seungwook.ktsp.domain.board.common.dto.response.Writer;
 import com.seungwook.ktsp.domain.board.type.community.common.dto.response.CommunityListResponse;
 import com.seungwook.ktsp.domain.board.type.community.common.dto.response.CommunityResponse;
 import com.seungwook.ktsp.domain.board.type.community.common.mapper.CommunityMapper;
-import com.seungwook.ktsp.domain.board.type.community.notice.entity.Notice;
-import com.seungwook.ktsp.domain.board.type.community.notice.service.NoticeService;
+import com.seungwook.ktsp.domain.board.type.community.report.entity.Report;
+import com.seungwook.ktsp.domain.board.type.community.report.service.ReportQueryService;
 import com.seungwook.ktsp.domain.file.dto.AttachedFileInfo;
 import com.seungwook.ktsp.domain.file.service.FileService;
+import com.seungwook.ktsp.domain.user.dto.WriterInfo;
+import com.seungwook.ktsp.domain.user.entity.enums.UserRole;
 import com.seungwook.ktsp.domain.user.mapper.UserMapper;
 import com.seungwook.ktsp.domain.user.service.UserQueryService;
 import com.seungwook.ktsp.global.auth.support.AuthHandler;
@@ -21,38 +23,43 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "공지사항")
+@Tag(name = "리포트")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/public/board/notice")
-public class NoticeQueryController {
+@RequestMapping("/public/service/notice")
+public class ReportQueryController {
 
-    private final UserQueryService userQueryService;
-    private final NoticeService noticeService;
     private final FileService fileService;
+    private final ReportQueryService reportQueryService;
+    private final UserQueryService userQueryService;
 
-    @Operation(summary = "모든 공지사항 조회", description = "모든 공지사항 조회, 페이징 크기 = 15")
+    @Operation(summary = "모든 리포트 조회", description = "일반 유저라면 본인이 작성한 것만, 관리자라면 모든 리포트 조회, 페이징 크기 = 15")
     @GetMapping
-    public ResponseEntity<Response<Page<CommunityListResponse>>> viewNoticeList(@RequestParam(defaultValue = "0") int page) {
+    public ResponseEntity<Response<Page<CommunityListResponse>>> viewReportList(@RequestParam(defaultValue = "0") int page) {
 
-        // 모든 공지사항 조회
-        Page<CommunityListResponse> response = CommunityMapper.toNoticeList(noticeService.getAllNotice(page));
+        Page<CommunityListResponse> response;
+
+        // 관리자라면 모든 리포트, 일반 유저라면 본인이 작성한 것만 리턴
+        if (AuthHandler.getUserRole() == UserRole.ADMIN)
+            response = CommunityMapper.toReportList(reportQueryService.getAllReports(page));
+        else
+            response = CommunityMapper.toReportList(reportQueryService.getUserReports(AuthHandler.getUserId(), page));
 
         return ResponseEntity.ok(Response.<Page<CommunityListResponse>>builder()
-                .message("모든 공지사항 조회 성공")
+                .message("모든 리포트 조회 성공")
                 .data(response)
                 .build());
     }
 
     @Operation(summary = "공지사항 상세 조회", description = "특정 공지사항 조회")
     @GetMapping("/{boardId}")
-    public ResponseEntity<Response<CommunityResponse>> viewNotice(@PathVariable long boardId) {
+    public ResponseEntity<Response<CommunityResponse>> viewReport(@PathVariable long boardId) {
 
-        // 공지사항
-        Notice notice = noticeService.getNotice(boardId);
+        // 리포트
+        Report report = reportQueryService.getReport(boardId);
 
         // 작성자
-        Writer writer = UserMapper.toWriter(userQueryService.getWriterInfo(notice.getUser().getId()));
+        Writer writer = UserMapper.toWriter(userQueryService.getWriterInfo(report.getUser().getId()));
 
         // 첨부파일
         List<AttachedFileInfo> attachedFileInfos = fileService.getAttachedFileDownloadPath(boardId);
@@ -61,7 +68,7 @@ public class NoticeQueryController {
         boolean manageable = AuthHandler.hasManagePermission(writer.getUserId());
 
         // 응답 본문(작성자 + 공지사항 + 첨부파일)
-        CommunityResponse response = CommunityMapper.toNoticeResponse(writer, notice, attachedFileInfos, manageable);
+        CommunityResponse response = CommunityMapper.toReportResponse(writer, report, attachedFileInfos, manageable);
 
         return ResponseEntity.ok(Response.<CommunityResponse>builder()
                 .message("공지사항 조회 성공")
