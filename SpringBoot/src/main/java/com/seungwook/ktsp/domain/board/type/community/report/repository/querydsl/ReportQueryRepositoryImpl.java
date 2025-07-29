@@ -52,7 +52,7 @@ public class ReportQueryRepositoryImpl implements ReportQueryRepository {
         return new PageImpl<>(contents, pageable, total);
     }
 
-    // 본인이 작성한 Report 리스트 페이징 조회
+    // 모든 Report 리스트 페이징 조회 (관리자용)
     @Override
     public Page<CommunityList> getAllReports(Pageable pageable) {
         List<CommunityList> contents = queryFactory

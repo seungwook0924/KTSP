@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "리포트")
+@Tag(name = "리포트", description = "리포트 관련 관련 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/service/board/report")

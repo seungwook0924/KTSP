@@ -6,11 +6,14 @@ import com.seungwook.ktsp.domain.comment.dto.request.CommentUpdateRequest;
 import com.seungwook.ktsp.domain.comment.service.CommentCommandService;
 import com.seungwook.ktsp.global.auth.support.AuthHandler;
 import com.seungwook.ktsp.global.response.Response;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Comment", description = "댓글 관련 관련 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/service/comment")
@@ -18,6 +21,7 @@ public class CommentCommandController {
 
     private final CommentCommandService commentCommandService;
 
+    @Operation(summary = "댓글 등록")
     @PostMapping
     public ResponseEntity<Response<Void>> registerComment(@Valid @RequestBody CommentRequest request) {
 
@@ -28,8 +32,9 @@ public class CommentCommandController {
                 .build());
     }
 
+    @Operation(summary = "대댓글 등록")
     @PostMapping("/reply")
-    public ResponseEntity<Response<Void>> reply(@Valid @RequestBody CommentReplyRequest request) {
+    public ResponseEntity<Response<Void>> registerReply(@Valid @RequestBody CommentReplyRequest request) {
 
         commentCommandService.registerReply(AuthHandler.getUserId(), request);
 
@@ -38,6 +43,7 @@ public class CommentCommandController {
                 .build());
     }
 
+    @Operation(summary = "댓글, 대댓글 수정")
     @PatchMapping
     public ResponseEntity<Response<Void>> updateComment(@Valid @RequestBody CommentUpdateRequest request) {
 
@@ -48,6 +54,7 @@ public class CommentCommandController {
                 .build());
     }
 
+    @Operation(summary = "댓글, 대댓글 삭제")
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Response<Void>> deleteComment(@PathVariable long commentId) {
 

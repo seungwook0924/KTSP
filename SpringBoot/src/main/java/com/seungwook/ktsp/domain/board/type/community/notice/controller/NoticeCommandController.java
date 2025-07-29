@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "공지사항")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/admin/notice")
+@RequestMapping("/admin/board/notice")
 public class NoticeCommandController {
 
     private final NoticeCommandService noticeCommandService;

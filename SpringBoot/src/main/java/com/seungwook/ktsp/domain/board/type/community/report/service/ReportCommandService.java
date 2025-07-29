@@ -52,7 +52,7 @@ public class ReportCommandService {
         boardFileBindingService.updateBoundFiles(report, request.getContent(), request.getAttachedFiles());
 
         // 리포트 업데이트
-        report.updateReport(report.getTitle(), request.getContent());
+        report.updateReport(request.getTitle(), request.getContent());
     }
 
     // 공지사항 삭제

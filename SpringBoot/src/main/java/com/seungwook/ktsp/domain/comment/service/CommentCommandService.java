@@ -77,6 +77,7 @@ public class CommentCommandService {
     }
 
     // 특정 게시글에 해당하는 모든 댓글 삭제
+    @Transactional
     public void deleteAllComment(Board board) {
         commentDomainService.deleteAllByBoard(board);
     }
