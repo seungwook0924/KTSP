@@ -28,10 +28,10 @@ public class BoardFileBindingService {
 
     // 게시글 생성시 연결
     @Transactional
-    public void bindFilesToBoard(Board board, String content, List<String> attachedFiles) {
+    public void bindFilesToBoard(Board board, String content, List<String> files) {
 
-        // attachedFiles이 null인지 검사
-        if (attachedFiles == null || attachedFiles.isEmpty()) return;
+        // Optional로 래핑
+        List<String> attachedFiles = Optional.ofNullable(files).orElse(Collections.emptyList());
 
         // 이미지 + 첨부파일 uuid 통합
         Set<String> requestedUuids = mergeImageAndAttachmentUuids(content, attachedFiles);
@@ -42,13 +42,10 @@ public class BoardFileBindingService {
 
     // 게시글 수정시 연결
     @Transactional
-    public void updateBoundFiles(Board board, String content, List<String> attachedFiles) {
+    public void updateBoundFiles(Board board, String content, List<String> files) {
 
-        // attachedFiles이 null인지 검사
-        if (attachedFiles == null || attachedFiles.isEmpty()) {
-            deleteBoundFiles(board); // 게시글에 관련된 모든 파일 삭제
-            return;
-        }
+        // Optional로 래핑
+        List<String> attachedFiles = Optional.ofNullable(files).orElse(Collections.emptyList());
 
         // 기존 연결된 BoardFile 조회
         List<BoardFile> existingBoardFiles = boardFileDomainService.findByBoard(board);
