@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -44,5 +45,11 @@ public class UploadFileDomainService {
     @Transactional
     public void delete(UploadFile uploadFile) {
         uploadFileRepository.delete(uploadFile);
+    }
+
+    // 지정된 시간 이전에 생성되고 BoardFile에 연결되지 않은 UploadFile 목록 조회
+    @Transactional(readOnly = true)
+    public List<UploadFile> findOrphanUploadFies(LocalDateTime threshold) {
+        return uploadFileRepository.findOrphanUploadFies(threshold);
     }
 }
