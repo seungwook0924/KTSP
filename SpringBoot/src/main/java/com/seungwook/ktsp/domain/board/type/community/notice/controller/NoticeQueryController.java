@@ -1,14 +1,13 @@
 package com.seungwook.ktsp.domain.board.type.community.notice.controller;
 
 import com.seungwook.ktsp.domain.board.common.dto.response.Writer;
-import com.seungwook.ktsp.domain.board.type.community.common.dto.CommunityList;
+import com.seungwook.ktsp.domain.board.type.community.common.dto.response.CommunityListResponse;
 import com.seungwook.ktsp.domain.board.type.community.common.dto.response.CommunityResponse;
 import com.seungwook.ktsp.domain.board.type.community.common.mapper.CommunityMapper;
 import com.seungwook.ktsp.domain.board.type.community.notice.entity.Notice;
-import com.seungwook.ktsp.domain.board.type.community.notice.service.NoticeService;
+import com.seungwook.ktsp.domain.board.type.community.notice.service.NoticeQueryService;
 import com.seungwook.ktsp.domain.file.dto.AttachedFileInfo;
 import com.seungwook.ktsp.domain.file.service.FileService;
-import com.seungwook.ktsp.domain.user.mapper.UserMapper;
 import com.seungwook.ktsp.domain.user.service.UserQueryService;
 import com.seungwook.ktsp.global.auth.support.AuthHandler;
 import com.seungwook.ktsp.global.response.Response;
@@ -28,19 +27,19 @@ import java.util.List;
 public class NoticeQueryController {
 
     private final UserQueryService userQueryService;
-    private final NoticeService noticeService;
+    private final NoticeQueryService noticeQueryService;
     private final FileService fileService;
 
     @Operation(summary = "모든 공지사항 조회", description = "모든 공지사항 조회, 페이징 크기 = 15")
     @GetMapping
-    public ResponseEntity<Response<Page<CommunityList>>> viewNoticeList(@RequestParam(defaultValue = "0") int page) {
+    public ResponseEntity<Response<Page<CommunityListResponse>>> viewNoticeList(@RequestParam(defaultValue = "0") int page) {
 
         // 모든 공지사항 조회
-        Page<CommunityList> allNotice = noticeService.getAllNotice(page);
+        Page<CommunityListResponse> response = CommunityMapper.toNoticeList(noticeQueryService.getAllNotice(page));
 
-        return ResponseEntity.ok(Response.<Page<CommunityList>>builder()
-                .message("공지사항 조회 성공")
-                .data(allNotice)
+        return ResponseEntity.ok(Response.<Page<CommunityListResponse>>builder()
+                .message("모든 공지사항 조회 성공")
+                .data(response)
                 .build());
     }
 
@@ -49,10 +48,10 @@ public class NoticeQueryController {
     public ResponseEntity<Response<CommunityResponse>> viewNotice(@PathVariable long boardId) {
 
         // 공지사항
-        Notice notice = noticeService.getNotice(boardId);
+        Notice notice = noticeQueryService.getNotice(boardId);
 
         // 작성자
-        Writer writer = UserMapper.toWriter(userQueryService.getWriterInfo(notice.getUser().getId()));
+        Writer writer = userQueryService.getWriter(notice.getUser().getId());
 
         // 첨부파일
         List<AttachedFileInfo> attachedFileInfos = fileService.getAttachedFileDownloadPath(boardId);

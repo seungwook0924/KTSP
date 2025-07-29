@@ -2,6 +2,7 @@ package com.seungwook.ktsp.domain.comment.service;
 
 import com.seungwook.ktsp.domain.board.common.entity.Board;
 import com.seungwook.ktsp.domain.board.common.service.BoardDomainService;
+import com.seungwook.ktsp.domain.comment.dto.request.CommentReplyRequest;
 import com.seungwook.ktsp.domain.comment.dto.request.CommentRequest;
 import com.seungwook.ktsp.domain.comment.dto.request.CommentUpdateRequest;
 import com.seungwook.ktsp.domain.comment.entity.Comment;
@@ -24,17 +25,42 @@ public class CommentCommandService {
     // 댓글 등록
     @Transactional
     public void registerComment(long userId, CommentRequest request) {
+
+        // User 프록시
         User user = userDomainService.getReferenceById(userId);
+
+        // Board 프록시
         Board board = boardDomainService.getReferenceById(request.getBoardId());
+
+        // 댓글 생성 및 저장
         Comment comment = Comment.createComment(user, board, request.getComment());
+        commentDomainService.save(comment);
+    }
+
+    // 대댓글 등록
+    @Transactional
+    public void registerReply(long userId, CommentReplyRequest request) {
+
+        // User 프록시
+        User user = userDomainService.getReferenceById(userId);
+
+        // 부모 댓글 프록시
+        Comment parentComment = commentDomainService.getReferenceById(request.getParentCommentId());
+
+        // 댓글 생성 및 저장
+        Comment comment = Comment.createReply(user, parentComment, request.getComment());
         commentDomainService.save(comment);
     }
 
     // 댓글 수정
     @Transactional
-    @PreAuthorize("@commentAccessHandler.check(#commentId)")
-    public void updateComment(long commentId, CommentUpdateRequest request) {
-        Comment comment = commentDomainService.getReferenceById(commentId);
+    @PreAuthorize("@commentAccessHandler.check(#request.getCommentId())")
+    public void updateComment(CommentUpdateRequest request) {
+
+        // Comment 프록시
+        Comment comment = commentDomainService.getReferenceById(request.getCommentId());
+
+        // 댓글 수정
         comment.updateComment(request.getComment());
     }
 
@@ -42,7 +68,17 @@ public class CommentCommandService {
     @Transactional
     @PreAuthorize("@commentAccessHandler.check(#commentId)")
     public void deleteComment(long commentId) {
+
+        // Comment 프록시
         Comment comment = commentDomainService.getReferenceById(commentId);
+
+        // 댓글 삭제
         commentDomainService.delete(comment);
+    }
+
+    // 특정 게시글에 해당하는 모든 댓글 삭제
+    @Transactional
+    public void deleteAllComment(Board board) {
+        commentDomainService.deleteAllByBoard(board);
     }
 }
