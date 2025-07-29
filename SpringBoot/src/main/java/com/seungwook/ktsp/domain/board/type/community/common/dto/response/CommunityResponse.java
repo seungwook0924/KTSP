@@ -32,7 +32,7 @@ public class CommunityResponse {
     @JsonFormat(pattern = "yy.MM.dd-HH:mm:ss")
     private final LocalDateTime modifiedAt;
 
-    private final List<CommentResponse> comments;
-
     private final List<AttachedFileInfo> attachedFiles;
+
+    private final List<CommentResponse> comments;
 }

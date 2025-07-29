@@ -12,9 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,6 +30,9 @@ public class BoardFileBindingService {
     @Transactional
     public void bindFilesToBoard(Board board, String content, List<String> attachedFiles) {
 
+        // attachedFiles이 null인지 검사
+        if (attachedFiles == null || attachedFiles.isEmpty()) return;
+
         // 이미지 + 첨부파일 uuid 통합
         Set<String> requestedUuids = mergeImageAndAttachmentUuids(content, attachedFiles);
 
@@ -42,6 +43,12 @@ public class BoardFileBindingService {
     // 게시글 수정시 연결
     @Transactional
     public void updateBoundFiles(Board board, String content, List<String> attachedFiles) {
+
+        // attachedFiles이 null인지 검사
+        if (attachedFiles == null || attachedFiles.isEmpty()) {
+            deleteBoundFiles(board); // 게시글에 관련된 모든 파일 삭제
+            return;
+        }
 
         // 기존 연결된 BoardFile 조회
         List<BoardFile> existingBoardFiles = boardFileDomainService.findByBoard(board);
@@ -69,7 +76,7 @@ public class BoardFileBindingService {
         addFiles(uuidsToAdd, board);
     }
 
-    // 게시글 삭제시 파일 삭제 로직
+    // 특정 게시글에 연결된 모든 파일 삭제 로직
     public void deleteBoundFiles(Board board) {
 
         // 연결된 모든 BoardFile 조회

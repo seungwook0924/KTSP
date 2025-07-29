@@ -52,8 +52,8 @@ public class CommunityMapper {
                 manageable, // 수정 및 삭제 권한 보유 여부
                 notice.getCreatedAt(),
                 notice.getModifiedAt(),
-                List.of(), // 공지사항은 댓글 없음
-                attachedFileInfos
+                attachedFileInfos,
+                List.of() // 공지사항은 댓글 없음
         );
     }
 
@@ -93,8 +93,8 @@ public class CommunityMapper {
                 manageable, // 수정 및 삭제 권한 보유 여부
                 report.getCreatedAt(),
                 report.getModifiedAt(),
-                comments,
-                attachedFileInfos
+                attachedFileInfos,
+                comments
         );
     }
 }
