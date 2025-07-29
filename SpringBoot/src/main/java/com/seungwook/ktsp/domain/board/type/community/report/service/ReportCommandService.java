@@ -6,6 +6,7 @@ import com.seungwook.ktsp.domain.board.type.community.common.dto.request.Communi
 import com.seungwook.ktsp.domain.board.type.community.common.dto.request.CommunityUpdateRequest;
 import com.seungwook.ktsp.domain.board.type.community.report.entity.Report;
 import com.seungwook.ktsp.domain.board.type.community.report.repository.ReportRepository;
+import com.seungwook.ktsp.domain.comment.service.CommentCommandService;
 import com.seungwook.ktsp.domain.user.entity.User;
 import com.seungwook.ktsp.domain.user.service.UserDomainService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class ReportCommandService {
     private final ReportRepository reportRepository;
     private final UserDomainService userDomainService;
     private final BoardFileBindingService boardFileBindingService;
+    private final CommentCommandService commentCommandService;
 
     // 리포트 등록
     @Transactional
@@ -60,6 +62,9 @@ public class ReportCommandService {
 
         // 리포트 조회
         Report report = findAsReport(boardId);
+
+        // 댓글 삭제
+        commentCommandService.deleteAllComment(report);
 
         // 연결된 파일 삭제
         boardFileBindingService.deleteBoundFiles(report);

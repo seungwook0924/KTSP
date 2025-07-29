@@ -75,4 +75,9 @@ public class CommentCommandService {
         // 댓글 삭제
         commentDomainService.delete(comment);
     }
+
+    // 특정 게시글에 해당하는 모든 댓글 삭제
+    public void deleteAllComment(Board board) {
+        commentDomainService.deleteAllByBoard(board);
+    }
 }

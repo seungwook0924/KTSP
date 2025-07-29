@@ -1,5 +1,6 @@
 package com.seungwook.ktsp.domain.comment.service.domain;
 
+import com.seungwook.ktsp.domain.board.common.entity.Board;
 import com.seungwook.ktsp.domain.comment.dto.CommentInfo;
 import com.seungwook.ktsp.domain.comment.entity.Comment;
 import com.seungwook.ktsp.domain.comment.exception.CommentNotFoundException;
@@ -42,6 +43,11 @@ public class CommentDomainService {
     // 특정 게시글의 모든 댓글 반환
     public List<CommentInfo> getComments(long boardId) {
         return commentRepository.getCommentsByBoardId(boardId);
+    }
+
+    // 특정 게시글의 모든 댓글 삭제
+    public void deleteAllByBoard(Board board) {
+        commentRepository.deleteAllByBoard(board);
     }
 
     public Comment findById(long commentId) {

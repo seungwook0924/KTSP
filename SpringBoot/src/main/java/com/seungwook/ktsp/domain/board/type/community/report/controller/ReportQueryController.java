@@ -75,7 +75,7 @@ public class ReportQueryController {
         CommunityResponse response = CommunityMapper.toReportResponse(writer, report, attachedFileInfos, manageable, comments);
 
         return ResponseEntity.ok(Response.<CommunityResponse>builder()
-                .message("공지사항 조회 성공")
+                .message("리포트 조회 성공")
                 .data(response)
                 .build());
     }
