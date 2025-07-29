@@ -25,7 +25,7 @@ public class NoticeCommandService {
 
     // 공지사항 등록
     @Transactional
-    public void registerNotice(long userId, CommunityRegisterRequest request) {
+    public Notice registerNotice(long userId, CommunityRegisterRequest request) {
 
         // 작성자 조회
         User user = userDomainService.getReferenceById(userId);
@@ -37,12 +37,13 @@ public class NoticeCommandService {
         // 이미지 및 첨부파일 연결
         boardFileBindingService.bindFilesToBoard(notice, request.getContent(), request.getAttachedFiles());
 
+        return notice;
     }
 
     // 공지사항 수정
     @Transactional
     @PreAuthorize("@boardAccessHandler.check(#boardId)")
-    public void updateNotice(long boardId, CommunityUpdateRequest request) {
+    public Notice updateNotice(long boardId, CommunityUpdateRequest request) {
 
         // 공지사항 조회
         Notice notice = findAsNotice(boardId);
@@ -52,6 +53,8 @@ public class NoticeCommandService {
 
         // 공지사항 업데이트
         notice.updateNotice(request.getTitle(), request.getContent());
+
+        return notice;
     }
 
     // 공지사항 삭제

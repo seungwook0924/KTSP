@@ -1,7 +1,10 @@
 package com.seungwook.ktsp.domain.board.type.community.notice.controller;
 
+import com.seungwook.ktsp.domain.board.common.dto.response.CommandResponse;
+import com.seungwook.ktsp.domain.board.common.mapper.CommandMapper;
 import com.seungwook.ktsp.domain.board.type.community.common.dto.request.CommunityRegisterRequest;
 import com.seungwook.ktsp.domain.board.type.community.common.dto.request.CommunityUpdateRequest;
+import com.seungwook.ktsp.domain.board.type.community.notice.entity.Notice;
 import com.seungwook.ktsp.domain.board.type.community.notice.service.NoticeCommandService;
 import com.seungwook.ktsp.global.auth.support.AuthHandler;
 import com.seungwook.ktsp.global.response.Response;
@@ -22,23 +25,29 @@ public class NoticeCommandController {
 
     @Operation(summary = "공지사항 등록", description = "공지사항은 Admin만 등록 가능")
     @PostMapping
-    public ResponseEntity<Response<Void>> registerNotice(@Valid @RequestBody CommunityRegisterRequest request) {
+    public ResponseEntity<Response<CommandResponse>> registerNotice(@Valid @RequestBody CommunityRegisterRequest request) {
 
-        noticeCommandService.registerNotice(AuthHandler.getUserId(), request);
+        Notice notice = noticeCommandService.registerNotice(AuthHandler.getUserId(), request);
 
-        return ResponseEntity.ok(Response.<Void>builder()
+        CommandResponse response = CommandMapper.toCommandResponse(notice);
+
+        return ResponseEntity.ok(Response.<CommandResponse>builder()
                 .message("공지사항 등록 성공")
+                .data(response)
                 .build());
     }
 
     @Operation(summary = "공지사항 수정")
     @PatchMapping("/{boardId}")
-    public ResponseEntity<Response<Void>> updateNotice(@PathVariable long boardId, @Valid @RequestBody CommunityUpdateRequest request) {
+    public ResponseEntity<Response<CommandResponse>> updateNotice(@PathVariable long boardId, @Valid @RequestBody CommunityUpdateRequest request) {
 
-        noticeCommandService.updateNotice(boardId, request);
+        Notice notice = noticeCommandService.updateNotice(boardId, request);
 
-        return ResponseEntity.ok(Response.<Void>builder()
+        CommandResponse response = CommandMapper.toCommandResponse(notice);
+
+        return ResponseEntity.ok(Response.<CommandResponse>builder()
                 .message("공지사항 수정 성공")
+                .data(response)
                 .build());
     }
 

@@ -1,7 +1,10 @@
 package com.seungwook.ktsp.domain.board.type.community.report.controller;
 
+import com.seungwook.ktsp.domain.board.common.dto.response.CommandResponse;
+import com.seungwook.ktsp.domain.board.common.mapper.CommandMapper;
 import com.seungwook.ktsp.domain.board.type.community.common.dto.request.CommunityRegisterRequest;
 import com.seungwook.ktsp.domain.board.type.community.common.dto.request.CommunityUpdateRequest;
+import com.seungwook.ktsp.domain.board.type.community.report.entity.Report;
 import com.seungwook.ktsp.domain.board.type.community.report.service.ReportCommandService;
 import com.seungwook.ktsp.global.auth.support.AuthHandler;
 import com.seungwook.ktsp.global.response.Response;
@@ -22,23 +25,29 @@ public class ReportCommandController {
 
     @Operation(summary = "리포트 등록")
     @PostMapping
-    public ResponseEntity<Response<Void>> registerReport(@Valid @RequestBody CommunityRegisterRequest request) {
+    public ResponseEntity<Response<CommandResponse>> registerReport(@Valid @RequestBody CommunityRegisterRequest request) {
 
-        reportCommandService.registerReport(AuthHandler.getUserId(), request);
+        Report report = reportCommandService.registerReport(AuthHandler.getUserId(), request);
 
-        return ResponseEntity.ok(Response.<Void>builder()
+        CommandResponse response = CommandMapper.toCommandResponse(report);
+
+        return ResponseEntity.ok(Response.<CommandResponse>builder()
                 .message("리포트 등록 성공")
+                .data(response)
                 .build());
     }
 
     @Operation(summary = "리포트 수정")
     @PatchMapping("/{boardId}")
-    public ResponseEntity<Response<Void>> updateReport(@PathVariable long boardId, @Valid @RequestBody CommunityUpdateRequest request) {
+    public ResponseEntity<Response<CommandResponse>> updateReport(@PathVariable long boardId, @Valid @RequestBody CommunityUpdateRequest request) {
 
-        reportCommandService.updateReport(boardId, request);
+        Report report = reportCommandService.updateReport(boardId, request);
 
-        return ResponseEntity.ok(Response.<Void>builder()
+        CommandResponse response = CommandMapper.toCommandResponse(report);
+
+        return ResponseEntity.ok(Response.<CommandResponse>builder()
                 .message("리포트 수정 성공")
+                .data(response)
                 .build());
     }
 
