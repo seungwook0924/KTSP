@@ -1,12 +1,13 @@
 package com.seungwook.ktsp.domain.file.repository;
 
 import com.seungwook.ktsp.domain.file.entity.UploadFile;
+import com.seungwook.ktsp.domain.file.repository.querydsl.UploadFileQueryRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface UploadFileRepository extends JpaRepository<UploadFile, Long> {
+public interface UploadFileRepository extends JpaRepository<UploadFile, Long>, UploadFileQueryRepository {
 
     // UUID를 바탕으로 UploadFile 리턴
     Optional<UploadFile> findByUuid(String uuid);

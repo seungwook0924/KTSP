@@ -27,7 +27,7 @@ public class ReportCommandService {
 
     // 리포트 등록
     @Transactional
-    public void registerReport(long userId, CommunityRegisterRequest request) {
+    public Report registerReport(long userId, CommunityRegisterRequest request) {
 
         // 작성자 조회
         User user = userDomainService.getReferenceById(userId);
@@ -39,11 +39,13 @@ public class ReportCommandService {
         // 이미지 및 첨부파일 연결
         if (request.getAttachedFiles() != null && !request.getAttachedFiles().isEmpty())
             boardFileBindingService.bindFilesToBoard(report, request.getContent(), request.getAttachedFiles());
+
+        return report;
     }
 
     @Transactional
     @PreAuthorize("@boardAccessHandler.check(#boardId)")
-    public void updateReport(long boardId, CommunityUpdateRequest request) {
+    public Report updateReport(long boardId, CommunityUpdateRequest request) {
 
         // 리포트 조회
         Report report = findAsReport(boardId);
@@ -53,6 +55,8 @@ public class ReportCommandService {
 
         // 리포트 업데이트
         report.updateReport(request.getTitle(), request.getContent());
+
+        return report;
     }
 
     // 공지사항 삭제

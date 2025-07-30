@@ -22,12 +22,12 @@ public class BoardFileDomainService {
         boardFileRepository.save(boardFile);
     }
 
+    public void delete(BoardFile boardFile) {
+        boardFileRepository.delete(boardFile);
+    }
+
     // 게시글에 연결된 모든 fileId(UploadFile PK)를 리턴
     public List<Long> findByBoardIdIn(long boardId) {
         return boardFileRepository.findUploadFileIdsByBoardId(boardId);
-    }
-
-    public void delete(BoardFile boardFile) {
-        boardFileRepository.delete(boardFile);
     }
 }
