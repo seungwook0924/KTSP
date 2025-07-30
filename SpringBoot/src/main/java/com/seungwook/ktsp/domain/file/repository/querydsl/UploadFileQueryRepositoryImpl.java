@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.querydsl.jpa.JPAExpressions.select;
 import static com.seungwook.ktsp.domain.file.entity.QBoardFile.boardFile;
 import static com.seungwook.ktsp.domain.file.entity.QUploadFile.uploadFile;
 
@@ -19,13 +18,14 @@ public class UploadFileQueryRepositoryImpl implements UploadFileQueryRepository 
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<UploadFile> findOrphanUploadFies(LocalDateTime threshold) {
+    public List<UploadFile> findOrphanUploadFiles(LocalDateTime threshold) {
         return queryFactory
                 .selectFrom(uploadFile)
-                .where(
-                        uploadFile.createdAt.lt(threshold)
-                        .and(uploadFile.id.notIn(select(boardFile.file.id).from(boardFile)))
-                )
+                .leftJoin(boardFile).on(boardFile.file.eq(uploadFile))
+                .where(uploadFile.createdAt.lt(threshold)
+                        .and(boardFile.id.isNull()))
+                .orderBy(uploadFile.id.asc())
+                .limit(500)
                 .fetch();
     }
 }

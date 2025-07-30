@@ -16,8 +16,8 @@ public class UploadFileCleanerScheduler {
     // 매일 새벽 3시에 실행
     @Scheduled(cron = "0 0 3 * * *", zone = "Asia/Seoul")
     public void cleanOrphanFiles() {
-        log.info("Orphan upload file cleanup started");
+        log.info("고아 파일 삭제 시작");
         uploadFileBatchService.deleteOldOrphanFiles();
-        log.info("Orphan upload file cleanup completed");
+        log.info("고아 파일 삭제 종료");
     }
 }
