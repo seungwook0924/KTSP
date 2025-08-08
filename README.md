@@ -44,7 +44,7 @@
 
 <br>
 
-## 소프트웨어 아키텍쳐
+## 아키텍쳐
 
 ![Architecture](images/README/Architecture.png)
 
