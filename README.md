@@ -57,4 +57,3 @@
 
 ## ERD
 
-![SCR-20241130-qdrx](images/README/SCR-20241130-qdrx.png)
