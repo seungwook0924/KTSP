@@ -9,8 +9,8 @@ public enum SubType {
 
     NONE(null, "구분 없음"),
 
-    MENTOR(LEARNING_CORE, "배우미"),
-    MENTEE(LEARNING_CORE, "가르치미"),
+    MENTOR(LEARNING_CORE, "가르치미"),
+    MENTEE(LEARNING_CORE, "배우미"),
 
     MAJOR_MULTI(MAJOR_LEARNER, "전공학습(부·복수) 공동체"),
     FRESH_REJOIN(MAJOR_LEARNER, "신입·재입학생공동체"),

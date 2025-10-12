@@ -16,10 +16,12 @@ public enum Semester {
         this.label = label;
     }
 
-    public static Semester resolveByDate(LocalDate date) {
-        LocalDate firstSemesterStart = LocalDate.of(date.getYear(), 1, 1); // 1학기 시작
-        LocalDate firstSemesterEnd = LocalDate.of(date.getYear(), 6, 30); // 1학기 종료
-
-        return (date.getMonthValue() <= 6) ? FIRST : SECOND;
+    /*
+        1월 ~ 6월: 1학기
+        7월 ~ 12월: 2학기
+        러닝코어, 메이저러너, 챌린지러너는 주로 학기 시작 이전 ~ 학기 초에 신청하기 때문
+    */
+    public static Semester resolveByDate() {
+        return (LocalDate.now().getMonthValue() <= 6) ? FIRST : SECOND;
     }
 }
