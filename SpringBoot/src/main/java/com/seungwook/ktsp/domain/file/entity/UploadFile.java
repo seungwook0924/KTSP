@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Getter
 @Entity
-@Table(name = "upload_file")
+@Table(name = "upload_file", indexes = {@Index(columnList = "created_at")})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UploadFile {
 
@@ -37,7 +37,7 @@ public class UploadFile {
     @Column(name = "kb", nullable = false)
     private Double kiloByte;
 
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
     private UploadFile(User user, String originalName, String extension, double kiloByte) {

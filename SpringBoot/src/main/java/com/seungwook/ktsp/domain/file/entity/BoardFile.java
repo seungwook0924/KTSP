@@ -25,7 +25,7 @@ public class BoardFile {
     // BoardFile과 UploadFile는 1:1 관계
     // 하나의 BoardFile은 하나의 UploadFile에 매핑 될 수 있다.
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true) // 1:1 매핑, 지연로딩
-    @JoinColumn(name = "file_id", nullable = false)
+    @JoinColumn(name = "file_id", nullable = false, unique = true)
     private UploadFile file;
 
     // 생성자

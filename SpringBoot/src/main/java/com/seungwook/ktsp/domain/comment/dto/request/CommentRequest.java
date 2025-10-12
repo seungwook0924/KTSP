@@ -10,7 +10,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class CommentRequest {
 
-    @Positive(message = "잘못된 요청입니다.")
+    @Positive(message = "잘못된 접근입니다.")
     private final long boardId;
 
     @NotBlank

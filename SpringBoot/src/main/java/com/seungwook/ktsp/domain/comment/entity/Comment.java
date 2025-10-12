@@ -3,15 +3,19 @@ package com.seungwook.ktsp.domain.comment.entity;
 import com.seungwook.ktsp.domain.board.common.entity.Board;
 import com.seungwook.ktsp.domain.comment.exception.CommentException;
 import com.seungwook.ktsp.domain.user.entity.User;
+import com.seungwook.ktsp.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Comment {
+public class Comment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,6 +42,10 @@ public class Comment {
     @Column(nullable = false, length = 255)
     private String comment;
 
+    // 양방향 매핑(부모댓글 삭제시 자식댓글도 자동 삭제)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private final List<Comment> replies = new ArrayList<>();
+
     // 생성자
     private Comment(User user, Board board, String comment, Comment parent) {
         this.user = user;
@@ -54,9 +62,12 @@ public class Comment {
     // 대댓글 생성 정적 팩터리
     public static Comment createReply(User user, Comment parent, String comment) {
         if (parent.getParent() != null) throw new CommentException("대댓글의 대댓글은 허용하지 않음.");
-        return new Comment(user, parent.getBoard(), comment, parent);
+        Comment reply = new Comment(user, parent.getBoard(), comment, parent);
+        parent.replies.add(reply);
+        return reply;
     }
 
+    // 댓글 수정
     public void updateComment(String comment) {
         this.comment = comment;
     }

@@ -1,8 +1,9 @@
 package com.seungwook.ktsp.domain.user.service;
 
+import com.seungwook.ktsp.domain.board.common.dto.response.Writer;
 import com.seungwook.ktsp.domain.user.dto.UserProfile;
-import com.seungwook.ktsp.domain.user.dto.WriterInfo;
 import com.seungwook.ktsp.domain.user.entity.User;
+import com.seungwook.ktsp.domain.user.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,7 @@ public class UserQueryService {
 
     // 게시글 작성자 정보 조회
     @Transactional(readOnly = true)
-    public WriterInfo getWriterInfo(long userId) {
-        return userDomainService.findWriterInfoById(userId);
+    public Writer getWriter(long userId) {
+        return UserMapper.toWriter(userDomainService.findWriterInfoById(userId));
     }
 }
