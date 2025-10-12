@@ -49,12 +49,12 @@ public class TeamMember extends BaseEntity {
     }
 
     // 최초 Board 생성자는 TeamMember 등록
-    public TeamMember BoardConstructorRegister(Board board, User user) {
+    public static TeamMember BoardConstructorRegister(Board board, User user) {
         return new TeamMember(board, user, TeamJoinStatus.APPROVED, null);
     }
 
     // 팀원 추가(최초 수락 대기중)
-    public TeamMember addTeamMember(Board board, User user, String introduction) {
+    public static TeamMember addTeamMember(Board board, User user, String introduction) {
         return new TeamMember(board, user, TeamJoinStatus.PENDING, introduction);
     }
 

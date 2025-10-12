@@ -6,9 +6,7 @@ import com.seungwook.ktsp.domain.board.common.entity.enums.Semester;
 import com.seungwook.ktsp.domain.board.common.entity.enums.SubType;
 import com.seungwook.ktsp.domain.user.entity.User;
 import com.seungwook.ktsp.domain.user.entity.enums.Campus;
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,6 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LearningCore extends Board {
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "campus", nullable = false)
     private Campus campus;
 
@@ -29,6 +28,7 @@ public class LearningCore extends Board {
     @Column(name = "is_closed", nullable = false)
     private boolean isClosed;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "semester", nullable = false)
     private Semester semester;
 
@@ -42,7 +42,7 @@ public class LearningCore extends Board {
     }
 
     // 가르치미 등록
-    public LearningCore registerMentor(User user, String title, String content, Campus campus, int teamSize) {
+    public static LearningCore registerMentor(User user, String title, String content, Campus campus, int teamSize) {
         return LearningCore.builder()
                 .user(user)
                 .mainType(MainType.LEARNING_CORE)
@@ -56,7 +56,7 @@ public class LearningCore extends Board {
     }
 
     // 배우미 등록
-    public LearningCore registerMentee(User user, String title, String content, Campus campus, int teamSize) {
+    public static LearningCore registerMentee(User user, String title, String content, Campus campus, int teamSize) {
         return LearningCore.builder()
                 .user(user)
                 .mainType(MainType.LEARNING_CORE)
