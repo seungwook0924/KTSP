@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface ReportRepository extends JpaRepository<Report, Long>, HitsIncrement, ReportQueryRepository {
 
-    // boardId를 바탕으로 공지사항 조회
+    // boardId를 바탕으로 리포트 조회
     Optional<Report> findReportById(Long boardId);
 }

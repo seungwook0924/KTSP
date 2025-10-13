@@ -47,6 +47,6 @@ public class UploadFileBatchService {
             }
         }
 
-        log.info("total Access={} / success={} / fail={}", total, success, fail);
+        log.info("total={} / success={} / fail={}", total, success, fail);
     }
 }
