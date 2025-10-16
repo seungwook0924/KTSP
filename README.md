@@ -48,8 +48,4 @@
 
 ![Architecture](images/README/Architecture.png)
 
-> [!TIP]
->
-> - Redis는 캐시, 세션, STMP 등을 위해 사용
-> - Nginx는 리버스 프록시를 위해 사용
 
