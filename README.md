@@ -42,10 +42,5 @@
 
 ![SCR-20241130-qcbr](images/README/SCR-20241130-qcbr.png)
 
-<br>
-
-## 아키텍쳐
-
-![Architecture](images/README/Architecture.png)
 
 
