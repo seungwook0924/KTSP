@@ -1,11 +1,11 @@
 package com.seungwook.ktsp.domain.board.type.learning_core.entity;
 
 import com.seungwook.ktsp.domain.board.common.entity.Board;
+import com.seungwook.ktsp.domain.board.common.entity.enums.Campus;
 import com.seungwook.ktsp.domain.board.common.entity.enums.MainType;
 import com.seungwook.ktsp.domain.board.common.entity.enums.Semester;
 import com.seungwook.ktsp.domain.board.common.entity.enums.SubType;
 import com.seungwook.ktsp.domain.user.entity.User;
-import com.seungwook.ktsp.domain.user.entity.enums.Campus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
