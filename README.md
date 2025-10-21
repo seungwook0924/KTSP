@@ -40,7 +40,6 @@
 
 ## 기술 스택
 
-![SCR-20241130-qcbr](images/README/SCR-20241130-qcbr.png)
 
 
 
