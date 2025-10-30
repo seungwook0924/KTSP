@@ -19,8 +19,26 @@ public class LearningCoreCommandService {
     private final BoardFileBindingService boardFileBindingService;
     private final CommentCommandService commentCommandService;
 
+    // 가르치미 등록
     public LearningCore registerMentor(User user, RegisterRequest request) {
         LearningCore learningCore = LearningCore.registerMentor(
+                user,
+                request.getTitle(),
+                request.getContent(),
+                request.getCampus(),
+                request.getTeamSize()
+        );
+
+        learningCoreRepository.save(learningCore);
+
+        boardFileBindingService.bindFilesToBoard(learningCore, request.getContent(), request.getAttachedFiles());
+
+        return learningCore;
+    }
+
+    // 배우미 등록
+    public LearningCore registerMentee(User user, RegisterRequest request) {
+        LearningCore learningCore = LearningCore.registerMentee(
                 user,
                 request.getTitle(),
                 request.getContent(),
