@@ -37,7 +37,6 @@
 
 ![SCR-20241130-pjdi](images/README/SCR-20241130-pjdi.png)
 
-<br>
 
 
 
